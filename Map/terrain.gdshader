@@ -4,7 +4,6 @@ uniform sampler2D heightMap;
 uniform sampler2D mapTexture;
 const float maxHeight = 60.0;
 const vec2 mapSize = vec2(4096.0,4096.0);
-const vec2 texSize = mapSize;
 const float mapScale = 1.0;
 
 varying vec2 v_world_pos;
