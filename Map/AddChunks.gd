@@ -11,6 +11,6 @@ func _ready() -> void:
 		for y in range(tilesNeededEachDir) :
 			var newTerrain : MeshInstance3D = terrainViewer.instantiate()
 			self.add_child(newTerrain)
-			newTerrain.position = Vector3(x * tileSize,0,y*tileSize)
+			newTerrain.position = Vector3((x+1) * tileSize,0,(y+1)*tileSize)
 			newTerrain.name = str(x) + "," + str(y)
 			newTerrain.owner = null

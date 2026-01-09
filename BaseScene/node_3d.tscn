@@ -13,10 +13,3 @@ environment = SubResource("Environment_pcchn")
 [node name="PlayerCamera" parent="." instance=ExtResource("1_pcchn")]
 
 [node name="TerrainCombiner" parent="." instance=ExtResource("1_ynjd7")]
-
-[node name="SpotLight3D" type="SpotLight3D" parent="."]
-transform = Transform3D(-0.774922, 0, -0.632056, 0, 1, 0, 0.632056, 0, -0.774922, 1707.49, 28.688, 1416.81)
-light_energy = 16.0
-shadow_enabled = true
-spot_range = 4096.0
-spot_angle_attenuation = 0.00728933
