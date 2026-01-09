@@ -1,10 +1,22 @@
-[gd_scene load_steps=3 format=3 uid="uid://bbeo2i8i3qn3a"]
+[gd_scene load_steps=5 format=3 uid="uid://bbeo2i8i3qn3a"]
 
 [ext_resource type="PackedScene" uid="uid://dci2cd0ppqp5e" path="res://Player/Camera/player_camera.tscn" id="1_pcchn"]
 [ext_resource type="PackedScene" uid="uid://y0vmg6qqm6m3" path="res://Map/terrain_combiner.tscn" id="1_ynjd7"]
+[ext_resource type="PackedScene" uid="uid://coyquo7qay2qv" path="res://VisibilityHighlighter/omni_light_3d.tscn" id="3_5qkku"]
+
+[sub_resource type="Environment" id="Environment_pcchn"]
 
 [node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_pcchn")
 
 [node name="PlayerCamera" parent="." instance=ExtResource("1_pcchn")]
 
 [node name="TerrainCombiner" parent="." instance=ExtResource("1_ynjd7")]
+
+[node name="OmniLight3D" parent="." instance=ExtResource("3_5qkku")]
+transform = Transform3D(-0.618312, 0, -0.785932, 0, 1, 0, 0.785932, 0, -0.618312, 1725.03, 19.5869, 1387.01)
+
+[node name="OmniLight3D2" parent="." instance=ExtResource("3_5qkku")]
+transform = Transform3D(0.180519, 0, 0.983571, 0, 1, 0, -0.983571, 0, 0.180519, 1407.01, 19.5869, 1387.01)

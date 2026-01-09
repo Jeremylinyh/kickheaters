@@ -1,9 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://goia4q86a2rw"]
+[gd_scene load_steps=6 format=3 uid="uid://goia4q86a2rw"]
 
 [ext_resource type="Shader" uid="uid://jogilbsoj6u3" path="res://Map/terrain.gdshader" id="1_ausvj"]
 [ext_resource type="Texture2D" uid="uid://dg3nbwma5bsae" path="res://Map/UnChunkedCalif.exr" id="2_i2weo"]
 [ext_resource type="Texture2D" uid="uid://7kd405vgviw6" path="res://Map/Texture.png" id="3_vosm8"]
-[ext_resource type="PackedScene" uid="uid://y0vmg6qqm6m3" path="res://Map/terrain_combiner.tscn" id="4_06xdb"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_i2weo"]
 render_priority = 0
@@ -20,4 +19,5 @@ center_offset = Vector3(64, 64, 0)
 
 [node name="Terrain" type="MeshInstance3D"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+custom_aabb = AABB(0, 0, 0, 128, 128, 60)
 mesh = SubResource("QuadMesh_6phdc")
