@@ -15,7 +15,13 @@ environment = SubResource("Environment_pcchn")
 [node name="TerrainCombiner" parent="." instance=ExtResource("1_ynjd7")]
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1754.88, 19.5869, 1386.58)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1739, 19.5869, 1399.09)
 shadow_enabled = true
 omni_range = 1024.0
-omni_attenuation = -0.616
+omni_attenuation = 0.0
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1607, 19.5869, 1509.09)
+shadow_enabled = true
+omni_range = 1024.0
+omni_attenuation = 0.0
