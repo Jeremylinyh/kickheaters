@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://coyquo7qay2qv"]
+
+[ext_resource type="Texture2D" uid="uid://clvywh2dbd1yo" path="res://Assets/icon.svg" id="1_qdbh2"]
+
+[node name="OmniLight3D" type="OmniLight3D"]
+light_color = Color(0.627451, 0.627451, 0.627451, 1)
+light_projector = ExtResource("1_qdbh2")
+shadow_enabled = true
+omni_range = 1024.0
+omni_attenuation = 0.0
