@@ -31,7 +31,7 @@ void light() {
 	// Called for every pixel for every light affecting the material.
 	// Uncomment to replace the default light processing function with this one.
 	vec3 litColor = vec3(0.5);
-	if (length(DIFFUSE_LIGHT) <= 0.0)
+	if (length(DIFFUSE_LIGHT) <= 0.5)
 	{
 		DIFFUSE_LIGHT += litColor * ATTENUATION;
 	}
