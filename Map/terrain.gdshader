@@ -31,8 +31,11 @@ void light() {
 	// Called for every pixel for every light affecting the material.
 	// Uncomment to replace the default light processing function with this one.
 	vec3 litColor = LIGHT_COLOR; //vec3(0.5);
-	if (length(DIFFUSE_LIGHT) <= 0.5)
+	bool shouldOverrideLight = length(DIFFUSE_LIGHT) <= 0.;
+	shouldOverrideLight = shouldOverrideLight || (litColor.x == litColor.y); // or if self is white
+	shouldOverrideLight = shouldOverrideLight && ATTENUATION > 0.0;
+	if (shouldOverrideLight)
 	{
-		DIFFUSE_LIGHT += litColor * ATTENUATION;
+		DIFFUSE_LIGHT = litColor * ATTENUATION;
 	}
 }

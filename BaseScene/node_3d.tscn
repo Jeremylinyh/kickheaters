@@ -16,4 +16,7 @@ environment = SubResource("Environment_pcchn")
 [node name="TerrainCombiner" parent="." instance=ExtResource("1_ynjd7")]
 
 [node name="OmniLight3D" parent="." instance=ExtResource("3_5qkku")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1725.03, 19.5869, 1387.01)
+transform = Transform3D(-0.618312, 0, -0.785932, 0, 1, 0, 0.785932, 0, -0.618312, 1725.03, 19.5869, 1387.01)
+
+[node name="OmniLight3D2" parent="." instance=ExtResource("3_5qkku")]
+transform = Transform3D(0.180519, 0, 0.983571, 0, 1, 0, -0.983571, 0, 0.180519, 1407.01, 19.5869, 1387.01)
