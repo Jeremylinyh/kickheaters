@@ -7,6 +7,7 @@ const vec2 mapSize = vec2(4096.0,4096.0);
 const float mapScale = 1.0;
 
 varying vec2 v_world_pos;
+varying float heightSampled;
 
 void vertex() {
 	// Called for every vertex the material is visible on.
@@ -15,13 +16,15 @@ void vertex() {
 	vec2 effectivePosition = mapScale * (VERTEX.xz/mapSize);
 	float height = texture(heightMap, effectivePosition).r;
 	VERTEX.y = height * maxHeight;
+	heightSampled = VERTEX.y;
 }
 
 void fragment() {
 	// Called for every pixel the material is visible on.
 	vec2 pixelPos = v_world_pos/mapSize;
 	
-	ALBEDO = texture(mapTexture,pixelPos * mapScale).rgb;
+	//ALBEDO = texture(mapTexture,pixelPos * mapScale).rgb;
+	ALBEDO = vec3(fract(heightSampled * 1.0));
 }
 
 //void light() {
