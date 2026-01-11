@@ -12,7 +12,7 @@ varying float heightSampled;
 void vertex() {
 	// Called for every vertex the material is visible on.
 	v_world_pos = VERTEX.xz;
-	
+
 	vec2 effectivePosition = mapScale * (VERTEX.xz/mapSize);
 	float height = texture(heightMap, effectivePosition).r;
 	VERTEX.y = height * maxHeight;
@@ -22,7 +22,7 @@ void vertex() {
 void fragment() {
 	// Called for every pixel the material is visible on.
 	vec2 pixelPos = v_world_pos/mapSize;
-	
+
 	ALBEDO = texture(mapTexture,pixelPos * mapScale).rgb;
 	//ALBEDO = vec3(fract(heightSampled * 1.0));
 }
@@ -36,6 +36,6 @@ void light() {
 	shouldOverrideLight = shouldOverrideLight && ATTENUATION > 0.0;
 	if (shouldOverrideLight)
 	{
-		DIFFUSE_LIGHT = litColor * ATTENUATION;
+		DIFFUSE_LIGHT = max(litColor * ATTENUATION,DIFFUSE_LIGHT);
 	}
 }
