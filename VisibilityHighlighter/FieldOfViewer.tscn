@@ -1,10 +1,11 @@
 [gd_scene load_steps=2 format=3 uid="uid://coyquo7qay2qv"]
 
-[ext_resource type="Texture2D" uid="uid://dlivwt75p8ybp" path="res://VisibilityHighlighter/Vision blocks.png" id="1_qdbh2"]
+[ext_resource type="Texture2D" uid="uid://dygaaejewko1o" path="res://VisibilityHighlighter/Vision blocks.png" id="1_qdbh2"]
 
 [node name="FOVVisualizer" type="OmniLight3D"]
 light_color = Color(0.627451, 0.627451, 0.627451, 1)
 light_projector = ExtResource("1_qdbh2")
 shadow_enabled = true
+shadow_bias = 1.0
 omni_range = 1024.0
 omni_attenuation = 0.0

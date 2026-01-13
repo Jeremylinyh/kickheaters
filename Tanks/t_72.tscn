@@ -1,5 +1,7 @@
 [gd_scene load_steps=6 format=4 uid="uid://bq5y2f64ii4ca"]
 
+[ext_resource type="PackedScene" uid="uid://coyquo7qay2qv" path="res://VisibilityHighlighter/FieldOfViewer.tscn" id="1_pt3k0"]
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p0d80"]
 resource_name = "Material"
 cull_mode = 2
@@ -59,9 +61,6 @@ _surfaces = [{
 }]
 blend_shape_mode = 0
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_566cc"]
-size = Vector3(4, 1, 2)
-
 [node name="t72" type="Node3D"]
 
 [node name="Turret" type="MeshInstance3D" parent="."]
@@ -69,6 +68,9 @@ transform = Transform3D(1.35038, 0, 0, 0, 0.980731, 0, 0, 0, -0.794922, 1.14008,
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_lxkxa")
 skeleton = NodePath("")
+
+[node name="FOVVisualizer" parent="Turret" instance=ExtResource("1_pt3k0")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.5, -0.4, 0)
 
 [node name="Base" type="MeshInstance3D" parent="."]
 transform = Transform3D(1.35038, 0, 0, 0, 0.980731, 0, 0, 0, -0.794922, 1.07921, 1.24933, -0.00283755)
@@ -81,9 +83,3 @@ transform = Transform3D(1.35038, 0, 0, 0, 0.980731, 0, 0, 0, -0.794922, 1.14008,
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_ujkwc")
 skeleton = NodePath("")
-
-[node name="DetectClicks" type="StaticBody3D" parent="."]
-
-[node name="Select" type="CollisionShape3D" parent="DetectClicks"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.627257, 0)
-shape = SubResource("BoxShape3D_566cc")
