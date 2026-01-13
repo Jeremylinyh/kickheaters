@@ -2,7 +2,7 @@ shader_type spatial;
 render_mode world_vertex_coords;
 uniform sampler2D heightMap;
 uniform sampler2D mapTexture;
-const float maxHeight = 60.0;
+const float maxHeight = 0.01;
 const vec2 mapSize = vec2(4096.0,4096.0);
 const float mapScale = 1.0;
 
