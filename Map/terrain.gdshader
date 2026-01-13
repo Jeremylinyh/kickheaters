@@ -24,7 +24,7 @@ void fragment() {
 	vec2 pixelPos = v_world_pos/mapSize;
 
 	ALBEDO = texture(mapTexture,pixelPos * mapScale).rgb;
-	//ALBEDO = vec3(fract(heightSampled * 1.0));
+	ALBEDO = vec3(1.0-fract(heightSampled * 1.0));
 }
 
 void light() {
