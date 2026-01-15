@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://cs8muodohmyvb"]
+
+[ext_resource type="Script" uid="uid://b4wo8ch3b7ns5" path="res://Player/Input/input.gd" id="1_c1m4v"]
+
+[node name="Selection" type="Panel"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_c1m4v")
