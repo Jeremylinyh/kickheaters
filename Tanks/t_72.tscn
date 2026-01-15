@@ -1,5 +1,6 @@
-[gd_scene load_steps=6 format=4 uid="uid://bq5y2f64ii4ca"]
+[gd_scene load_steps=7 format=4 uid="uid://bq5y2f64ii4ca"]
 
+[ext_resource type="Script" uid="uid://c8ey5ttewwqqa" path="res://Tanks/t_72.gd" id="1_i7212"]
 [ext_resource type="PackedScene" uid="uid://coyquo7qay2qv" path="res://VisibilityHighlighter/FieldOfViewer.tscn" id="1_pt3k0"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p0d80"]
@@ -62,6 +63,7 @@ _surfaces = [{
 blend_shape_mode = 0
 
 [node name="t72" type="Node3D"]
+script = ExtResource("1_i7212")
 
 [node name="Turret" type="MeshInstance3D" parent="."]
 transform = Transform3D(1.35038, 0, 0, 0, 0.980731, 0, 0, 0, -0.794922, 1.14008, 1.2426, -0.00612144)
