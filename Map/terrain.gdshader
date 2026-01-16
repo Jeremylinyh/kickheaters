@@ -11,12 +11,12 @@ varying float heightSampled;
 
 void vertex() {
 	// Called for every vertex the material is visible on.
-	v_world_pos = VERTEX.xz;
 
 	vec2 effectivePosition = mapScale * (VERTEX.xz/mapSize);
 	float height = texture(heightMap, effectivePosition).r;
 	VERTEX.y = height * maxHeight;
 	heightSampled = VERTEX.y;
+	v_world_pos = VERTEX.xz;
 }
 
 void fragment() {
@@ -31,11 +31,14 @@ void light() {
 	// Called for every pixel for every light affecting the material.
 	// Uncomment to replace the default light processing function with this one.
 	vec3 litColor = LIGHT_COLOR; //vec3(0.5);
+
+	float funnyAttenuation = fwidth(ATTENUATION);
+
 	bool shouldOverrideLight = length(DIFFUSE_LIGHT) <= 0.;
 	shouldOverrideLight = shouldOverrideLight || (litColor.x == litColor.y); // or if self is white
-	shouldOverrideLight = shouldOverrideLight && ATTENUATION > 0.0;
+	shouldOverrideLight = shouldOverrideLight && ATTENUATION > 0.5;
 	if (shouldOverrideLight)
 	{
-		DIFFUSE_LIGHT = max(litColor * ATTENUATION,DIFFUSE_LIGHT);
+		DIFFUSE_LIGHT = max(litColor * 1.0,DIFFUSE_LIGHT);
 	}
 }
