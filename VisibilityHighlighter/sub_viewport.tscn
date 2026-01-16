@@ -15,7 +15,6 @@ script = ExtResource("1_rlafc")
 
 [node name="PointOfView" type="SubViewport" parent="."]
 debug_draw = 1
-size = Vector2i(4096, 4096)
 render_target_clear_mode = 1
 render_target_update_mode = 1
 

@@ -12,10 +12,10 @@ var proj_matrix# = shadow_cam.get_camera_projection()
 var full_shadow_matrix# = proj_matrix * view_matrix
 
 func _ready():
-	if Engine.is_editor_hint() :
-		$PointOfView/Camera3D/Depth.visible = true#false
-	else :
-		$PointOfView/Camera3D/Depth.visible = true
+	#if Engine.is_editor_hint() :
+		#$PointOfView/Camera3D/Depth.visible = true#false
+	#else :
+		#$PointOfView/Camera3D/Depth.visible = true
 	pass#$PointOfView.world_3d = get_viewport().find_world_3d()
 	
 
@@ -30,7 +30,10 @@ func _process(_delta: float) -> void:
 		
 		#print(self.name+" moved")
 		positionPrevFrame = currentPosition
+		$PointOfView/Camera3D/Depth.visible = true
 		$PointOfView.render_target_update_mode = $PointOfView.UPDATE_DISABLED
 		$PointOfView.render_target_update_mode = $PointOfView.UPDATE_ONCE
 		depth_tex = $PointOfView.get_texture()
+		await Engine.get_main_loop().process_frame
+		$PointOfView/Camera3D/Depth.visible = false
 		#print(depth_tex)
