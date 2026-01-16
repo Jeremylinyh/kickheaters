@@ -30,10 +30,14 @@ func _process(_delta: float) -> void:
 		
 		#print(self.name+" moved")
 		positionPrevFrame = currentPosition
-		$PointOfView/Camera3D/Depth.visible = true
+		#$PointOfView/Camera3D/Depth.visible = true
 		$PointOfView.render_target_update_mode = $PointOfView.UPDATE_DISABLED
 		$PointOfView.render_target_update_mode = $PointOfView.UPDATE_ONCE
+		
+		## Force the rendering server to draw the current frame
+		#RenderingServer.frame_post_draw.connect(func(): pass) # Await the signal to ensure it draws
+		#await RenderingServer.frame_post_draw
+		
 		depth_tex = $PointOfView.get_texture()
-		await Engine.get_main_loop().process_frame
-		$PointOfView/Camera3D/Depth.visible = false
+		#$PointOfView/Camera3D/Depth.visible = false
 		#print(depth_tex)

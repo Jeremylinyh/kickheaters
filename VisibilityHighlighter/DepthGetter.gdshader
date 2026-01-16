@@ -8,7 +8,7 @@ uniform sampler2D depth_texture : hint_depth_texture, repeat_disable, filter_nea
 void vertex() {
 	// This forces the mesh to cover the entire screen (Screen Space Quad)
 	// regardless of where the camera is looking.
-	POSITION = vec4(VERTEX.xy*2.0, 1.0, 1.0);
+	//POSITION = vec4(VERTEX.xy*2.0, 1.0, 1.0);
 }
 
 void fragment() {
