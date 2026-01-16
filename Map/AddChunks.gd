@@ -14,7 +14,8 @@ func setCollider(colliderPos : Vector3) :
 	var shape : CollisionShape3D = heigtmapExample.get_child(0)
 	
 	var map_data = PackedFloat32Array()
-	map_data.resize(pow(tileSize,2.0)) 
+	var newMapSize : int = ceili(pow(tileSize,2.0))
+	map_data.resize(newMapSize) 
 	for x in range(tileSize):
 		for y in range(tileSize):
 			map_data.push_back(0.0)
@@ -31,3 +32,9 @@ func _ready() -> void:
 			newTerrain.name = str(x) + "," + str(y)
 			newTerrain.owner = null
 			newTerrain.add_child(setCollider(newTerrain.position))
+
+func _process(_delta: float) -> void:
+	var selfScale = get_viewport().get_camera_3d().global_position.y/100.0
+	selfScale = round(selfScale)
+	selfScale = max(1,selfScale)
+	scale = Vector3(selfScale,1.0,selfScale)
