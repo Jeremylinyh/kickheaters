@@ -50,6 +50,11 @@ ui_down={
 ]
 }
 
+[layer_names]
+
+2d_render/layer_1="Default"
+2d_render/layer_2="Terrain"
+
 [rendering]
 
 lights_and_shadows/directional_shadow/soft_shadow_filter_quality=0
