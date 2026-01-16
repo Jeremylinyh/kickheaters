@@ -1,11 +1,11 @@
 @tool
 extends Node3D
-@export var currentPosition : Transform3D = Transform3D()
+var currentPosition : Transform3D = Transform3D()
 
 var positionPrevFrame : Transform3D = currentPosition
 
 func _ready():
-	$PointOfView.world_3d = get_viewport().find_world_3d()
+	pass#$PointOfView.world_3d = get_viewport().find_world_3d()
 	
 
 func _process(_delta: float) -> void:
