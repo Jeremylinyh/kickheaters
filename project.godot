@@ -58,6 +58,8 @@ ui_down={
 
 2d_render/layer_1="Default"
 2d_render/layer_2="Terrain"
+3d_render/layer_2="Terrain"
+3d_render/layer_3="Depth Buffer"
 
 [rendering]
 

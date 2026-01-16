@@ -7,3 +7,4 @@ script = ExtResource("1_xxw0e")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 100, 0)
+cull_mask = 1048571

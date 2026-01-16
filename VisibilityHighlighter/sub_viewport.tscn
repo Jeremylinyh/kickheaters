@@ -1,6 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://d0l4ggdq68wro"]
+[gd_scene load_steps=5 format=3 uid="uid://d0l4ggdq68wro"]
 
 [ext_resource type="Script" uid="uid://b5xnohrdyff6f" path="res://VisibilityHighlighter/sub_viewport.gd" id="1_rlafc"]
+[ext_resource type="Shader" uid="uid://bpvot152coooy" path="res://VisibilityHighlighter/DepthGetter.gdshader" id="2_k75ir"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_48fcv"]
+render_priority = 0
+shader = ExtResource("2_k75ir")
+
+[sub_resource type="QuadMesh" id="QuadMesh_rlafc"]
+material = SubResource("ShaderMaterial_48fcv")
 
 [node name="DepthLight" type="Node3D" groups=["CustomLights"]]
 script = ExtResource("1_rlafc")
@@ -12,5 +20,11 @@ render_target_update_mode = 1
 
 [node name="Camera3D" type="Camera3D" parent="PointOfView"]
 top_level = true
-cull_mask = 2
+cull_mask = 6
 current = true
+fov = 90.0
+
+[node name="Depth" type="MeshInstance3D" parent="PointOfView/Camera3D"]
+layers = 4
+extra_cull_margin = 3.0
+mesh = SubResource("QuadMesh_rlafc")
