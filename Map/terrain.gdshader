@@ -45,9 +45,7 @@ bool isInShadow(sampler2D depthTexture,vec4 world_pos,mat4 projMatrix) {
 	float my_dist = shadow_coords.w; // Often .w holds the linear depth before division!
 
     // B. Read "Map Distance" (Blocker)
-    // Check if we are actually inside the shadow map area
-    float shadow = 1.0;
-    if (uv.x >= 0.0 && uv.x <= 1.0 && uv.y >= 0.0 && uv.y <= 1.0) {
+    if (uv.x >= 0.0 && uv.x <= 1.0 && uv.y >= 0.0 && uv.y <= 1.0 && my_dist > 0.0) {
 
         vec3 c = texture(depthTexture, uv).rgb * 100.0;
 
