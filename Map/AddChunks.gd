@@ -25,6 +25,7 @@ func _process(_delta: float) -> void:
 	for depthCharge in get_tree().get_nodes_in_group("CustomLights") :
 		if not depthCharge.depth_tex :
 			continue
-		#print(leadMaterial)
+		#print(depthCharge.full_shadow_matrix)
 		leadMaterial.set_shader_parameter("depthTexture" + str(counter),depthCharge.depth_tex)
+		leadMaterial.set_shader_parameter("projMatrix" + str(counter),depthCharge.full_shadow_matrix)
 		counter += 1

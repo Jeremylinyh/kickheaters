@@ -12,8 +12,9 @@
 environment = SubResource("Environment_pcchn")
 
 [node name="PlayerCamera" parent="." instance=ExtResource("1_pcchn")]
+movementSpeed = 1000.0
 
 [node name="TerrainCombiner" parent="." instance=ExtResource("1_ynjd7")]
 
 [node name="SubViewport" parent="." instance=ExtResource("3_5qkku")]
-transform = Transform3D(-0.576518, 0, -0.817085, 0, 1, 0, 0.817085, 0, -0.576518, 0, 7.35293, 0)
+transform = Transform3D(-0.981461, 0, -0.191666, 0, 1, 0, 0.191666, 0, -0.981461, 1338.55, 15.0095, 1177.81)
