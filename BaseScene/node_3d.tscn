@@ -1,12 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://bbeo2i8i3qn3a"]
+[gd_scene load_steps=5 format=3 uid="uid://bbeo2i8i3qn3a"]
 
 [ext_resource type="PackedScene" uid="uid://dci2cd0ppqp5e" path="res://Player/Camera/player_camera.tscn" id="1_pcchn"]
 [ext_resource type="PackedScene" uid="uid://y0vmg6qqm6m3" path="res://Map/terrain_combiner.tscn" id="1_ynjd7"]
 [ext_resource type="PackedScene" uid="uid://d0l4ggdq68wro" path="res://VisibilityHighlighter/sub_viewport.tscn" id="3_5qkku"]
 
 [sub_resource type="Environment" id="Environment_pcchn"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_5qkku"]
 
 [node name="Node3D" type="Node3D"]
 
@@ -18,10 +16,3 @@ environment = SubResource("Environment_pcchn")
 [node name="TerrainCombiner" parent="." instance=ExtResource("1_ynjd7")]
 
 [node name="SubViewport" parent="." instance=ExtResource("3_5qkku")]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.89224)
-mesh = SubResource("BoxMesh_5qkku")
-skeleton = NodePath("../PlayerCamera")
-
-[editable path="SubViewport"]
