@@ -2,6 +2,11 @@ shader_type spatial;
 render_mode world_vertex_coords;
 uniform sampler2D heightMap;
 uniform sampler2D mapTexture;
+
+// snippet insert
+uniform sampler2D depthTexture0;
+// snippet outsert
+uniform float numDepthTextures = 1;
 const float maxHeight = 60.0;
 const vec2 mapSize = vec2(4096.0,4096.0);
 const float mapScale = 1.0;
@@ -25,6 +30,7 @@ void fragment() {
 
 	ALBEDO = texture(mapTexture,pixelPos * mapScale).rgb;
 	//ALBEDO = vec3(fract(heightSampled * 1.0));
+	ALBEDO = texture(depthTexture0,pixelPos * mapScale).rgb;
 }
 
 void light() {

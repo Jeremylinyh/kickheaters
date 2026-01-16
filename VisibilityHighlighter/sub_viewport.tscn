@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b5xnohrdyff6f" path="res://VisibilityHighlighter/sub_viewport.gd" id="1_rlafc"]
 
-[node name="DepthLight" type="Node3D"]
+[node name="DepthLight" type="Node3D" groups=["CustomLights"]]
 script = ExtResource("1_rlafc")
 
 [node name="PointOfView" type="SubViewport" parent="."]

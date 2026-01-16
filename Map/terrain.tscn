@@ -9,6 +9,7 @@ render_priority = 0
 shader = ExtResource("1_ausvj")
 shader_parameter/heightMap = ExtResource("2_i2weo")
 shader_parameter/mapTexture = ExtResource("3_vosm8")
+shader_parameter/numDepthTextures = 1.0
 
 [sub_resource type="QuadMesh" id="QuadMesh_6phdc"]
 material = SubResource("ShaderMaterial_i2weo")

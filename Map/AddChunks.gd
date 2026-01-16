@@ -5,6 +5,7 @@ extends Node3D
 
 const tilesNeededEachDir : int = 32
 const tileSize : float = 128.0;
+var leadMaterial : ShaderMaterial
 
 func _ready() -> void:
 	for x in range(tilesNeededEachDir) :
@@ -16,3 +17,14 @@ func _ready() -> void:
 			newTerrain.owner = null
 			
 			newTerrain.set_layer_mask_value(2, true)
+			
+			leadMaterial = newTerrain.mesh.material
+
+func _process(_delta: float) -> void:
+	var counter : int = 0
+	for depthCharge in get_tree().get_nodes_in_group("CustomLights") :
+		if not depthCharge.depth_tex :
+			continue
+		#print(leadMaterial)
+		leadMaterial.set_shader_parameter("depthTexture" + str(counter),depthCharge.depth_tex)
+		counter += 1

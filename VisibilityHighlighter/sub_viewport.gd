@@ -1,7 +1,8 @@
 @tool
 extends Node3D
-var currentPosition : Transform3D = Transform3D()
 
+var depth_tex : Texture2D
+var currentPosition : Transform3D = Transform3D()
 var positionPrevFrame : Transform3D = currentPosition
 
 func _ready():
@@ -16,3 +17,5 @@ func _process(_delta: float) -> void:
 		positionPrevFrame = currentPosition
 		$PointOfView.render_target_update_mode = $PointOfView.UPDATE_DISABLED
 		$PointOfView.render_target_update_mode = $PointOfView.UPDATE_ONCE
+		depth_tex = $PointOfView.get_texture()
+		#print(depth_tex)
