@@ -22,13 +22,10 @@ void fragment() {
     view.xyz /= view.w;
     float linear_depth = -view.z; // This is now actual units (e.g., meters)
 
-    // 3. Normalize it for display (Optional)
-    // Divide by, say, 100.0 so that 100 meters = 1.0 (White)
-    // Everything past 100m will clip to white, everything closer is a gradient.
-    ALBEDO = vec3(linear_depth/1000.0);
+    // 3. Pack it (you may be wondering why we aren't using 100% of the memory avaliable to us, it is totally not because I think that is unnecessarily complicated but that I decided this is enough precision)
+	float red_val   = mod(linear_depth, 100.0);
+	float green_val = mod(floor(linear_depth / 100.0), 100.0);
+	float blue_val  = mod(floor(linear_depth / 10000.0), 100.0);
+	
+    ALBEDO = vec3(red_val,green_val,blue_val)/100.0;
 }
-
-//void light() {
-//	// Called for every pixel for every light affecting the material.
-//	// Uncomment to replace the default light processing function with this one.
-//}

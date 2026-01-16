@@ -25,6 +25,7 @@ current = true
 fov = 90.0
 
 [node name="Depth" type="MeshInstance3D" parent="PointOfView/Camera3D"]
+visible = false
 layers = 4
 extra_cull_margin = 3.0
 mesh = SubResource("QuadMesh_rlafc")
