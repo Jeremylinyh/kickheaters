@@ -6,6 +6,8 @@ var currentPosition : Transform3D = Transform3D()
 var positionPrevFrame : Transform3D = currentPosition
 
 func _ready():
+	if Engine.is_editor_hint() :
+		$PointOfView/Camera3D/Depth.visible = false
 	pass#$PointOfView.world_3d = get_viewport().find_world_3d()
 	
 

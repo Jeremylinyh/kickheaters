@@ -30,7 +30,7 @@ void fragment() {
 
 	ALBEDO = texture(mapTexture,pixelPos * mapScale).rgb;
 	//ALBEDO = vec3(fract(heightSampled * 1.0));
-	//ALBEDO = texture(depthTexture0,pixelPos * mapScale).rgb;
+	ALBEDO = texture(depthTexture0,pixelPos * mapScale).rgb;
 }
 
 void light() {
