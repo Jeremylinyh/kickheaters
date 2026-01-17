@@ -9,6 +9,11 @@ const float mapScale = 1.0;
 varying vec2 v_world_pos;
 varying float heightSampled;
 
+float getSineHeight(vec2 vertexCoords)
+{
+	return sin(vertexCoords.x/60.0) + cos(vertexCoords.y/60.0);
+}
+
 void vertex() {
 	// Called for every vertex the material is visible on.
 
