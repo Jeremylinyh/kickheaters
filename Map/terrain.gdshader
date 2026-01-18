@@ -34,8 +34,16 @@ void light() {
 	bool shouldOverrideLight = length(DIFFUSE_LIGHT) <= 0.;
 	shouldOverrideLight = shouldOverrideLight || (litColor.x == litColor.y); // or if self is white
 	shouldOverrideLight = shouldOverrideLight && ATTENUATION > 0.0;// && ATTENUATION <= 1.0;
-	if (shouldOverrideLight&& ATTENUATION < 0.9)
+	if (shouldOverrideLight)
 	{
-		DIFFUSE_LIGHT = max(litColor * 1.0,DIFFUSE_LIGHT);
+		if (ATTENUATION < 0.9)
+		{
+			DIFFUSE_LIGHT = vec3(0.0,0.0,1.0);
+		}
+		else 
+		{
+			DIFFUSE_LIGHT = max(litColor * 1.0,DIFFUSE_LIGHT);
+		}
+		
 	}
 }
