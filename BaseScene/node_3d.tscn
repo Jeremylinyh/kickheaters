@@ -16,7 +16,7 @@ environment = SubResource("Environment_pcchn")
 [node name="TerrainCombiner" parent="." instance=ExtResource("1_ynjd7")]
 
 [node name="FOVVisualizer" parent="." instance=ExtResource("3_5qkku")]
-transform = Transform3D(0.0336437, 0, -0.999434, 0, 1, 0, 0.999434, 0, 0.0336437, 1789.49, 22.4213, 1378.31)
+transform = Transform3D(0.0336437, 0, -0.999434, 0, 1, 0, 0.999434, 0, 0.0336437, 1787.8, 13.4017, 1397.53)
 
 [node name="FOVVisualizer2" parent="." instance=ExtResource("3_5qkku")]
-transform = Transform3D(-0.961885, 0, -0.273456, 0, 1, 0, 0.273456, 0, -0.961885, 1623, 29.6502, 1668.78)
+transform = Transform3D(-0.961885, 0, -0.273456, 0, 1, 0, 0.273456, 0, -0.961885, 1695.81, 13.2404, 1668.78)

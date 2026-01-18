@@ -25,6 +25,17 @@ void fragment() {
 
 	ALBEDO = texture(mapTexture,pixelPos * mapScale).rgb;
 	//ALBEDO = vec3(fract(heightSampled * 1.0));
+
+	// 1. LIGHT_VERTEX to World
+    vec3 world_pos = (INV_VIEW_MATRIX * vec4(LIGHT_VERTEX, 1.0)).xyz;
+
+    // 2. Round / Snap to Grid
+    float grid_size = 1.0;
+    vec3 snapped_world_pos = round(world_pos / grid_size) * grid_size;
+
+    // 3. "Write" back by calculating a modified Light Vector
+    // Convert snapped world pos back to View Space to interact with LIGHT
+    LIGHT_VERTEX = (VIEW_MATRIX * vec4(snapped_world_pos, 1.0)).xyz;
 }
 
 void light() {
