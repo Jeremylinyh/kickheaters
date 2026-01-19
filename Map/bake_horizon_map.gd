@@ -89,6 +89,7 @@ func dispatchCompute(heightmap : Image ,origin : Vector2,outputSize : Vector2, h
 	
 	# Submit to GPU and wait for sync
 	rd.submit()
+	await get_tree().process_frame
 	rd.sync()
 	
 	# 1. Download the bytes from the GPU
@@ -98,8 +99,12 @@ func dispatchCompute(heightmap : Image ,origin : Vector2,outputSize : Vector2, h
 	var output_image := Image.create_from_data(4096, 1024, false, Image.FORMAT_RF, output_bytes)
 	
 	# CLEANUP
+	rd.free_rid(pipeline)
+	rd.free_rid(uniform_set)
+	rd.free_rid(shader)
+	rd.free_rid(sampler_rid)
 	rd.free_rid(buffer_rid)
-	rd.free_rid(texture_input_rid) # You'll need to store this from the helper
+	rd.free_rid(texture_input_rid)
 	rd.free_rid(output_texture_rid)
 	
 	return output_image
