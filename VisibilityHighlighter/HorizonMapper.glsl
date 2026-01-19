@@ -26,7 +26,7 @@ void main() {
     // Origin Height
     vec2 tex_size = vec2(textureSize(input_heightmap, 0));
     vec2 origin_uv = params.origin / tex_size;
-    float height_origin = textureLod(input_heightmap, origin_uv,1.0).r * params.height_scale;
+    float height_origin = textureLod(input_heightmap, origin_uv,0.0).r * params.height_scale;
 
     float max_slope = -10000.0; // Start very low
     int max_dist = int(params.output_size.y);
@@ -47,7 +47,7 @@ void main() {
             break;
         }
 
-        float height_current = textureLod(input_heightmap, sample_uv,1.0).r * params.height_scale;
+        float height_current = textureLod(input_heightmap, sample_uv,0.0).r * params.height_scale;
         
         // Slope = Rise / Run. We use float(d) because that is the distance.
         float current_slope = (height_current - height_origin) / float(d);
