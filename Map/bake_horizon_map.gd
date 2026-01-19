@@ -1,10 +1,10 @@
 extends Node
 
+# Create a local rendering device.
+@onready var rd := RenderingServer.create_local_rendering_device()
+
 # stride: step size when marching heightmap
 func dispatchCompute(heightmap : Image ,origin : Vector2,outputSize : Vector2, heightScale : float,stride : float) :
-	# Create a local rendering device.
-	var rd := RenderingServer.create_local_rendering_device()
-	
 	# Load GLSL shader
 	var shader_file := load("res://VisibilityHighlighter/HorizonMapper.glsl")
 	var shader_spirv: RDShaderSPIRV = shader_file.get_spirv()
@@ -42,7 +42,8 @@ func dispatchCompute(heightmap : Image ,origin : Vector2,outputSize : Vector2, h
 	uniform_input.binding = 1
 	# IMPORTANT: For SAMPLER_WITH_TEXTURE, add the Sampler RID first, then the Texture RID.
 	uniform_input.add_id(sampler_rid)
-	uniform_input.add_id(create_heightmap_rid(rd,heightmap)) # <--- The RID of your input texture
+	var texture_input_rid := create_heightmap_rid(rd,heightmap)
+	uniform_input.add_id(texture_input_rid) # <--- The RID of your input texture
 
 
 	# --- Binding 2: The Output Texture (Image2D) ---
@@ -95,6 +96,12 @@ func dispatchCompute(heightmap : Image ,origin : Vector2,outputSize : Vector2, h
 
 	# 2. Create an Image from the bytes (Must match Image.FORMAT_RF for r32f)
 	var output_image := Image.create_from_data(4096, 1024, false, Image.FORMAT_RF, output_bytes)
+	
+	# CLEANUP
+	rd.free_rid(buffer_rid)
+	rd.free_rid(texture_input_rid) # You'll need to store this from the helper
+	rd.free_rid(output_texture_rid)
+	
 	return output_image
 
 func create_heightmap_rid(rd: RenderingDevice, image: Image) -> RID:
