@@ -3,12 +3,38 @@ extends Node
 # Create a local rendering device.
 @onready var rd := RenderingServer.create_local_rendering_device()
 
+var output_texture_rid = null
+var pipeline = null
+var shader = null
+var uniform_set = null
+var sampler_rid = null
+var buffer_rid = null
+var texture_input_rid = null
+
+const outputSize := Vector2(4096,1024)
+
 # stride: step size when marching heightmap
-func dispatchCompute(heightmap : Image ,origin : Vector2,outputSize : Vector2, heightScale : float,stride : float) :
+func dispatchCompute(heightmap : Image ,origin : Vector2, heightScale : float,stride : float) :
+	# CLEANUP
+	if pipeline :
+		rd.free_rid(pipeline)
+	if uniform_set :
+		rd.free_rid(uniform_set)
+	if shader :
+		rd.free_rid(shader)
+	if sampler_rid :
+		rd.free_rid(sampler_rid)
+	if buffer_rid :
+		rd.free_rid(buffer_rid)
+	if texture_input_rid :
+		rd.free_rid(texture_input_rid)
+	if output_texture_rid :
+		rd.free_rid(output_texture_rid)
+	
 	# Load GLSL shader
 	var shader_file := load("res://VisibilityHighlighter/HorizonMapper.glsl")
 	var shader_spirv: RDShaderSPIRV = shader_file.get_spirv()
-	var shader := rd.shader_create_from_spirv(shader_spirv)
+	shader = rd.shader_create_from_spirv(shader_spirv)
 
 	# --- Binding 0: The Params Buffer ---
 	# (vec2, vec2, float, float) creates a clean, packed 24-byte block.
@@ -18,7 +44,7 @@ func dispatchCompute(heightmap : Image ,origin : Vector2,outputSize : Vector2, h
 		heightScale, stride
 	])
 	var input_bytes := input_data.to_byte_array()
-	var buffer_rid := rd.storage_buffer_create(input_bytes.size(), input_bytes)
+	buffer_rid = rd.storage_buffer_create(input_bytes.size(), input_bytes)
 
 	var uniform_params := RDUniform.new()
 	uniform_params.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
@@ -34,7 +60,7 @@ func dispatchCompute(heightmap : Image ,origin : Vector2,outputSize : Vector2, h
 	var sampler_state := RDSamplerState.new()
 	sampler_state.min_filter = RenderingDevice.SAMPLER_FILTER_LINEAR
 	sampler_state.mag_filter = RenderingDevice.SAMPLER_FILTER_LINEAR
-	var sampler_rid := rd.sampler_create(sampler_state)
+	sampler_rid = rd.sampler_create(sampler_state)
 
 	# 2. Create the Uniform
 	var uniform_input := RDUniform.new()
@@ -42,7 +68,7 @@ func dispatchCompute(heightmap : Image ,origin : Vector2,outputSize : Vector2, h
 	uniform_input.binding = 1
 	# IMPORTANT: For SAMPLER_WITH_TEXTURE, add the Sampler RID first, then the Texture RID.
 	uniform_input.add_id(sampler_rid)
-	var texture_input_rid := create_heightmap_rid(rd,heightmap)
+	texture_input_rid = create_heightmap_rid(rd,heightmap)
 	uniform_input.add_id(texture_input_rid) # <--- The RID of your input texture
 
 
@@ -51,8 +77,8 @@ func dispatchCompute(heightmap : Image ,origin : Vector2,outputSize : Vector2, h
 	# This texture MUST have been created with the usage bit: TEXTURE_USAGE_STORAGE_BIT
 	# 1. Define the format (Must match your shader's layout)
 	var fmt = RDTextureFormat.new()
-	fmt.width = 4096
-	fmt.height = 1024
+	fmt.width = outputSize.x
+	fmt.height = outputSize.y
 	fmt.format = RenderingDevice.DATA_FORMAT_R32_SFLOAT # Matches layout(r32f)
 
 	# 2. Set Usage Bits (This is the most important part)
@@ -63,7 +89,7 @@ func dispatchCompute(heightmap : Image ,origin : Vector2,outputSize : Vector2, h
 
 	# 3. Create it on the GPU
 	# We pass an empty array [] because there is no initial image data.
-	var output_texture_rid = rd.texture_create(fmt, RDTextureView.new(), [])
+	output_texture_rid = rd.texture_create(fmt, RDTextureView.new(), [])
 	
 	var uniform_output := RDUniform.new()
 	uniform_output.uniform_type = RenderingDevice.UNIFORM_TYPE_IMAGE
@@ -73,14 +99,14 @@ func dispatchCompute(heightmap : Image ,origin : Vector2,outputSize : Vector2, h
 
 	# --- Final Step: Create the Set ---
 	# We pass all three uniforms in a single array.
-	var uniform_set := rd.uniform_set_create(
+	uniform_set = rd.uniform_set_create(
 		[uniform_params, uniform_input, uniform_output], 
 		shader, 
 		0 # This matches "set = 0" in GLSL
 	)
 
 	# Create a compute pipeline
-	var pipeline := rd.compute_pipeline_create(shader)
+	pipeline = rd.compute_pipeline_create(shader)
 	var compute_list := rd.compute_list_begin()
 	rd.compute_list_bind_compute_pipeline(compute_list, pipeline)
 	rd.compute_list_bind_uniform_set(compute_list, uniform_set, 0)
@@ -89,23 +115,34 @@ func dispatchCompute(heightmap : Image ,origin : Vector2,outputSize : Vector2, h
 	
 	# Submit to GPU and wait for sync
 	rd.submit()
-	await get_tree().process_frame
+	#await get_tree().process_frame
+	#rd.sync()
+	#
+	## 1. Download the bytes from the GPU
+	#var output_bytes := rd.texture_get_data(output_texture_rid, 0)
+#
+	## 2. Create an Image from the bytes (Must match Image.FORMAT_RF for r32f)
+	#var output_image := Image.create_from_data(outputSize.x, outputSize.y, false, Image.FORMAT_RF, output_bytes)
+	#
+	## CLEANUP
+	#rd.free_rid(pipeline)
+	#rd.free_rid(uniform_set)
+	#rd.free_rid(shader)
+	#rd.free_rid(sampler_rid)
+	#rd.free_rid(buffer_rid)
+	#rd.free_rid(texture_input_rid)
+	#rd.free_rid(output_texture_rid)
+	#
+	#return output_image
+func getComputeResult() :
 	rd.sync()
-	
+	if not output_texture_rid :
+		return null
 	# 1. Download the bytes from the GPU
 	var output_bytes := rd.texture_get_data(output_texture_rid, 0)
 
 	# 2. Create an Image from the bytes (Must match Image.FORMAT_RF for r32f)
-	var output_image := Image.create_from_data(4096, 1024, false, Image.FORMAT_RF, output_bytes)
-	
-	# CLEANUP
-	rd.free_rid(pipeline)
-	rd.free_rid(uniform_set)
-	rd.free_rid(shader)
-	rd.free_rid(sampler_rid)
-	rd.free_rid(buffer_rid)
-	rd.free_rid(texture_input_rid)
-	rd.free_rid(output_texture_rid)
+	var output_image := Image.create_from_data(outputSize.x, outputSize.y, false, Image.FORMAT_RF, output_bytes)
 	
 	return output_image
 
