@@ -68,7 +68,7 @@ func dispatchCompute(heightmap : Image ,origin : Vector2, heightScale : float,st
 	uniform_input.binding = 1
 	# IMPORTANT: For SAMPLER_WITH_TEXTURE, add the Sampler RID first, then the Texture RID.
 	uniform_input.add_id(sampler_rid)
-	texture_input_rid = create_heightmap_rid(rd,heightmap)
+	texture_input_rid = create_heightmap_rid(heightmap)
 	uniform_input.add_id(texture_input_rid) # <--- The RID of your input texture
 
 
@@ -134,7 +134,7 @@ func dispatchCompute(heightmap : Image ,origin : Vector2, heightScale : float,st
 	#rd.free_rid(output_texture_rid)
 	#
 	#return output_image
-func getComputeResult() :
+func getComputeResult() -> Image :
 	rd.sync()
 	if not output_texture_rid :
 		return null
@@ -146,11 +146,12 @@ func getComputeResult() :
 	
 	return output_image
 
-func create_heightmap_rid(rd: RenderingDevice, image: Image) -> RID:
+func create_heightmap_rid(image: Image) -> RID:
 	# 1. Prepare the image data
 	# We convert to RF (Red Float) because heightmaps usually need high precision (32-bit float).
 	# If your shader expects vec4 color, use FORMAT_RGBA8.
 	# Since you have 'sampler2D', the shader will read the Red channel automatically.
+	
 	image.convert(Image.FORMAT_RF) 
 	
 	# 2. Describe the texture to the GPU

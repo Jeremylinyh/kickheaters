@@ -2,7 +2,7 @@
 
 extends Node3D
 @export var terrainViewer : PackedScene
-
+@export var heightmapImage : Texture2D
 const tilesNeededEachDir : int = 32
 const tileSize : float = 128.0;
 
