@@ -8,5 +8,5 @@
 script = ExtResource("1_rgtf8")
 terrainViewer = ExtResource("2_u0y6e")
 
-[node name="BakeHorizonMap" type="Node3D" parent="."]
+[node name="BakeHorizonMap" type="Node" parent="."]
 script = ExtResource("3_f8pgk")

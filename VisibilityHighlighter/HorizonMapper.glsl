@@ -7,6 +7,7 @@ layout(set = 0, binding = 0, std430) restrict buffer Params {
     vec2 origin;        // Fits in bytes 0-8
     vec2 output_size;   // Fits in bytes 8-16 (Perfectly aligned!)
     float height_scale; // Fits in bytes 16-20
+    float incrementSize;// Fits in bytes 20-24
 } params;
 
 layout(set = 0, binding = 1) uniform sampler2D input_heightmap;
