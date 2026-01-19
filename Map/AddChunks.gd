@@ -14,3 +14,5 @@ func _ready() -> void:
 			newTerrain.position = Vector3((x) * tileSize,0,(y+1)*tileSize)
 			newTerrain.name = str(x) + "," + str(y)
 			newTerrain.owner = null
+
+# differed rendering (deffered?)
