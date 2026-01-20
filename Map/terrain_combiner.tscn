@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://y0vmg6qqm6m3"]
+[gd_scene load_steps=7 format=3 uid="uid://y0vmg6qqm6m3"]
 
 [ext_resource type="Script" uid="uid://qk0xahkxiubw" path="res://Map/AddChunks.gd" id="1_rgtf8"]
 [ext_resource type="PackedScene" uid="uid://goia4q86a2rw" path="res://Map/terrain.tscn" id="2_u0y6e"]
 [ext_resource type="Script" uid="uid://skxc31y1jg42" path="res://Map/bake_horizon_map.gd" id="3_f8pgk"]
 [ext_resource type="Texture2D" uid="uid://dg3nbwma5bsae" path="res://Map/UnChunkedCalif.exr" id="3_rsqod"]
 [ext_resource type="Script" uid="uid://c63qbjrvpbnx8" path="res://Map/get_horizons.gd" id="4_igrap"]
+[ext_resource type="RDShaderFile" uid="uid://mk56k1if1lcx" path="res://VisibilityHighlighter/HorizonMapper.glsl" id="5_qwkyr"]
 
 [node name="TerrainCombiner" type="Node3D"]
 script = ExtResource("1_rgtf8")
@@ -13,6 +14,8 @@ heightmapImage = ExtResource("3_rsqod")
 
 [node name="BakeHorizonMap" type="Node" parent="."]
 script = ExtResource("3_f8pgk")
+shader_file = ExtResource("5_qwkyr")
 
 [node name="GetHorizons" type="Node" parent="."]
 script = ExtResource("4_igrap")
+Heightmap = ExtResource("3_rsqod")

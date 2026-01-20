@@ -1,179 +1,139 @@
+@tool
+class_name HorizonComputer
 extends Node
 
-# Create a local rendering device.
-@onready var rd := RenderingServer.create_local_rendering_device()
+## WARN: AI CODE
 
-var output_texture_rid = null
-var pipeline = null
-var shader = null
-var uniform_set = null
-var sampler_rid = null
-var buffer_rid = null
-var texture_input_rid = null
+# --- Public Settings ---
+@export var shader_file: RDShaderFile
+@export var output_size := Vector2i(4096, 1024)
 
-const outputSize := Vector2(4096,1024)
+# --- Private Internals (Don't touch) ---
+var _rd: RenderingDevice
+var _pipeline: RID
+var _shader: RID
+var _output_tex_rid: RID
+var _params_buffer: RID
+var _texture_wrapper: Texture2DRD
+var _cached_input_rid: RID
+var _initialized := false
 
-# stride: step size when marching heightmap
-func dispatchCompute(heightmap : Image ,origin : Vector2, heightScale : float,stride : float) :
-	# CLEANUP
-	if pipeline :
-		rd.free_rid(pipeline)
-	if uniform_set :
-		rd.free_rid(uniform_set)
-	if shader :
-		rd.free_rid(shader)
-	if sampler_rid :
-		rd.free_rid(sampler_rid)
-	if buffer_rid :
-		rd.free_rid(buffer_rid)
-	if texture_input_rid :
-		rd.free_rid(texture_input_rid)
-	if output_texture_rid :
-		rd.free_rid(output_texture_rid)
+func _notification(what):
+	# Automatic Cleanup when node is deleted
+	if what == NOTIFICATION_PREDELETE:
+		_cleanup_gpu()
+
+# --- The Only Function You Need To Call ---
+# 1. input_img: The heightmap Image (or Texture2D)
+# 2. settings: Dictionary with { "origin": Vector2, "scale": float, "stride": float }
+# 3. target_global: The string name of the Global Shader Uniform to update
+func run_compute(input_img: Image, settings: Dictionary, target_global: String) -> void:
+	if not _initialized:
+		_initialize_gpu()
+
+	# 1. Update Inputs
+	_update_params(settings.get("origin", Vector2.ZERO), settings.get("scale", 10.0), settings.get("stride", 1.0))
+	_update_input_texture(input_img)
+
+	# 2. Assign the result to the requested Global Variable
+	# The wrapper points to our internal GPU texture. We just tell Godot "This name = This texture"
+	RenderingServer.global_shader_parameter_set(target_global, _texture_wrapper)
+
+	# 3. Run the magic
+	_dispatch()
+
+# --- Internal "Engine Magic" Below ---
+
+func _initialize_gpu():
+	_rd = RenderingServer.get_rendering_device()
 	
-	# Load GLSL shader
-	var shader_file := load("res://VisibilityHighlighter/HorizonMapper.glsl")
-	var shader_spirv: RDShaderSPIRV = shader_file.get_spirv()
-	shader = rd.shader_create_from_spirv(shader_spirv)
-
-	# --- Binding 0: The Params Buffer ---
-	# (vec2, vec2, float, float) creates a clean, packed 24-byte block.
-	var input_data := PackedFloat32Array([
-		origin.x, origin.y, 
-		outputSize.x, outputSize.y, 
-		heightScale, stride
-	])
-	var input_bytes := input_data.to_byte_array()
-	buffer_rid = rd.storage_buffer_create(input_bytes.size(), input_bytes)
-
-	var uniform_params := RDUniform.new()
-	uniform_params.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
-	uniform_params.binding = 0
-	uniform_params.add_id(buffer_rid)
-
-
-	# --- Binding 1: The Input Heightmap (Sampler2D) ---
-	# You need two things here: A Sampler State and the Texture RID itself.
-	# Note: See "How to get the Texture RID" below if you aren't sure where this comes from.
-
-	# 1. Create a sampler (Linear filtering is usually what you want for heightmaps)
-	var sampler_state := RDSamplerState.new()
-	sampler_state.min_filter = RenderingDevice.SAMPLER_FILTER_LINEAR
-	sampler_state.mag_filter = RenderingDevice.SAMPLER_FILTER_LINEAR
-	sampler_rid = rd.sampler_create(sampler_state)
-
-	# 2. Create the Uniform
-	var uniform_input := RDUniform.new()
-	uniform_input.uniform_type = RenderingDevice.UNIFORM_TYPE_SAMPLER_WITH_TEXTURE
-	uniform_input.binding = 1
-	# IMPORTANT: For SAMPLER_WITH_TEXTURE, add the Sampler RID first, then the Texture RID.
-	uniform_input.add_id(sampler_rid)
-	texture_input_rid = create_heightmap_rid(heightmap)
-	uniform_input.add_id(texture_input_rid) # <--- The RID of your input texture
-
-
-	# --- Binding 2: The Output Texture (Image2D) ---
-	# This is a "write-only" image in the shader (r32f).
-	# This texture MUST have been created with the usage bit: TEXTURE_USAGE_STORAGE_BIT
-	# 1. Define the format (Must match your shader's layout)
+	# Compile Shader
+	var spirv = shader_file.get_spirv()
+	_shader = _rd.shader_create_from_spirv(spirv)
+	_pipeline = _rd.compute_pipeline_create(_shader)
+	
+	# Create Output Texture (R32F)
 	var fmt = RDTextureFormat.new()
-	fmt.width = outputSize.x
-	fmt.height = outputSize.y
-	fmt.format = RenderingDevice.DATA_FORMAT_R32_SFLOAT # Matches layout(r32f)
-
-	# 2. Set Usage Bits (This is the most important part)
-	fmt.usage_bits = (
-		RenderingDevice.TEXTURE_USAGE_STORAGE_BIT |    # Allows shader to write
-		RenderingDevice.TEXTURE_USAGE_CAN_COPY_FROM_BIT # Allows CPU to read back
-	)
-
-	# 3. Create it on the GPU
-	# We pass an empty array [] because there is no initial image data.
-	output_texture_rid = rd.texture_create(fmt, RDTextureView.new(), [])
+	fmt.width = output_size.x
+	fmt.height = output_size.y
+	fmt.format = RenderingDevice.DATA_FORMAT_R32_SFLOAT
+	fmt.usage_bits = RenderingDevice.TEXTURE_USAGE_STORAGE_BIT | RenderingDevice.TEXTURE_USAGE_SAMPLING_BIT | RenderingDevice.TEXTURE_USAGE_CAN_UPDATE_BIT | RenderingDevice.TEXTURE_USAGE_CAN_COPY_FROM_BIT
+	_output_tex_rid = _rd.texture_create(fmt, RDTextureView.new())
 	
-	var uniform_output := RDUniform.new()
-	uniform_output.uniform_type = RenderingDevice.UNIFORM_TYPE_IMAGE
-	uniform_output.binding = 2
-	uniform_output.add_id(output_texture_rid) 
+	# Create Wrapper
+	_texture_wrapper = Texture2DRD.new()
+	_texture_wrapper.texture_rd_rid = _output_tex_rid
+	
+	# Create Param Buffer (24 bytes)
+	_params_buffer = _rd.storage_buffer_create(24)
+	
+	_initialized = true
 
+func _update_params(origin: Vector2, h_scale: float, stride: float):
+	var data = PackedByteArray()
+	data.resize(24)
+	data.encode_float(0, origin.x)
+	data.encode_float(4, origin.y)
+	data.encode_float(8, float(output_size.x))
+	data.encode_float(12, float(output_size.y))
+	data.encode_float(16, h_scale)
+	data.encode_float(20, stride)
+	_rd.buffer_update(_params_buffer, 0, 24, data)
 
-	# --- Final Step: Create the Set ---
-	# We pass all three uniforms in a single array.
-	uniform_set = rd.uniform_set_create(
-		[uniform_params, uniform_input, uniform_output], 
-		shader, 
-		0 # This matches "set = 0" in GLSL
-	)
-
-	# Create a compute pipeline
-	pipeline = rd.compute_pipeline_create(shader)
-	var compute_list := rd.compute_list_begin()
-	rd.compute_list_bind_compute_pipeline(compute_list, pipeline)
-	rd.compute_list_bind_uniform_set(compute_list, uniform_set, 0)
-	rd.compute_list_dispatch(compute_list, 64, 1, 1)
-	rd.compute_list_end()
-	
-	# Submit to GPU and wait for sync
-	rd.submit()
-	#await get_tree().process_frame
-	#rd.sync()
-	#
-	## 1. Download the bytes from the GPU
-	#var output_bytes := rd.texture_get_data(output_texture_rid, 0)
-#
-	## 2. Create an Image from the bytes (Must match Image.FORMAT_RF for r32f)
-	#var output_image := Image.create_from_data(outputSize.x, outputSize.y, false, Image.FORMAT_RF, output_bytes)
-	#
-	## CLEANUP
-	#rd.free_rid(pipeline)
-	#rd.free_rid(uniform_set)
-	#rd.free_rid(shader)
-	#rd.free_rid(sampler_rid)
-	#rd.free_rid(buffer_rid)
-	#rd.free_rid(texture_input_rid)
-	#rd.free_rid(output_texture_rid)
-	#
-	#return output_image
-func getComputeResult() -> Image :
-	rd.sync()
-	if not output_texture_rid :
-		return null
-	# 1. Download the bytes from the GPU
-	var output_bytes := rd.texture_get_data(output_texture_rid, 0)
-
-	# 2. Create an Image from the bytes (Must match Image.FORMAT_RF for r32f)
-	var output_image := Image.create_from_data(outputSize.x, outputSize.y, false, Image.FORMAT_RF, output_bytes)
-	
-	return output_image
-
-func create_heightmap_rid(image: Image) -> RID:
-	# 1. Prepare the image data
-	# We convert to RF (Red Float) because heightmaps usually need high precision (32-bit float).
-	# If your shader expects vec4 color, use FORMAT_RGBA8.
-	# Since you have 'sampler2D', the shader will read the Red channel automatically.
-	
-	image.convert(Image.FORMAT_RF) 
-	
-	# 2. Describe the texture to the GPU
-	var fmt := RDTextureFormat.new()
-	fmt.width = image.get_width()
-	fmt.height = image.get_height()
-	
-	# This must match the Image format converted above! 
-	# R32_SFLOAT corresponds to Image.FORMAT_RF
-	fmt.format = RenderingDevice.DATA_FORMAT_R32_SFLOAT 
-	
-	# 3. Define how the GPU is allowed to use this
-	# SAMPLING_BIT = "I will read this inside a shader using a sampler"
-	# CAN_UPDATE_BIT = "I will upload data to this from the CPU"
-	# CAN_COPY_FROM_BIT = "I might want to read this back later" (Optional, but safe)
+func _update_input_texture(img: Image):
+	# Only recreate if we strictly have to (Optimization)
+	# Ideally, check if RID exists, but simpler to recreate for robustness in this example
+	if _cached_input_rid.is_valid():
+		_rd.free_rid(_cached_input_rid)
+		
+	img.convert(Image.FORMAT_RF)
+	var fmt = RDTextureFormat.new()
+	fmt.width = img.get_width()
+	fmt.height = img.get_height()
+	fmt.format = RenderingDevice.DATA_FORMAT_R32_SFLOAT
 	fmt.usage_bits = RenderingDevice.TEXTURE_USAGE_SAMPLING_BIT | RenderingDevice.TEXTURE_USAGE_CAN_UPDATE_BIT | RenderingDevice.TEXTURE_USAGE_CAN_COPY_FROM_BIT
 	
-	# 4. Create the Texture View (default settings are usually fine)
-	var view := RDTextureView.new()
+	_cached_input_rid = _rd.texture_create(fmt, RDTextureView.new(), [img.get_data()])
+
+func _dispatch():
+	# Uniforms
+	var u_param = RDUniform.new()
+	u_param.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
+	u_param.binding = 0
+	u_param.add_id(_params_buffer)
 	
-	# 5. Create the actual texture and upload the bytes
-	var data := [image.get_data()] # Must be an array of byte arrays (for mipmaps)
-	var texture_rid := rd.texture_create(fmt, view, data)
+	var u_in = RDUniform.new()
+	u_in.uniform_type = RenderingDevice.UNIFORM_TYPE_SAMPLER_WITH_TEXTURE
+	u_in.binding = 1
+	var sampler = _rd.sampler_create(RDSamplerState.new())
+	u_in.add_id(sampler)
+	u_in.add_id(_cached_input_rid)
 	
-	return texture_rid
+	var u_out = RDUniform.new()
+	u_out.uniform_type = RenderingDevice.UNIFORM_TYPE_IMAGE
+	u_out.binding = 2
+	u_out.add_id(_output_tex_rid)
+	
+	var set = _rd.uniform_set_create([u_param, u_in, u_out], _shader, 0)
+	
+	# Execute
+	var list = _rd.compute_list_begin()
+	_rd.compute_list_bind_compute_pipeline(list, _pipeline)
+	_rd.compute_list_bind_uniform_set(list, set, 0)
+	_rd.compute_list_dispatch(list, int(ceil(output_size.x / 64.0)), 1, 1)
+	_rd.compute_list_end()
+	
+	# Barrier
+	#_rd.barrier(RenderingDevice.BARRIER_MASK_COMPUTE, RenderingDevice.BARRIER_MASK_FRAGMENT)
+	
+	# Cleanup Loop Garbage
+	_rd.free_rid(set)
+	_rd.free_rid(sampler)
+
+func _cleanup_gpu():
+	if _rd: # Check if RD still exists
+		if _output_tex_rid.is_valid(): _rd.free_rid(_output_tex_rid)
+		if _params_buffer.is_valid(): _rd.free_rid(_params_buffer)
+		if _pipeline.is_valid(): _rd.free_rid(_pipeline)
+		if _shader.is_valid(): _rd.free_rid(_shader)
+		if _cached_input_rid.is_valid(): _rd.free_rid(_cached_input_rid)

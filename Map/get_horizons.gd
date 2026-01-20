@@ -1,17 +1,25 @@
+@tool
 extends Node
 
-func horizonLoop() :
-	var heights : Image = $"..".heightmapImage.get_image()
-	if heights.is_compressed() :
-		heights.decompress()
-	if heights.has_mipmaps() :
-		heights.clear_mipmaps()
-	while (true) :
-		
-		$"../BakeHorizonMap".dispatchCompute(heights,Vector2(128,128),60.0,1.0)
-		for i in range(3) :
-			await get_tree().process_frame
-		var horizonMap : Image = $"../BakeHorizonMap".getComputeResult()
+@export var compute_node: HorizonComputer # Link to the node above
+@export var Heightmap: Texture2D
+var heightmapImage : Image
+
+@onready var sibling = $"../BakeHorizonMap"
 
 func _ready() -> void:
-	horizonLoop()
+	heightmapImage = Heightmap.get_image()
+	if heightmapImage.is_compressed() :
+		heightmapImage.decompress()
+	if heightmapImage.has_mipmaps() :
+		heightmapImage.clear_mipmaps()
+
+func _process(_delta):
+	# Prepare your settings
+	var settings = {
+		"origin": Vector2(1024, 1024),
+		"scale": 60.0,
+		"stride": 1.0
+	}
+	
+	sibling.run_compute(heightmapImage, settings, "Horizon0")
