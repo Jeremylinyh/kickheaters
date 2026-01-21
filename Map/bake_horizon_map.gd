@@ -114,12 +114,12 @@ func _dispatch():
 	u_out.binding = 2
 	u_out.add_id(_output_tex_rid)
 	
-	var set = _rd.uniform_set_create([u_param, u_in, u_out], _shader, 0)
+	var setUni = _rd.uniform_set_create([u_param, u_in, u_out], _shader, 0)
 	
 	# Execute
 	var list = _rd.compute_list_begin()
 	_rd.compute_list_bind_compute_pipeline(list, _pipeline)
-	_rd.compute_list_bind_uniform_set(list, set, 0)
+	_rd.compute_list_bind_uniform_set(list, setUni, 0)
 	_rd.compute_list_dispatch(list, int(ceil(output_size.x / 64.0)), 1, 1)
 	_rd.compute_list_end()
 	
@@ -127,7 +127,7 @@ func _dispatch():
 	#_rd.barrier(RenderingDevice.BARRIER_MASK_COMPUTE, RenderingDevice.BARRIER_MASK_FRAGMENT)
 	
 	# Cleanup Loop Garbage
-	_rd.free_rid(set)
+	_rd.free_rid(setUni)
 	_rd.free_rid(sampler)
 
 func _cleanup_gpu():
