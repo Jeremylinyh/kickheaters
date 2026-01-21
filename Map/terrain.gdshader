@@ -1,15 +1,12 @@
 shader_type spatial;
 render_mode world_vertex_coords;
-uniform sampler2D heightMap;
+global uniform sampler2D heightMap;
 uniform sampler2D mapTexture;
 const float maxHeight = 60.0;
 const vec2 mapSize = vec2(4096.0,4096.0);
 const float mapScale = 1.0;
 
-global uniform sampler2D Horizon0;
-//global uniform sampler2D Horizon1;
-//global uniform sampler2D Horizon2;
-//global uniform sampler2D Horizon3;
+#include "res://VisibilityHighlighter/visibleHorizon.gdshaderinc"
 
 varying vec2 v_world_pos;
 varying float heightSampled;
@@ -29,8 +26,7 @@ void fragment() {
 	vec2 pixelPos = v_world_pos/mapSize;
 
 	ALBEDO = texture(mapTexture,pixelPos * mapScale).rgb;
-	ALBEDO = vec3(textureLod(Horizon0,UV,0.0).r);
-	//ALBEDO = vec3(fract(heightSampled * 1.0));
+	
 }
 
 void light() {

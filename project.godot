@@ -61,3 +61,15 @@ Horizon0={
 "type": "sampler2D",
 "value": ""
 }
+Cupola0={
+"type": "sampler2D",
+"value": ""
+}
+tankPos0={
+"type": "vec2",
+"value": Vector2(0, 0)
+}
+heightMap={
+"type": "sampler2D",
+"value": "res://Map/UnChunkedCalif.exr"
+}

@@ -14,12 +14,15 @@ func _ready() -> void:
 	if heightmapImage.has_mipmaps() :
 		heightmapImage.clear_mipmaps()
 
-func _process(_delta):
-	# Prepare your settings
+func updateTank(position : Vector2,id : int) :
+	# stride means height above ground, it is named well truss
 	var settings = {
-		"origin": Vector2(1024, 1024),
+		"origin": position,
 		"scale": 60.0,
 		"stride": 1.0
 	}
-	
-	sibling.run_compute(heightmapImage, settings, "Horizon0")
+	RenderingServer.global_shader_parameter_set("tankPos" + str(id), position)
+	sibling.run_compute(heightmapImage, settings, "Horizon" + str(id))
+
+func _process(_delta):
+	updateTank(Vector2(1024,1024),0)
