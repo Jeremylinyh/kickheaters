@@ -43,7 +43,7 @@ void main() {
         if (sample_uv.x < 0.0 || sample_uv.x > 1.0 || sample_uv.y < 0.0 || sample_uv.y > 1.0) {
             // Fill remaining pixels with current max_slope to avoid streaks
             for (int fill_d = d; fill_d <= max_dist; fill_d++) {
-                 imageStore(output_texture, ivec2(out_x, fill_d - 1), vec4(max_slope, 0.0, 0.0, 1.0));
+                 imageStore(output_texture, ivec2(out_x, fill_d - 1), vec4(1000000, 0.0, 0.0, 1.0));
             }
             break;
         }
@@ -57,6 +57,6 @@ void main() {
         // 2. Write to Texture
         // d=1 writes to y=0
         // d=2 writes to y=1
-        imageStore(output_texture, ivec2(out_x, d - 1), vec4(max_slope, 0.0, 0.0, 1.0));
+        imageStore(output_texture, ivec2(out_x, d - 1), vec4(max_slope*d+height_origin, 0.0, 0.0, 1.0));
     }
 }

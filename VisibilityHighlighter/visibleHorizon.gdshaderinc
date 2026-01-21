@@ -16,14 +16,14 @@ float isUnderground(vec3 fragWorldPos) {
 	    angle_rad += 6.28318530718; // 2 * PI
 	}
 	float theta = angle_rad / 6.28318530718;
-	
+	return sampleTexheight(theta,dist,Horizon0);
 	if (fragWorldPos.y > sampleTexheight(theta,dist,Horizon0))
 	{
 		return 1.0;
 	}
-	else if (fragWorldPos.y > sampleTexheight(theta,dist,Cupola0))
-	{
-		return 0.5;
-	}
-	return 0.0;
+	//else if (fragWorldPos.y > sampleTexheight(theta,dist,Cupola0))
+	//{
+		//return 0.75;
+	//}
+	return 0.25;
 }
