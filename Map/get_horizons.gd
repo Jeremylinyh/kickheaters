@@ -25,4 +25,4 @@ func updateTank(position : Vector2,id : int) :
 	sibling.run_compute(heightmapImage, settings, "Horizon" + str(id))
 
 func _process(_delta):
-	updateTank(Vector2(1024,1535),0)
+	updateTank(Vector2(2048,1535),0)

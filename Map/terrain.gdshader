@@ -10,6 +10,7 @@ const float mapScale = 1.0;
 
 varying vec2 v_world_pos;
 varying float heightSampled;
+varying float supposedHeight;
 
 void vertex() {
 	// Called for every vertex the material is visible on.
@@ -19,14 +20,17 @@ void vertex() {
 	float height = texture(heightMap, effectivePosition).r;
 	VERTEX.y = height * maxHeight;
 	heightSampled = VERTEX.y;
-	//VERTEX.y = max(VERTEX.y,isUnderground(VERTEX));
+	VERTEX.y = max(VERTEX.y,isUnderground(VERTEX));
+	supposedHeight = VERTEX.y;
 }
 
 void fragment() {
 	// Called for every pixel the material is visible on.
 	vec2 pixelPos = v_world_pos/mapSize;
 	vec3 worldPos = vec3(v_world_pos.x,heightSampled,v_world_pos.y); // brainfart
-	ALBEDO = texture(mapTexture,pixelPos * mapScale).rgb * isUnderground(worldPos);
+	//////ALBEDO = texture(mapTexture,pixelPos * mapScale).rgb * isUnderground(worldPos);
+	float brightness = ceil(heightSampled-supposedHeight) + 1.0;
+	ALBEDO = texture(mapTexture,pixelPos * mapScale).rgb * brightness;
 	///ALBEDO = vec3(isUnderground(worldPos) * fract(UV*10.0)/100.0,0.5);
 	//ALBEDO = vec3(heightSampled);
 	//ALBEDO = worldPos;
