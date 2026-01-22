@@ -13,3 +13,6 @@ environment = SubResource("Environment_pcchn")
 [node name="PlayerCamera" parent="." instance=ExtResource("1_pcchn")]
 
 [node name="TerrainCombiner" parent="." instance=ExtResource("1_ynjd7")]
+
+[node name="Viewer" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2048, 12.5265, 1535)

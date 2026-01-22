@@ -26,6 +26,7 @@ void fragment() {
 	vec2 pixelPos = v_world_pos/mapSize;
 	vec3 worldPos = vec3(v_world_pos.x,heightSampled,v_world_pos.y); // brainfart
 	ALBEDO = texture(mapTexture,pixelPos * mapScale).rgb * isUnderground(worldPos);
+	//ALBEDO = vec3(heightSampled);
 	//ALBEDO = worldPos;
 	//ALBEDO = vec3(isUnderground(worldPos));
 }
