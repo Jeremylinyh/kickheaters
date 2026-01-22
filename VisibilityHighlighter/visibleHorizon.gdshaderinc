@@ -3,10 +3,12 @@ global uniform sampler2D Horizon0 : filter_linear;
 global uniform sampler2D Cupola0;
 
 const float shadowDarkness = 0.25;
-
-float sampleTexheight(float theta,float dist,sampler2D tex)
+float sampleTexheight(float theta, float dist, sampler2D tex)
 {
-	return textureLod(tex,vec2(theta,dist/1024.0),0.0).r;
+    float coord_y = (dist - 0.5) / 1024.0;
+    coord_y = min(coord_y, (1024.0 - 0.5) / 1024.0);
+
+    return textureLod(tex, vec2(theta, coord_y), 0.0).r;
 }
 
 // returns how visible one is; 0.0 --> nothing; 0.5 --> can see cupola; 1.0 --> can see hull;
@@ -22,8 +24,8 @@ float isUnderground(vec3 fragWorldPos) {
 	    angle_rad += 6.28318530718; // 2 * PI
 	}
 	float theta = angle_rad / 6.28318530718;
-	return sampleTexheight(theta,dist,Horizon0);
-	if (fragWorldPos.y > sampleTexheight(theta,dist,Horizon0))
+	//return sampleTexheight(theta,dist,Horizon0);
+	if (fragWorldPos.y > sampleTexheight(theta,dist,Horizon0) - 1.0)
 	{
 		return 1.0;
 	}

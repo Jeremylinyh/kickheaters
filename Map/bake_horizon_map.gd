@@ -2,8 +2,6 @@
 class_name HorizonComputer
 extends Node
 
-## WARN: AI CODE
-
 # --- Public Settings ---
 @export var shader_file: RDShaderFile
 @export var output_size := Vector2i(4096, 1024)
