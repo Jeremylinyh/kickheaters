@@ -29,7 +29,7 @@ void fragment() {
 	vec2 pixelPos = v_world_pos/mapSize;
 	vec3 worldPos = vec3(v_world_pos.x,heightSampled,v_world_pos.y); // brainfart
 	//////ALBEDO = texture(mapTexture,pixelPos * mapScale).rgb * isUnderground(worldPos);
-	float brightness = ceil(heightSampled-supposedHeight) + 1.0;
+	float brightness = sign(heightSampled-supposedHeight + 1.0);
 	ALBEDO = texture(mapTexture,pixelPos * mapScale).rgb * brightness;
 	///ALBEDO = vec3(isUnderground(worldPos) * fract(UV*10.0)/100.0,0.5);
 	//ALBEDO = vec3(heightSampled);
