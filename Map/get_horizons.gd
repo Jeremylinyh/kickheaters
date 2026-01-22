@@ -19,7 +19,7 @@ func updateTank(position : Vector2,id : int) :
 	var settings = {
 		"origin": position,
 		"scale": 60.0,
-		"stride": 1.0
+		"stride": 3.0
 	}
 	RenderingServer.global_shader_parameter_set("tankPos" + str(id), position)
 	sibling.run_compute(heightmapImage, settings, "Horizon" + str(id))
