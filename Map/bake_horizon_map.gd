@@ -22,7 +22,7 @@ func _notification(what):
 		_cleanup_gpu()
 
 # Added 'index' parameter
-func run_compute(input_img: Image, settings: Dictionary, target_global: String, index: int) -> void:
+func run_compute(input_img : Image,settings: Dictionary, target_global: String, index: int,distance : float) -> void:
 	if not _initialized:
 		_initialize_gpu()
 
@@ -31,7 +31,8 @@ func run_compute(input_img: Image, settings: Dictionary, target_global: String, 
 		settings.get("origin", Vector2.ZERO), 
 		settings.get("scale", 10.0), 
 		settings.get("stride", 1.0),
-		index
+		index,
+		distance
 	)
 	_update_input_texture(input_img)
 
@@ -54,7 +55,7 @@ func _initialize_gpu():
 	fmt.height = output_size.y
 	fmt.texture_type = RenderingDevice.TEXTURE_TYPE_2D_ARRAY # Set type to Array
 	fmt.array_layers = layer_count # Set number of layers
-	fmt.format = RenderingDevice.DATA_FORMAT_R32_SFLOAT
+	fmt.format = RenderingDevice.DATA_FORMAT_R16G16_SFLOAT
 	fmt.usage_bits = RenderingDevice.TEXTURE_USAGE_STORAGE_BIT | RenderingDevice.TEXTURE_USAGE_SAMPLING_BIT | RenderingDevice.TEXTURE_USAGE_CAN_UPDATE_BIT | RenderingDevice.TEXTURE_USAGE_CAN_COPY_FROM_BIT
 	
 	_output_tex_rid = _rd.texture_create(fmt, RDTextureView.new())
@@ -68,7 +69,7 @@ func _initialize_gpu():
 	
 	_initialized = true
 
-func _update_params(origin: Vector2, h_scale: float, stride: float, index: int):
+func _update_params(origin: Vector2, h_scale: float, stride: float, index: int,distance : float):
 	var data = PackedByteArray()
 	data.resize(32)
 	data.encode_float(0, origin.x)
@@ -78,7 +79,7 @@ func _update_params(origin: Vector2, h_scale: float, stride: float, index: int):
 	data.encode_float(16, h_scale)
 	data.encode_float(20, stride)
 	data.encode_s32(24, index)
-	data.encode_s32(28, 0) # Padding: strictly to hit 32 bytes
+	data.encode_float(28, distance) # distance
 	_rd.buffer_update(_params_buffer, 0, 32, data)
 
 func _update_input_texture(img: Image):

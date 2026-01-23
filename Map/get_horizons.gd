@@ -16,12 +16,13 @@ func _ready() -> void:
 		heightmapImage.decompress()
 	if heightmapImage.has_mipmaps() :
 		heightmapImage.clear_mipmaps()
-		
+	#sibling.update_input_texture(heightmapImage)
+	
 	while (is_inside_tree()) :
 		await get_tree().process_frame
 		iterateViewers()
 
-func updateTank(position : Vector2,id : int,height : float) :
+func updateTank(heightmapImage : Image,position : Vector2,id : int,height : float,distance : float) :
 	# stride means height above ground, it is named well truss
 	var settings = {
 		"origin": position,
@@ -29,7 +30,7 @@ func updateTank(position : Vector2,id : int,height : float) :
 		"stride": height
 	}
 	RenderingServer.global_shader_parameter_set("tankPos" + str(id), position)
-	sibling.run_compute(heightmapImage, settings, "Horizon", (id))
+	sibling.run_compute(heightmapImage,settings, "Horizon", (id),distance)
 
 var expectedCount = 0
 func iterateViewers() -> void :
@@ -55,7 +56,13 @@ func iterateViewers() -> void :
 		if seeker.global_position != oldPosition :
 			#print("seeking")
 			memorizedLightPositions[index] = seeker.global_position
-			updateTank(Vector2(memorizedLightPositions[index].x,memorizedLightPositions[index].z),index,memorizedLightPositions[index].y)
+			updateTank(
+				heightmapImage,
+				Vector2(memorizedLightPositions[index].x,memorizedLightPositions[index].z),
+				index,
+				memorizedLightPositions[index].y,
+				1.0
+			)
 			if not arrayResized :
 				await get_tree().process_frame
 		index += 1

@@ -9,11 +9,11 @@ layout(set = 0, binding = 0, std430) restrict readonly buffer Params {
     float height_scale; // Fits in bytes 16-20
     float selfHeight;// Fits in bytes 20-24
     int layer_index;
-    int padding;
+    float padding;
 } params;
 
 layout(set = 0, binding = 1) uniform sampler2D input_heightmap;
-layout(set = 0, binding = 2, r32f) uniform writeonly image2DArray output_texture;
+layout(set = 0, binding = 2, rg16f) uniform writeonly image2DArray output_texture;
 
 const float PI = 3.14159265359;
 
