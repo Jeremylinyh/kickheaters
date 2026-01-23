@@ -36,7 +36,7 @@ void main() {
     int max_dist = int(params.output_size.y);
 
     // Start marching at 1 pixel away
-    for (int d = 1; d <= max_dist; d++) {
+    for (int d = 1; d <= 1024; d++) { // Prev: max_dist as length, however, yes.
         
         // 1. Calculate Physics
         vec2 sample_pos_px = params.origin + (dir * float(d));

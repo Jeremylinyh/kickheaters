@@ -1,5 +1,12 @@
+// as you have probably guessed, this thing handles horizon maps. Up to 4 viewers at once.
+
 global uniform vec2 tankPos0;
+global uniform vec2 tankPos1;
+global uniform vec2 tankPos2;
+global uniform vec2 tankPos3;
+
 global uniform sampler2DArray Horizon : filter_linear;
+global uniform float horizonLayerCount; // WARN: This is only a suggestion, it is not used anywhere, we'll see
 
 const float shadowDarkness = 0.25;
 float sampleTexheight(float theta, float dist,float index)
@@ -10,11 +17,10 @@ float sampleTexheight(float theta, float dist,float index)
     return textureLod(Horizon, vec3(theta, coord_y,index), 0.0).r;
 }
 
-// returns how visible one is; 0.0 --> nothing; 0.5 --> can see cupola; 1.0 --> can see hull;
-float isUnderground(vec3 fragWorldPos) {
-	float currIndex = 0.0;
+float isUndergroundHelper(vec3 fragWorldPos,float currIndex) {
+	vec2 tankPositions[4] = vec2[](tankPos0,tankPos1,tankPos2,tankPos3);
 	
-	vec2 relativePos = fragWorldPos.xz - tankPos0;
+	vec2 relativePos = fragWorldPos.xz - tankPositions[int(currIndex)];
 	float dist = length(relativePos);
 	if (dist > 1024.0)
 	{
@@ -30,9 +36,16 @@ float isUnderground(vec3 fragWorldPos) {
 	{
 		return 1.0;
 	}
-	//else if (fragWorldPos.y > sampleTexheight(theta,dist,Cupola0))
-	//{
-		//return 0.75;
-	//}
+	
 	return shadowDarkness;
+}
+
+// returns how visible one is; 0.0 --> nothing; 0.5 --> can see cupola; 1.0 --> can see hull;
+float isUnderground(vec3 fragWorldPos) {
+	float determination = 0.0;
+	for (float i = 0.0; i < 4.0; i++)
+	{
+		determination = max(determination,isUndergroundHelper(fragWorldPos,i));
+	}
+	return determination;
 }

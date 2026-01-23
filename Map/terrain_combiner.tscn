@@ -15,7 +15,6 @@ heightmapImage = ExtResource("3_rsqod")
 [node name="BakeHorizonMap" type="Node" parent="."]
 script = ExtResource("3_f8pgk")
 shader_file = ExtResource("5_qwkyr")
-layer_count = null
 
 [node name="GetHorizons" type="Node" parent="."]
 script = ExtResource("4_igrap")

@@ -10,7 +10,7 @@ var heightmapImage : Image
 var memorizedLightPositions : Array[Vector3] = []
 
 func _ready() -> void:
-	memorizedLightPositions.resize(1)
+	memorizedLightPositions.resize(4)
 	heightmapImage = Heightmap.get_image()
 	if heightmapImage.is_compressed() :
 		heightmapImage.decompress()
@@ -41,11 +41,14 @@ func iterateViewers() -> void :
 			return
 		if index > memorizedLightPositions.size() :
 			memorizedLightPositions.resize(index + 1)
+			sibling.layer_count = index + 1
+			RenderingServer.global_shader_parameter_set("horizonLayerCount", index + 1.0)
 		var oldPosition = memorizedLightPositions[index]
 		#print(seeker)
 		if seeker.global_position != oldPosition :
 			#print("seeking")
 			memorizedLightPositions[index] = seeker.global_position
-			updateTank(Vector2(memorizedLightPositions[index].x,memorizedLightPositions[index].z),0,memorizedLightPositions[index].y)
+			updateTank(Vector2(memorizedLightPositions[index].x,memorizedLightPositions[index].z),index,memorizedLightPositions[index].y)
 			await get_tree().process_frame
+		index += 1
 	#updateTank(Vector2(1024,1535),0)
