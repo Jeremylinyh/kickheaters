@@ -9,7 +9,7 @@ layout(set = 0, binding = 0, std430) restrict readonly buffer Params {
     float height_scale; // Fits in bytes 16-20
     float selfHeight;// Fits in bytes 20-24
     int layer_index;
-    float padding;
+    float hullDist;
 } params;
 
 layout(set = 0, binding = 1) uniform sampler2D input_heightmap;
@@ -33,6 +33,7 @@ void main() {
     height_origin += params.selfHeight;
 
     float max_slope = -10000.0; // Start very low
+    float max_slope_hull = max_slope;
     int max_dist = int(params.output_size.y);
 
     // Start marching at 1 pixel away
@@ -56,12 +57,14 @@ void main() {
         // Slope = Rise / Run. We use float(d) because that is the distance.
         float current_slope = (height_current - height_origin) / float(d);
         max_slope = max(max_slope, current_slope);
+        float current_hull_slope = (height_current - params.hullDist - height_origin) / float(d);
+        max_slope_hull = max(max_slope, current_slope);
 
         // 2. Write to Texture
         // d=1 writes to y=0
         // d=2 writes to y=1
         ///imageStore(output_texture, ivec2(out_x, d - 1), vec4(max_slope*d+height_origin, 0.0, 0.0, 1.0));
         // Use ivec3(x, y, layer) to index the Array Texture
-        imageStore(output_texture, ivec3(ivec2(out_x,d-1), params.layer_index), vec4(max_slope*d+height_origin, 0.0, 0.0, 1.0));
+        imageStore(output_texture, ivec3(ivec2(out_x,d-1), params.layer_index), vec4(max_slope*d+height_origin, max_slope_hull*d+height_origin, 0.0, 1.0));
     }
 }
