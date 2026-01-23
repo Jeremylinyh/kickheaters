@@ -25,6 +25,7 @@ func _notification(what):
 func run_compute(input_img : Image,settings: Dictionary, target_global: String, index: int,distance : float) -> void:
 	if not _initialized:
 		_initialize_gpu()
+		_update_input_texture(input_img)
 
 	# 1. Update Inputs (Now includes index)
 	_update_params(
@@ -34,7 +35,7 @@ func run_compute(input_img : Image,settings: Dictionary, target_global: String, 
 		index,
 		distance
 	)
-	_update_input_texture(input_img)
+	#_update_input_texture(input_img)
 
 	# 2. Assign the Array Texture to Global Uniform
 	RenderingServer.global_shader_parameter_set(target_global, _texture_wrapper)
