@@ -29,7 +29,7 @@ func updateTank(position : Vector2,id : int,height : float) :
 		"stride": height
 	}
 	RenderingServer.global_shader_parameter_set("tankPos" + str(id), position)
-	sibling.run_compute(heightmapImage, settings, "Horizon" + str(id))
+	sibling.run_compute(heightmapImage, settings, "Horizon", (id))
 
 func iterateViewers() -> void :
 	if not is_inside_tree() :

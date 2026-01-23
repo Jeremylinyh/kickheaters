@@ -61,14 +61,6 @@ lights_and_shadows/positional_shadow/soft_shadow_filter_quality=1
 
 [shader_globals]
 
-Horizon0={
-"type": "sampler2D",
-"value": ""
-}
-Cupola0={
-"type": "sampler2D",
-"value": ""
-}
 tankPos0={
 "type": "vec2",
 "value": Vector2(0, 0)
@@ -76,4 +68,8 @@ tankPos0={
 heightMap={
 "type": "sampler2D",
 "value": "res://Map/UnChunkedCalif.exr"
+}
+Horizon={
+"type": "sampler2DArray",
+"value": ""
 }

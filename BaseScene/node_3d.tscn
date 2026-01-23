@@ -16,4 +16,4 @@ environment = SubResource("Environment_pcchn")
 [node name="TerrainCombiner" parent="." instance=ExtResource("1_ynjd7")]
 
 [node name="Viewer" parent="." instance=ExtResource("3_5qkku")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1484.41, 53.4897, 1626.14)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1763.45, 17.5601, 1763.9)

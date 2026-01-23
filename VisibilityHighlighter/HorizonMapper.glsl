@@ -3,15 +3,17 @@
 
 layout(local_size_x = 64, local_size_y = 1, local_size_z = 1) in;
 
-layout(set = 0, binding = 0, std430) restrict buffer Params {
+layout(set = 0, binding = 0, std430) restrict readonly buffer Params {
     vec2 origin;        // Fits in bytes 0-8
     vec2 output_size;   // Fits in bytes 8-16 (Perfectly aligned!)
     float height_scale; // Fits in bytes 16-20
     float selfHeight;// Fits in bytes 20-24
+    int layer_index;
+    int padding;
 } params;
 
 layout(set = 0, binding = 1) uniform sampler2D input_heightmap;
-layout(set = 0, binding = 2, r32f) uniform image2D output_texture;
+layout(set = 0, binding = 2, r32f) uniform writeonly image2DArray output_texture;
 
 const float PI = 3.14159265359;
 
@@ -44,7 +46,7 @@ void main() {
         if (sample_uv.x < 0.0 || sample_uv.x > 1.0 || sample_uv.y < 0.0 || sample_uv.y > 1.0) {
             // Fill remaining pixels with current max_slope to avoid streaks
             for (int fill_d = d; fill_d <= max_dist; fill_d++) {
-                 imageStore(output_texture, ivec2(out_x, fill_d - 1), vec4(1000000, 0.0, 0.0, 1.0));
+                 imageStore(output_texture, ivec3(out_x, fill_d - 1, params.layer_index), vec4(1000000, 0.0, 0.0, 1.0));
             }
             break;
         }
@@ -58,6 +60,8 @@ void main() {
         // 2. Write to Texture
         // d=1 writes to y=0
         // d=2 writes to y=1
-        imageStore(output_texture, ivec2(out_x, d - 1), vec4(max_slope*d+height_origin, 0.0, 0.0, 1.0));
+        ///imageStore(output_texture, ivec2(out_x, d - 1), vec4(max_slope*d+height_origin, 0.0, 0.0, 1.0));
+        // Use ivec3(x, y, layer) to index the Array Texture
+        imageStore(output_texture, ivec3(ivec2(out_x,d-1), params.layer_index), vec4(max_slope*d+height_origin, 0.0, 0.0, 1.0));
     }
 }
