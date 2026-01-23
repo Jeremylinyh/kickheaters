@@ -6,7 +6,7 @@ global uniform vec2 tankPos2;
 global uniform vec2 tankPos3;
 
 global uniform sampler2DArray Horizon : filter_linear;
-global uniform float horizonLayerCount; // WARN: This is only a suggestion, it is not used anywhere, we'll see
+global uniform float horizonLayerCount;
 
 const float shadowDarkness = 0.25;
 float sampleTexheight(float theta, float dist,float index)
@@ -43,9 +43,13 @@ float isUndergroundHelper(vec3 fragWorldPos,float currIndex) {
 // returns how visible one is; 0.0 --> nothing; 0.5 --> can see cupola; 1.0 --> can see hull;
 float isUnderground(vec3 fragWorldPos) {
 	float determination = 0.0;
-	for (float i = 0.0; i < 4.0; i++)
+	for (int i = 0; i < 4; i++)
 	{
-		determination = max(determination,isUndergroundHelper(fragWorldPos,i));
+		if (float(i) >= horizonLayerCount)
+		{
+			return determination;
+		}
+		determination = max(determination,isUndergroundHelper(fragWorldPos,float(i)));
 	}
 	return determination;
 }
