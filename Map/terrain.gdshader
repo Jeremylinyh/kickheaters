@@ -1,7 +1,7 @@
 shader_type spatial;
 render_mode world_vertex_coords;
-global uniform sampler2D heightMap;
-uniform sampler2D mapTexture;
+global uniform sampler2D heightMap : repeat_disable;
+uniform sampler2D mapTexture : repeat_disable;
 const float maxHeight = 60.0;
 const vec2 mapSize = vec2(4096.0,4096.0);
 const float mapScale = 1.0;
@@ -16,7 +16,7 @@ void vertex() {
 	v_world_pos = VERTEX.xz;
 
 	vec2 effectivePosition = mapScale * (VERTEX.xz/mapSize);
-	float height = texture(heightMap, effectivePosition).r;
+	float height = textureLod(heightMap, effectivePosition,0.0).r;
 	VERTEX.y = height * maxHeight;
 	heightSampled = VERTEX.y;
 	//VERTEX.y = max(VERTEX.y,isUnderground(VERTEX));
