@@ -29,8 +29,8 @@ void main() {
     // Origin Height
     vec2 tex_size = vec2(textureSize(input_heightmap, 0));
     vec2 origin_uv = params.origin / tex_size;
-    float height_origin = textureLod(input_heightmap, origin_uv,0.0).r * params.height_scale;
-    height_origin += params.selfHeight;
+    //float height_origin = textureLod(input_heightmap, origin_uv,0.0).r * params.height_scale;
+    float height_origin = params.selfHeight;
 
     float max_slope = -10000.0; // Start very low
     float max_slope_hull = max_slope;

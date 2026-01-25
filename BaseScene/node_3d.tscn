@@ -19,4 +19,4 @@ environment = SubResource("Environment_pcchn")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2286.24, 17.5601, 2436.7)
 
 [node name="Viewer2" parent="." instance=ExtResource("3_5qkku")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1278.45, 17.5601, 1468.08)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1278.28, 18.0796, 1468.21)
