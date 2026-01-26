@@ -8,7 +8,8 @@ global uniform vec2 tankPos3;
 global uniform sampler2DArray Horizon : filter_linear;
 global uniform float horizonLayerCount;
 
-const float shadowDarkness = 0.25;
+const float defaultLitness = 1.0;
+const float brightness = 1.16;
 vec4 sampleTexheight(float theta, float dist,float index)
 {
     float coord_y = (dist - 0.5) / 1024.0;
@@ -65,14 +66,14 @@ vec3 isUndergroundQ(vec3 fragWorldPos) {
 vec3 isUnderground(vec3 fragWorldPos)
 {
 	vec3 result = isUndergroundQ(fragWorldPos);
-	return result;
+	//return result;
 	if (result.g > 0.0)
 	{
-		return vec3(0,1.0,0);
+		return vec3(defaultLitness,brightness*0.75 + defaultLitness,defaultLitness);
 	}
 	if (result.r > 0.0)
 	{
-		return vec3(1.0,0.0,0.0);
+		return vec3(brightness + defaultLitness,vec2(defaultLitness));
 	}
-	return vec3(0.0);
+	return vec3(defaultLitness/2.0);
 }
