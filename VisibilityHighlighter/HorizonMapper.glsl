@@ -65,6 +65,6 @@ void main() {
         // d=2 writes to y=1
         ///imageStore(output_texture, ivec2(out_x, d - 1), vec4(max_slope*d+height_origin, 0.0, 0.0, 1.0));
         // Use ivec3(x, y, layer) to index the Array Texture
-        imageStore(output_texture, ivec3(ivec2(out_x,d-1), params.layer_index), vec4(max_slope*d+height_origin, max_slope_hull*d+height_origin, 0.0, 1.0));
+        imageStore(output_texture, ivec3(ivec2(out_x,d-1), params.layer_index), vec4(max_slope*d+(height_origin-params.hullDist), max_slope_hull*d+height_origin, 0.0, 1.0));
     }
 }
