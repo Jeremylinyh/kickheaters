@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://mk56k1if1lcx"
+path="res://.godot/imported/HorizonMapper.glsl-ff5a4ef3089ae5c1f2227d9517549ade.res"
+
+[deps]
+
+source_file="res://VisibilityHighlighter/HorizonMapper.glsl"
+dest_files=["res://.godot/imported/HorizonMapper.glsl-ff5a4ef3089ae5c1f2227d9517549ade.res"]
+
+[params]
+

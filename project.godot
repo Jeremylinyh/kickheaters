@@ -15,6 +15,10 @@ run/main_scene="uid://bbeo2i8i3qn3a"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://Assets/icon.svg"
 
+[global_group]
+
+Viewers=""
+
 [input]
 
 ui_left={
@@ -54,3 +58,34 @@ ui_down={
 
 lights_and_shadows/directional_shadow/soft_shadow_filter_quality=0
 lights_and_shadows/positional_shadow/soft_shadow_filter_quality=1
+
+[shader_globals]
+
+heightMap={
+"type": "sampler2D",
+"value": "res://Map/UnChunkedCalif.exr"
+}
+Horizon={
+"type": "sampler2DArray",
+"value": ""
+}
+horizonLayerCount={
+"type": "float",
+"value": 4.0
+}
+tankPos0={
+"type": "vec2",
+"value": Vector2(-10000, -10000)
+}
+tankPos1={
+"type": "vec2",
+"value": Vector2(-10000, -10000)
+}
+tankPos2={
+"type": "vec2",
+"value": Vector2(-10000, -10000)
+}
+tankPos3={
+"type": "vec2",
+"value": Vector2(-10000, -10000)
+}
