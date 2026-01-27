@@ -10,12 +10,46 @@ global uniform float horizonLayerCount;
 
 const float defaultLitness = 1.0;
 const float brightness = 1.16;
-vec4 sampleTexheight(float theta, float dist,float index)
+//vec4 sampleTexheight(float theta, float dist,float index)
+//{
+    //float coord_y = (dist - 0.5) / 1024.0;
+    //coord_y = min(coord_y, (1024.0 - 0.5) / 1024.0);
+//
+    //return textureLod(Horizon, vec3(theta, coord_y,index), 0.0);
+//}
+vec4 sampleTexheight(float theta, float dist, float index)
 {
+    // 1. Calculate the base coordinates (original logic)
     float coord_y = (dist - 0.5) / 1024.0;
     coord_y = min(coord_y, (1024.0 - 0.5) / 1024.0);
+    
+    // 2. Determine Texel Size
+    // Fetch the resolution of 'Horizon' to calculate the size of one texel.
+    // We cast to float to use in UV calculations.
+    ivec3 texSize = textureSize(Horizon, 0);
+    vec2 texelSize = vec2(1.0) / vec2(texSize.xy);
 
-    return textureLod(Horizon, vec3(theta, coord_y,index), 0.0);
+    vec4 total = vec4(0.0);
+    float samples = 0.0;
+
+    // 3. PCF Loop (3x3 Kernel)
+    // Runs from -1 to 1 in both X and Y directions
+    for (int x = -1; x <= 1; x++)
+    {
+        for (int y = -1; y <= 1; y++)
+        {
+            // Calculate offset based on texel size
+            vec2 offset = vec2(float(x), float(y)) * texelSize;
+
+            // Sample the texture with the offset
+            // We use the same 'index' for the array layer
+            total += textureLod(Horizon, vec3(theta + offset.x, coord_y + offset.y, index), 0.0);
+            samples += 1.0;
+        }
+    }
+
+    // 4. Return the average
+    return total / samples;
 }
 
 vec2 isUndergroundHelper(vec3 fragWorldPos,float currIndex) {
