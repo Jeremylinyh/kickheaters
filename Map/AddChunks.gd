@@ -27,6 +27,7 @@ func _process(delta: float) -> void:
 	var current_camera3d : Vector3 = get_viewport().get_camera_3d().global_position
 	var offset : float = 0.0 #tilesNeededEachDir * tileSize/2.0
 	var griddedPosition : Vector2 = Vector2(current_camera3d.x,current_camera3d.z)
+	const gridSize : float = 1.0
 	griddedPosition = griddedPosition.round()
 	griddedPosition -= Vector2(offset,offset)
-	position = Vector3(griddedPosition.x,0,griddedPosition.y)
+	global_position = Vector3(griddedPosition.x,0,griddedPosition.y)

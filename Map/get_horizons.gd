@@ -53,6 +53,9 @@ func iterateViewers() -> void :
 			
 		var oldPosition = memorizedLightPositions[index]
 		#print(seeker)
+		var forward_direction_3d: Vector3 = -seeker.global_transform.basis.z
+		var facingAngle : float = atan2(forward_direction_3d.z,forward_direction_3d.x)
+		RenderingServer.global_shader_parameter_set("tankFacing"+str(index), facingAngle)
 		if seeker.global_position != oldPosition :
 			#print("seeking")
 			memorizedLightPositions[index] = seeker.global_position
