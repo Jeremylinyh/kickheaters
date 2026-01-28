@@ -5,11 +5,17 @@ global uniform vec2 tankPos1;
 global uniform vec2 tankPos2;
 global uniform vec2 tankPos3;
 
+global uniform vec2 tankFacing0;
+global uniform vec2 tankFacing1;
+global uniform vec2 tankFacing2;
+global uniform vec2 tankFacing3;
+
 global uniform sampler2DArray Horizon : filter_linear;
 global uniform float horizonLayerCount;
 
 const float defaultLitness = 1.0;
 const float brightness = 1.16;
+const float fovSide = 0.99; // a dot product comparison
 //vec4 sampleTexheight(float theta, float dist,float index)
 //{
     //float coord_y = (dist - 0.5) / 1024.0;
@@ -17,12 +23,13 @@ const float brightness = 1.16;
 //
     //return textureLod(Horizon, vec3(theta, coord_y,index), 0.0);
 //}
-vec4 sampleTexheight(float theta, float dist, float index)
+
+vec4 sampleTexheight(float theta, float dist,float index)
 {
     // 1. Calculate the base coordinates (original logic)
     float coord_y = (dist - 0.5) / 1024.0;
     coord_y = min(coord_y, (1024.0 - 0.5) / 1024.0);
-    
+
     // 2. Determine Texel Size
     // Fetch the resolution of 'Horizon' to calculate the size of one texel.
     // We cast to float to use in UV calculations.
@@ -54,7 +61,8 @@ vec4 sampleTexheight(float theta, float dist, float index)
 
 vec2 isUndergroundHelper(vec3 fragWorldPos,float currIndex) {
 	vec2 tankPositions[4] = vec2[](tankPos0,tankPos1,tankPos2,tankPos3);
-	
+	vec2 tankFacings[4] = vec2[](tankFacing0,tankFacing1,tankFacing2,tankFacing3);
+
 	vec2 relativePos = fragWorldPos.xz - tankPositions[int(currIndex)];
 	float dist = length(relativePos);
 	if (dist > 1024.0)
@@ -75,7 +83,7 @@ vec2 isUndergroundHelper(vec3 fragWorldPos,float currIndex) {
 	{
 		return vec2(0.0,1.0);
 	}
-	
+
 	return vec2(0.0);
 }
 
@@ -100,7 +108,21 @@ vec3 isUndergroundQ(vec3 fragWorldPos) {
 vec3 isUnderground(vec3 fragWorldPos)
 {
 	vec3 result = isUndergroundQ(fragWorldPos);
+	vec2 tankPositions[4] = vec2[](tankPos0,tankPos1,tankPos2,tankPos3);
+	vec2 tankFacings[4] = vec2[](tankFacing0,tankFacing1,tankFacing2,tankFacing3);
 	//return result;
+	for (int i= 0; i < 4; i++)
+	{
+		if (float(i) >= horizonLayerCount)
+		{
+			break;
+		}
+		vec2 relativePos = fragWorldPos.xz-tankPositions[i];
+		if ((result.r > 0.0 || result.g > 0.0) && (dot(normalize(relativePos),tankFacings[i])) > fovSide)
+		{
+			return vec3(brightness);
+		}
+	}
 
 	if (result.r > 0.0)
 	{
@@ -110,6 +132,6 @@ vec3 isUnderground(vec3 fragWorldPos)
 	{
 		return vec3(defaultLitness,brightness*0.75 + defaultLitness,defaultLitness);
 	}
-	
+
 	return vec3(defaultLitness/2.0);
 }

@@ -89,3 +89,19 @@ tankPos3={
 "type": "vec2",
 "value": Vector2(-10000, -10000)
 }
+tankFacing1={
+"type": "vec2",
+"value": Vector2(1, 0)
+}
+tankFacing2={
+"type": "vec2",
+"value": Vector2(1, 0)
+}
+tankFacing3={
+"type": "vec2",
+"value": Vector2(1, 0)
+}
+tankFacing0={
+"type": "vec2",
+"value": Vector2(1, 0)
+}
