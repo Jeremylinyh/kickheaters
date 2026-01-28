@@ -5,10 +5,10 @@ global uniform vec2 tankPos1;
 global uniform vec2 tankPos2;
 global uniform vec2 tankPos3;
 
-global uniform vec2 tankFacing0;
-global uniform vec2 tankFacing1;
-global uniform vec2 tankFacing2;
-global uniform vec2 tankFacing3;
+global uniform float tankFacing0;
+global uniform float tankFacing1;
+global uniform float tankFacing2;
+global uniform float tankFacing3;
 
 global uniform sampler2DArray Horizon : filter_linear;
 global uniform float horizonLayerCount;
@@ -61,7 +61,7 @@ vec4 sampleTexheight(float theta, float dist,float index)
 
 vec2 isUndergroundHelper(vec3 fragWorldPos,float currIndex) {
 	vec2 tankPositions[4] = vec2[](tankPos0,tankPos1,tankPos2,tankPos3);
-	vec2 tankFacings[4] = vec2[](tankFacing0,tankFacing1,tankFacing2,tankFacing3);
+	float tankFacings[4] = float[](tankFacing0,tankFacing1,tankFacing2,tankFacing3);
 
 	vec2 relativePos = fragWorldPos.xz - tankPositions[int(currIndex)];
 	float dist = length(relativePos);
@@ -109,7 +109,7 @@ vec3 isUnderground(vec3 fragWorldPos)
 {
 	vec3 result = isUndergroundQ(fragWorldPos);
 	vec2 tankPositions[4] = vec2[](tankPos0,tankPos1,tankPos2,tankPos3);
-	vec2 tankFacings[4] = vec2[](tankFacing0,tankFacing1,tankFacing2,tankFacing3);
+	float tankFacings[4] = float[](tankFacing0,tankFacing1,tankFacing2,tankFacing3);
 	//return result;
 	for (int i= 0; i < 4; i++)
 	{
@@ -118,7 +118,8 @@ vec3 isUnderground(vec3 fragWorldPos)
 			break;
 		}
 		vec2 relativePos = fragWorldPos.xz-tankPositions[i];
-		if ((result.r > 0.0 || result.g > 0.0) && (dot(normalize(relativePos),tankFacings[i])) > fovSide)
+		vec2 relevantFacing = vec2(cos(tankFacings[i]),sin(tankFacings[i]));
+		if ((result.r > 0.0 || result.g > 0.0) && (dot(normalize(relativePos),relevantFacing)) > fovSide)
 		{
 			return vec3(brightness);
 		}
