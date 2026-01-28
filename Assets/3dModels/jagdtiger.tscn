@@ -76,9 +76,6 @@ shadow_mesh = SubResource("ArrayMesh_yd124")
 
 [node name="jagdtiger" type="Node3D"]
 
-[node name="Reference" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, -0.392817, 0.894456, 2.32932)
-
 [node name="Body" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_e5rvr")
 skeleton = NodePath("")
