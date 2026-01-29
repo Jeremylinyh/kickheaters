@@ -34,7 +34,7 @@ void main() {
 
     float max_slope = -10000.0; // Start very low
     float max_slope_hull = max_slope;
-    int max_dist = int(params.output_size.y);
+    //int max_dist = int(params.output_size.y);
 
     // Start marching at 1 pixel away
     for (int d = 1; d <= 1024; d++) { // Prev: max_dist as length, however, yes.
@@ -46,7 +46,7 @@ void main() {
         // Boundary Check
         if (sample_uv.x < 0.0 || sample_uv.x > 1.0 || sample_uv.y < 0.0 || sample_uv.y > 1.0) {
             // Fill remaining pixels with current max_slope to avoid streaks
-            for (int fill_d = d; fill_d <= max_dist; fill_d++) {
+            for (int fill_d = d; fill_d <= 1024; fill_d++) {
                  imageStore(output_texture, ivec3(out_x, fill_d - 1, params.layer_index), vec4(1000000, 0.0, 0.0, 1.0));
             }
             break;
@@ -54,17 +54,21 @@ void main() {
 
         float height_current = textureLod(input_heightmap, sample_uv,0.0).r * params.height_scale;
         
-        // Slope = Rise / Run. We use float(d) because that is the distance.
         float current_slope = (height_current - height_origin) / float(d);
         max_slope = max(max_slope, current_slope);
-        float current_hull_slope = (height_current - params.hullDist - height_origin) / float(d);
-        max_slope_hull = max(max_slope_hull, current_slope);
 
-        // 2. Write to Texture
-        // d=1 writes to y=0
-        // d=2 writes to y=1
-        ///imageStore(output_texture, ivec2(out_x, d - 1), vec4(max_slope*d+height_origin, 0.0, 0.0, 1.0));
-        // Use ivec3(x, y, layer) to index the Array Texture
-        imageStore(output_texture, ivec3(ivec2(out_x,d-1), params.layer_index), vec4(max_slope*d+(height_origin-params.hullDist), max_slope_hull*d+height_origin, 0.0, 1.0));
+        float current_hull_slope = (height_current + params.hullDist - height_origin) / float(d);
+
+        
+        max_slope_hull = max(max_slope_hull, current_hull_slope); 
+
+        imageStore(output_texture, ivec3(ivec2(out_x, d - 1), params.layer_index), 
+            vec4(
+                max_slope * d + height_origin,   
+                max_slope_hull * d + (height_origin - params.hullDist), 
+                0.0, 
+                1.0
+            )
+        );
     }
 }
