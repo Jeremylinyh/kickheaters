@@ -58,7 +58,7 @@ void main() {
         float current_slope = (height_current - height_origin) / float(d);
         max_slope = max(max_slope, current_slope);
         float current_hull_slope = (height_current - params.hullDist - height_origin) / float(d);
-        max_slope_hull = max(max_slope, current_slope);
+        max_slope_hull = max(max_slope_hull, current_slope);
 
         // 2. Write to Texture
         // d=1 writes to y=0
