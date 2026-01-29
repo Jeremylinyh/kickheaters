@@ -119,9 +119,6 @@ skeleton = NodePath("")
 [node name="Viewer" parent="Turret" instance=ExtResource("1_klg0w")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0.25, 0)
 
-[node name="Reference" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.584361, -0.491446, -0.0107742)
-
 [node name="Base" type="MeshInstance3D" parent="."]
 transform = Transform3D(1.35038, 0, 0, 0, 0.980731, 0, 0, 0, -0.794922, -0.254104, 0.512356, 0.034621)
 mesh = SubResource("ArrayMesh_74yka")
