@@ -1,4 +1,6 @@
-[gd_scene load_steps=8 format=4 uid="uid://d1el08nhjyn6i"]
+[gd_scene load_steps=9 format=4 uid="uid://d1el08nhjyn6i"]
+
+[ext_resource type="PackedScene" uid="uid://j4vbsnvtu2tf" path="res://VisibilityHighlighter/viewer.tscn" id="1_klg0w"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_trvea"]
 resource_name = "Material"
@@ -113,6 +115,9 @@ shadow_mesh = SubResource("ArrayMesh_0gh2h")
 transform = Transform3D(1.35038, 0, 0, 0, 0.980731, 0, 0, 0, -0.794922, -0.0458267, 0.858123, 0.0356267)
 mesh = SubResource("ArrayMesh_qew4e")
 skeleton = NodePath("")
+
+[node name="Viewer" parent="Turret" instance=ExtResource("1_klg0w")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0.25, 0)
 
 [node name="Base" type="MeshInstance3D" parent="."]
 transform = Transform3D(1.35038, 0, 0, 0, 0.980731, 0, 0, 0, -0.794922, -0.254104, 0.512356, 0.034621)
