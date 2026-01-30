@@ -44,6 +44,8 @@ func run_compute(input_img : Image,settings: Dictionary, target_global: String, 
 	_dispatch()
 
 func _initialize_gpu():
+	if _initialized :
+		return
 	_rd = RenderingServer.get_rendering_device()
 	
 	var spirv = shader_file.get_spirv()

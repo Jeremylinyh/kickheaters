@@ -2,11 +2,16 @@
 
 extends Node3D
 @export var terrainViewer : PackedScene
-@export var heightmapImage : Texture2D
+var heightmapImage : Texture2D
 var tilesNeededEachDir : int = 6
 const tileSize : float = 128.0;
 
 func _ready() -> void:
+	heightmapImage = await $ComputeSimplex.generate_noise_texture(4096,4096)
+	$BakeHorizonMap._initialize_gpu()
+	$BakeHorizonMap._update_input_texture(heightmapImage.get_image())
+	$GetHorizons.heightmapImage = heightmapImage.get_image()
+	
 	if Engine.is_editor_hint() :
 		tilesNeededEachDir = 32
 	RenderingServer.global_shader_parameter_set("heightMap", heightmapImage)

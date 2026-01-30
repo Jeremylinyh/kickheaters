@@ -25,7 +25,7 @@ environment = SubResource("Environment_pcchn")
 [node name="TerrainCombiner" parent="." instance=ExtResource("1_ynjd7")]
 
 [node name="t72v2" parent="." instance=ExtResource("3_5qkku")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2243.44, 36.6788, 2089.34)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2243.44, 34.7525, 2089.34)
 
 [node name="FOVDemo" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2219.37, 37.4201, 2088.75)
