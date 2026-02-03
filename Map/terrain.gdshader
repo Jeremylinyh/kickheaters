@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode world_vertex_coords;
+render_mode world_vertex_coords,unshaded;
 global uniform sampler2D heightMap : repeat_disable;
 //uniform sampler2D mapTexture : repeat_disable;
 const float maxHeight = 60.0;
@@ -36,7 +36,7 @@ void fragment() {
 	// Called for every pixel the material is visible on.
 	vec2 pixelPos = v_world_pos/mapSize;
 	vec3 worldPos = vec3(v_world_pos.x,heightSampled,v_world_pos.y); // brainfart
-	ALBEDO = mapColor(UV).rgb * (isUnderground(worldPos) + 0.5);
+	ALBEDO = mapColor(UV).rgb * (isUnderground(worldPos) + 0.5) * (heightSampled*0.5)/60.0+0.0;
 	///ALBEDO = vec3(isUnderground(worldPos) * fract(UV*10.0)/100.0,0.5);
 	//ALBEDO = vec3(heightSampled);
 	//ALBEDO = worldPos;

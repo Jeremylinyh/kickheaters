@@ -59,15 +59,15 @@ void main() {
     // Aspect ratio correction
     st.x *= u_resolution.x / u_resolution.y;
 
-    float height = snoise(st * 16.0) * 0.5 + 0.5;
+    float height = snoise(st * 8.0) * 0.5 + 0.5;
     
     float amplitude = snoise(st * 3.0 + vec2(100.0));
     // Splines and stuff
-    amplitude = smoothstep(-0.25, 0.25, amplitude) * 0.3;
+    amplitude = smoothstep(-0.25, 0.25, amplitude) * 0.08;
     height *= amplitude + 0.1;
 
-    float continentalness = snoise(st * 1.0 - vec2(67.0));
-    
-    height += smoothstep(-0.6, 0.75, continentalness) * 0.6;
+    float continentalness = snoise(st * 0.75 - vec2(67.0));
+    continentalness *= continentalness;
+    height += (smoothstep(0.1, 0.5, continentalness)) * 0.5;
     imageStore(output_image, id, vec4(height * 1.0,0.0,0.0, 1.0));
 }
