@@ -131,7 +131,7 @@ vec3 isUnderground(vec3 fragWorldPos)
 	}
 	if (result.g > 0.0)
 	{
-		return vec3(defaultLitness,brightness*0.75 + defaultLitness,defaultLitness);
+		return vec3(0.0, 1.0, 1.0);// //vec3(defaultLitness,brightness*0.75 + defaultLitness,defaultLitness);
 	}
 
 	return vec3(defaultLitness/2.0);
