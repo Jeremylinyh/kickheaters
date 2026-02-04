@@ -121,18 +121,18 @@ vec3 isUnderground(vec3 fragWorldPos)
 		vec2 relevantFacing = vec2(cos(tankFacings[i]),sin(tankFacings[i]));
 		if ((result.r > 0.0 || result.g > 0.0) && (dot(normalize(relativePos),relevantFacing)) > fovSide)
 		{
-			return vec3(brightness * 3.0);
+			return vec3(brightness * 1.0);
 		}
 	}
 
 	if (result.r > 0.0)
 	{
-		return vec3(brightness + defaultLitness,vec2(defaultLitness));
+		return vec3(brightness + defaultLitness,vec2(defaultLitness))/vec3(0.016, 0.569, 0.035);
 	}
 	if (result.g > 0.0)
 	{
-		return vec3(0.0, 1.0, 1.0);// //vec3(defaultLitness,brightness*0.75 + defaultLitness,defaultLitness);
+		return vec3(0.0, 1.0, 1.0)/vec3(0.016, 0.569, 0.035);// //vec3(defaultLitness,brightness*0.75 + defaultLitness,defaultLitness);
 	}
 
-	return vec3(defaultLitness/2.0);
+	return vec3(defaultLitness/1.0);
 }

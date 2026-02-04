@@ -23,7 +23,7 @@ void vertex() {
 }
 
 float random (vec2 st) {
-	st = floor(st*(4096.0*0.75));
+	st = floor(st*(4096.0*1.0));
     return fract(sin(dot(st.xy,
                          vec2(12.9898,78.233)))*
         43758.5453123) * 0.5 + 0.5;
@@ -96,7 +96,7 @@ float accumulateLIC(vec2 startPos) {
 
 
 vec3 mapColor(vec2 position) {
-	return vec3(0.016, 0.569, 0.035) * accumulateLIC(position);
+	return vec3(1.0) * accumulateLIC(position);
 	//* random(position);
 	//(random(floor(position * 36.0)) *0.5 + 1.0);
 }
@@ -105,7 +105,10 @@ void fragment() {
 	// Called for every pixel the material is visible on.
 	vec2 pixelPos = v_world_pos/mapSize;
 	vec3 worldPos = vec3(v_world_pos.x,heightSampled,v_world_pos.y); // brainfart
-	ALBEDO = mix(mapColor(pixelPos).rgb , (isUnderground(worldPos) + 0.1),0.5) * ((heightSampled*0.5) + 6.0)/60.0;
+	ALBEDO = (mapColor(pixelPos).rgb * vec3(0.016, 0.569, 0.035) * (isUnderground(worldPos) + 0.3)) * ((heightSampled*0.25) + 16.0)/60.0;
+	
+	// green:  vec3(0.016, 0.569, 0.035) * 
+	
 	///ALBEDO = vec3(isUnderground(worldPos) * fract(UV*10.0)/100.0,0.5);
 	//ALBEDO = vec3(heightSampled);
 	//ALBEDO = worldPos;
