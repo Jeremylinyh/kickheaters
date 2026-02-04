@@ -1,5 +1,5 @@
 @tool
-
+class_name TankTerrain
 extends Node3D
 @export var terrainViewer : PackedScene
 var heightmapImage : Texture2D
@@ -11,7 +11,7 @@ var bufferFloat : PackedFloat32Array
 
 func getHeightAt(input : Vector2) -> float :
 	var index = input.x + input.y * sideSize
-	return bufferFloat[index]
+	return bufferFloat[index] * 60.0
 
 func traceRay(origin : Vector2,destination : Vector2) :
 	pass
