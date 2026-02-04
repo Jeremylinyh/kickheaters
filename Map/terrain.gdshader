@@ -23,7 +23,7 @@ void vertex() {
 }
 
 float random (vec2 st) {
-	st = floor(st*1.0);
+	st = floor(st*(4096.0*0.5));
     return fract(sin(dot(st.xy,
                          vec2(12.9898,78.233)))*
         43758.5453123) * 0.5 + 0.5;
@@ -31,35 +31,64 @@ float random (vec2 st) {
 
 vec2 gradientDir(vec2 st) 
 {
-    return vec2(1.0,0.0);
-    vec2 towards = st - vec2(0.0);
-    //return normalize(towards);
-    return normalize(vec2(-towards.y,towards.x));
+    const float mip_level = 0.0;
+	
+	vec2 texel0 = 1.0 / vec2(textureSize(heightMap, 0));
+	
+    vec2 duv = vec2(1.0/4096.0);
+
+    float hL = textureLod(heightMap,st - vec2(duv.x, 0.0), mip_level).r;
+    float hR = textureLod(heightMap,st + vec2(duv.x, 0.0), mip_level).r;
+    float hD = textureLod(heightMap,st - vec2(0.0, duv.y), mip_level).r;
+    float hU = textureLod(heightMap,st + vec2(0.0, duv.y), mip_level).r;
+
+    // central difference
+    float dHdu = (hR - hL) / (2.0 * duv.x);
+    float dHdv = (hU - hD) / (2.0 * duv.y);
+	
+	//return normalize(vec2(-dHdv, dHdu));
+	return normalize(vec2(dHdu, dHdv));
+    //return vec2(dHdu, dHdv);
 }
 
 float accumulateLIC(vec2 startPos) {
-    const float steps = 16.0;
-    
+    const int steps = 6;
     float totalWeight = 0.0;
-    float totalColor = 0.0;
-    float dt = 0.01;
-    
+    float totalColor  = 0.0;
+    float dt = 1.0 / mapSize.x;
+
+    // forward pass
     vec2 p = startPos;
-    for (float i = 0.0; i < steps; i++) {
+    vec2 forward = vec2(1.0, 0.0);
+    for (int i = 0; i < steps; i++) {
         vec2 v = gradientDir(p);
-        p += v * dt; 
-        float weight = exp(-0.1 * i);
-        totalColor += random(p) * weight;
-        totalWeight += weight;
+
+        float s = dot(v, forward);
+        v *= (step(0.0, s) * 2.0 - 1.0);   // safe hemisphere align
+
+        p += v * dt;
+        forward = v;
+
+        float w = exp(-0.1 * float(i));
+        totalColor  += random(p) * w;
+        totalWeight += w;
     }
-    
+
+    // backward pass
     p = startPos;
-    for (float i = 0.0; i < steps; i++) {
+    forward = vec2(-1.0, 0.0);
+    for (int i = 0; i < steps; i++) {
         vec2 v = gradientDir(p);
-        p -= v * dt; 
-        float weight = exp(-0.1 * i);
-        totalColor += random(p) * weight;
-        totalWeight += weight;
+
+        float s = dot(v, forward);
+        v *= (step(0.0, s) * 2.0 - 1.0);
+
+        p += v * dt;          // same integration direction
+        forward = v;
+
+        float w = exp(-0.1 * float(i));
+        totalColor  += random(p) * w;
+        totalWeight += w;
     }
 
     return totalColor / totalWeight;
