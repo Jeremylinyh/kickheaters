@@ -46,8 +46,8 @@ vec2 gradientDir(vec2 st)
     float dHdu = (hR - hL) / (2.0 * duv.x);
     float dHdv = (hU - hD) / (2.0 * duv.y);
 	
-	//return normalize(vec2(-dHdv, dHdu));
-	return normalize(vec2(dHdu, dHdv));
+	return normalize(vec2(-dHdv, dHdu));
+	//return normalize(vec2(dHdu, dHdv));
     //return vec2(dHdu, dHdv);
 }
 
