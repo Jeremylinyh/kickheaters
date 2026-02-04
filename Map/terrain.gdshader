@@ -22,11 +22,19 @@ void vertex() {
 	//VERTEX.y = max(VERTEX.y,isUnderground(VERTEX));
 }
 
-float random (vec2 st) {
-	st = floor(st*(4096.0*1.0));
-    return fract(sin(dot(st.xy,
-                         vec2(12.9898,78.233)))*
-        43758.5453123) * 0.5 + 0.5;
+float random(vec2 st) {
+    // 1. Scale and Floor to get the grid ID
+    st = floor(st * (1024.0 * 6.0));
+    
+    // 2. Cast directly to uints (Do not use floatBitsToUint)
+    uvec2 p = uvec2(st);
+
+    // 3. Hash them (this specific math is standard for preventing artifacts)
+    p = p * uvec2(1597334673U, 3812015801U);
+    uint n = (p.x ^ p.y) * 1597334673U;
+    
+    // 4. Return normalized float
+    return float(n) * (1.0 / 4294967295.0) + 0.5;
 }
 
 vec2 gradientDir(vec2 st) 
