@@ -10,7 +10,7 @@ global uniform float tankFacing1;
 global uniform float tankFacing2;
 global uniform float tankFacing3;
 
-global uniform sampler2DArray Horizon : filter_linear;
+global uniform sampler2DArray Horizon : filter_linear, repeat_disable;
 global uniform float horizonLayerCount;
 
 const float defaultLitness = 0.0;
