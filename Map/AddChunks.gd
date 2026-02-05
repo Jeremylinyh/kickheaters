@@ -10,8 +10,15 @@ var sideSize = tilesNeededEachDir * tileSize
 var bufferFloat : PackedFloat32Array 
 
 func getHeightAt(input : Vector2) -> float :
-	var index = input.x + input.y * sideSize
+	var index = input.x + input.y * 4096.0
 	return bufferFloat[index] * 60.0
+
+func getHeightBilinear(pos: Vector2) -> float:
+	var base = pos.floor()
+	var ratio = pos - base
+	var h1 = lerp(getHeightAt(base), getHeightAt(base + Vector2(1, 0)), ratio.x)
+	var h2 = lerp(getHeightAt(base + Vector2(0, 1)), getHeightAt(base + Vector2(1, 1)), ratio.x)
+	return lerp(h1, h2, ratio.y)
 
 func traceRay(origin : Vector2,destination : Vector2) :
 	pass
