@@ -46,3 +46,19 @@ func _process(delta: float) -> void:
 	for pos : Vector3 in totalArr :
 		avgPos += pos
 	global_position = avgPos/6.0
+	global_basis = get_orientation(leftHeights,rightHeights)
+
+func get_orientation(leftArr: Array[Vector3], rightArr: Array[Vector3]) -> Basis:
+	var back_center = (leftArr[0] + rightArr[0]) * 0.5
+	var front_center = (leftArr[2] + rightArr[2]) * 0.5
+	var new_forward = (front_center - back_center).normalized()
+	
+	var left_avg = (leftArr[0] + leftArr[1] + leftArr[2]) / 3.0
+	var right_avg = (rightArr[0] + rightArr[1] + rightArr[2]) / 3.0
+	var new_right = (right_avg - left_avg).normalized()
+	
+	var new_up = new_right.cross(new_forward).normalized()
+	
+	new_right = new_forward.cross(new_up).normalized()
+	
+	return Basis(new_forward, new_up, new_right)
