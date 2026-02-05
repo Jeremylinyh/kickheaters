@@ -63,7 +63,7 @@ lights_and_shadows/positional_shadow/soft_shadow_filter_quality=1
 
 heightMap={
 "type": "sampler2D",
-"value": "res://Map/UnChunkedCalif.exr"
+"value": ""
 }
 Horizon={
 "type": "sampler2DArray",

@@ -1,8 +1,8 @@
 @tool
 extends Node
 
-@export var compute_node: HorizonComputer # Link to the node above
-@export var Heightmap: Texture2D
+var compute_node: HorizonComputer
+#var Heightmap: Texture2D
 var heightmapImage : Image
 
 @onready var sibling = $"../BakeHorizonMap"
@@ -11,11 +11,11 @@ var memorizedLightPositions : Array[Vector3] = []
 
 func _ready() -> void:
 	#memorizedLightPositions.resize(4)
-	heightmapImage = Heightmap.get_image()
-	if heightmapImage.is_compressed() :
-		heightmapImage.decompress()
-	if heightmapImage.has_mipmaps() :
-		heightmapImage.clear_mipmaps()
+	#heightmapImage = Heightmap.get_image()
+	#if heightmapImage.is_compressed() :
+		#heightmapImage.decompress()
+	#if heightmapImage.has_mipmaps() :
+		#heightmapImage.clear_mipmaps()
 	#sibling.update_input_texture(heightmapImage)
 	
 	while (is_inside_tree()) :

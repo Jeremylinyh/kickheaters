@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://s6a437cg748r"
+path="res://.godot/imported/HeightGen.glsl-daa728af0f212845c3a4a6ac1c997092.res"
+
+[deps]
+
+source_file="res://Map/Generator/HeightGen.glsl"
+dest_files=["res://.godot/imported/HeightGen.glsl-daa728af0f212845c3a4a6ac1c997092.res"]
+
+[params]
+
