@@ -8,9 +8,7 @@ extends Node3D
 func _ready() -> void:
 	# do not keep visuals in final product
 	if not Engine.is_editor_hint() :
-		var children = get_children()
-		for child in children:
-			child.queue_free()
+		$Left.queue_free()
 	else :
 		$Left.mesh.size = Vector3(trackLength,0.1,trackSpacing)
 
@@ -47,4 +45,4 @@ func _process(delta: float) -> void:
 	totalArr.append_array(rightHeights)
 	for pos : Vector3 in totalArr :
 		avgPos += pos
-	$"../Base".global_position = avgPos/6.0
+	global_position = avgPos/6.0
