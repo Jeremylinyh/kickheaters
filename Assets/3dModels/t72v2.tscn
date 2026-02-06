@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=4 uid="uid://d1el08nhjyn6i"]
+[gd_scene load_steps=13 format=4 uid="uid://d1el08nhjyn6i"]
 
 [ext_resource type="Script" uid="uid://ds18dbc67h1j4" path="res://Units/BaseTank/tank.gd" id="1_2y26j"]
 [ext_resource type="PackedScene" uid="uid://j4vbsnvtu2tf" path="res://VisibilityHighlighter/viewer.tscn" id="1_klg0w"]
 [ext_resource type="Script" uid="uid://1ajdet1aswoj" path="res://Units/BaseTank/driver.gd" id="3_04cge"]
+[ext_resource type="PackedScene" uid="uid://ore43dcnnpcb" path="res://Assets/ParticleEffects/muzzleFlash.tscn" id="4_lkyw6"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_04cge"]
 size = Vector3(3, 0.1, 1.6)
@@ -141,3 +142,6 @@ transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0.2
 transform = Transform3D(1, 6.3492e-08, 0, -1.20373e-07, 1, 0, 0, 0, 1, -0.384449, -0.0276712, 0.002639)
 mesh = SubResource("ArrayMesh_ueb3l")
 skeleton = NodePath("")
+
+[node name="muzzleFlash" parent="Driver/Base/Turret" instance=ExtResource("4_lkyw6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1046, 0, 0)
