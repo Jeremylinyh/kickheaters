@@ -1,19 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://bbeo2i8i3qn3a"]
+[gd_scene load_steps=5 format=3 uid="uid://bbeo2i8i3qn3a"]
 
 [ext_resource type="PackedScene" uid="uid://dci2cd0ppqp5e" path="res://Player/Camera/player_camera.tscn" id="1_pcchn"]
 [ext_resource type="PackedScene" uid="uid://y0vmg6qqm6m3" path="res://Map/terrain_combiner.tscn" id="1_ynjd7"]
 [ext_resource type="PackedScene" uid="uid://d1el08nhjyn6i" path="res://Assets/3dModels/t72v2.tscn" id="3_5qkku"]
-[ext_resource type="Shader" uid="uid://bhdlt7e06glvn" path="res://VisibilityHighlighter/VisibilityReciever/Demostrate.gdshader" id="4_7ueq3"]
 
 [sub_resource type="Environment" id="Environment_pcchn"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_g7wwq"]
-render_priority = 0
-shader = ExtResource("4_7ueq3")
-
-[sub_resource type="BoxMesh" id="BoxMesh_tj408"]
-material = SubResource("ShaderMaterial_g7wwq")
-size = Vector3(10, 10, 10)
 
 [node name="Node3D" type="Node3D"]
 
@@ -28,6 +19,8 @@ environment = SubResource("Environment_pcchn")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2242.08, 3.61085, 2089.98)
 currentTerrain = NodePath("../TerrainCombiner")
 
-[node name="FOVDemo" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2219.37, 9.24308, 2088.75)
-mesh = SubResource("BoxMesh_tj408")
+[node name="t72Ev3" parent="." node_paths=PackedStringArray("currentTerrain") instance=ExtResource("3_5qkku")]
+transform = Transform3D(-0.125835, 0, 0.992051, 0, 1, 0, -0.992051, 0, -0.125835, 2231.31, 3.61085, 2088.41)
+currentTerrain = NodePath("../TerrainCombiner")
+hasPlayerView = false
+shouldHideWhenNotView = true

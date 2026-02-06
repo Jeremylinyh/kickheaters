@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://1ajdet1aswoj" path="res://Units/BaseTank/driver.gd" id="3_04cge"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_04cge"]
-size = Vector3(0, 0.1, 1.6)
+size = Vector3(3, 0.1, 1.6)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_trvea"]
 resource_name = "Material"
@@ -119,7 +119,6 @@ script = ExtResource("1_2y26j")
 
 [node name="Driver" type="Node3D" parent="."]
 script = ExtResource("3_04cge")
-trackLength = 0.0
 
 [node name="Left" type="MeshInstance3D" parent="Driver"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.0154092)

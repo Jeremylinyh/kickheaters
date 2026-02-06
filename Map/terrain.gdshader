@@ -25,24 +25,24 @@ void vertex() {
 float random(vec2 st) {
     // 1. Scale and Floor to get the grid ID
     st = floor(st * (1024.0 * 6.0));
-    
+
     // 2. Cast directly to uints (Do not use floatBitsToUint)
     uvec2 p = uvec2(st);
 
     // 3. Hash them (this specific math is standard for preventing artifacts)
     p = p * uvec2(1597334673U, 3812015801U);
     uint n = (p.x ^ p.y) * 1597334673U;
-    
+
     // 4. Return normalized float
     return float(n) * (1.0 / 4294967295.0) + 0.5;
 }
 
-vec2 gradientDir(vec2 st) 
+vec2 gradientDir(vec2 st)
 {
     const float mip_level = 0.0;
-	
+
 	vec2 texel0 = 1.0 / vec2(textureSize(heightMap, 0));
-	
+
     vec2 duv = vec2(1.0/4096.0);
 
     float hL = textureLod(heightMap,st - vec2(duv.x, 0.0), mip_level).r;
@@ -53,7 +53,7 @@ vec2 gradientDir(vec2 st)
     // central difference
     float dHdu = (hR - hL) / (2.0 * duv.x);
     float dHdv = (hU - hD) / (2.0 * duv.y);
-	
+
 	return normalize(vec2(-dHdv, dHdu));
 	//return normalize(vec2(dHdu, dHdv));
     //return vec2(dHdu, dHdv);
@@ -114,9 +114,9 @@ void fragment() {
 	vec2 pixelPos = v_world_pos/mapSize;
 	vec3 worldPos = vec3(v_world_pos.x,heightSampled,v_world_pos.y); // brainfart
 	ALBEDO = (mapColor(pixelPos).rgb * vec3(0.016, 0.569, 0.035) * (isUnderground(worldPos) + 0.3)) * ((heightSampled*0.25) + 16.0)/60.0;
-	
-	// green:  vec3(0.016, 0.569, 0.035) * 
-	
+
+	// green:  vec3(0.016, 0.569, 0.035) *
+
 	///ALBEDO = vec3(isUnderground(worldPos) * fract(UV*10.0)/100.0,0.5);
 	//ALBEDO = vec3(heightSampled);
 	//ALBEDO = worldPos;
