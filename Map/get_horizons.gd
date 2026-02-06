@@ -64,7 +64,7 @@ func iterateViewers() -> void :
 				Vector2(memorizedLightPositions[index].x,memorizedLightPositions[index].z),
 				index,
 				memorizedLightPositions[index].y,
-				1.0
+				0.36
 			)
 			if not arrayResized :
 				await get_tree().process_frame
