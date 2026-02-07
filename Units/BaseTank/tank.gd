@@ -10,6 +10,10 @@ class_name Tank
 @export var shouldHideWhenNotView : bool = false : set = toggleHider # toggle to false when firing on player
 @export var lookAt : Node3D
 
+@export var traverseSpeed : float = PI*2.0/12.0 ## Radians per second
+@export var turretLerpFactor : float = 0.1
+#var selfAzimuth : float = 0.0
+
 const occlusive : ShaderMaterial = preload("res://VisibilityHighlighter/VisibilityReciever/ShowFov.tres")
 const camouflage : ShaderMaterial = preload("res://Units/BaseTank/camoflage.tres")
 
@@ -34,11 +38,22 @@ func _ready() -> void:
 		$Driver/Base/Turret/Viewer.add_to_group("Viewers")
 	toggleHider(shouldHideWhenNotView)
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if not lookAt :
 		return
 	var relativePos : Vector3 = (lookAt.global_position - $Driver/Base/Turret.global_position)
-	$Driver/Base/Turret.rotation.y = (atan2(relativePos.x,relativePos.z)) + PI/2.0
+	
+	var goalRadians : float = (atan2(relativePos.x,relativePos.z)) + PI/2.0
+	var selfRadians : float = $Driver/Base/Turret.rotation.y
+	var diffRadians : float = angle_difference(selfRadians,goalRadians)
+	
+	var diffSign : float = sign(diffRadians)
+	var difference = abs(diffRadians)
+	if difference > traverseSpeed * delta :
+		$Driver/Base/Turret.rotation.y += diffSign * traverseSpeed * delta
+	else :
+		#$Driver/Base/Turret.rotation.y += diffSign * (difference/2.0) * delta
+		$Driver/Base/Turret.rotation.y = goalRadians
 
 func fire() -> void :
 	$Driver/Base/Turret/muzzleFlash.muzzleFlash()

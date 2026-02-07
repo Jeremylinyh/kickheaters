@@ -124,12 +124,14 @@ script = ExtResource("3_04cge")
 
 [node name="Left" type="MeshInstance3D" parent="Driver"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.0154092)
+material_override = ExtResource("3_3o0uq")
 mesh = SubResource("BoxMesh_04cge")
 
 [node name="Base" type="Node3D" parent="Driver"]
 
 [node name="Base" type="MeshInstance3D" parent="Driver/Base"]
 transform = Transform3D(1.35038, 8.57382e-08, 0, -1.18054e-07, 0.980731, 0, 0, 0, -0.794922, -0.254104, 0.512356, 0.034621)
+material_override = ExtResource("3_3o0uq")
 mesh = SubResource("ArrayMesh_74yka")
 skeleton = NodePath("")
 
@@ -137,6 +139,7 @@ skeleton = NodePath("")
 
 [node name="Turret" type="MeshInstance3D" parent="Driver/Base/Turret"]
 transform = Transform3D(1.35038, 8.57382e-08, 0, -1.18054e-07, 0.980731, 0, 0, 0, -0.794922, -0.0458267, 0.858123, 0.0356267)
+material_override = ExtResource("3_3o0uq")
 mesh = SubResource("ArrayMesh_qew4e")
 skeleton = NodePath("")
 
@@ -145,6 +148,7 @@ transform = Transform3D(-5.9027e-08, 8.57382e-08, 1.35038, 5.1603e-15, 0.980731,
 
 [node name="Tube" type="MeshInstance3D" parent="Driver/Base/Turret/Viewer"]
 transform = Transform3D(-4.37114e-08, -2.77532e-15, -1, -1.20373e-07, 1, 0, 1, 6.3492e-08, -4.37114e-08, -0.00263898, -0.277671, -0.384449)
+material_override = ExtResource("3_3o0uq")
 mesh = SubResource("ArrayMesh_ueb3l")
 skeleton = NodePath("")
 
