@@ -37,7 +37,7 @@ func _process(_delta: float) -> void:
 	if not lookAt :
 		return
 	var relativePos : Vector3 = (lookAt.global_position - $Driver/Base/Turret.global_position)
-	$Driver/Base/Turret.rotation.y = (-atan2(relativePos.z,-relativePos.x))
+	$Driver/Base/Turret.rotation.y = (atan2(relativePos.x,relativePos.z)) + PI/2.0
 
 func fire() -> void :
 	$Driver/Base/Turret/muzzleFlash.muzzleFlash()
