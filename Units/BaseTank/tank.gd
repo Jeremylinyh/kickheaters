@@ -11,6 +11,7 @@ class_name Tank
 @export var lookAt : Node3D
 
 const occlusive : ShaderMaterial = preload("res://VisibilityHighlighter/VisibilityReciever/ShowFov.tres")
+const camouflage : ShaderMaterial = preload("res://Units/BaseTank/camoflage.tres")
 
 func toggleHider(newStatus) :
 	#print(newStatus)
@@ -23,7 +24,7 @@ func toggleHider(newStatus) :
 		var allChilds : Array[Node] = self.find_children("*","MeshInstance3D",true)
 		for mesher : MeshInstance3D in allChilds :
 			#print(mesher)
-			mesher.material_override = null
+			mesher.material_override = camouflage
 	shouldHideWhenNotView = newStatus
 
 func _ready() -> void:

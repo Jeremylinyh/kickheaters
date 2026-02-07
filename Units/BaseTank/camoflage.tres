@@ -1,0 +1,7 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://c8w2a0y1ny0l0"]
+
+[ext_resource type="Shader" uid="uid://diin12xg6ac62" path="res://Units/BaseTank/camoflage.gdshader" id="1_mraae"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_mraae")
