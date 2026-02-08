@@ -1,8 +1,8 @@
 use godot::prelude::*;
 
-struct RustExtension;
+struct MyExtension;
 
 #[gdextension]
-unsafe impl ExtensionLibrary for RustExtension {}
+unsafe impl ExtensionLibrary for MyExtension {}
 
 mod heights;

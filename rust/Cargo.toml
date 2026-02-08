@@ -7,5 +7,5 @@ edition = "2024"
 crate-type = ["cdylib"]
 
 [dependencies]
-godot = "0.4.5"
-bevy_ecs = "0.13"
+godot = "0.4.4"
+# bevy_ecs = "0.18"

@@ -1,19 +1,27 @@
 use godot::prelude::*;
-use godot::classes::{Node, INode};
+use godot::classes::Node;
+use godot::classes::INode; // The interface trait
 
 #[derive(GodotClass)]
 #[class(base=Node)]
-struct Player {
-    base: Base<Node>
+struct Heights {
+    #[base]
+    base: Base<Node>,
 }
 
 #[godot_api]
-impl INode for Player {
+impl INode for Heights {
     fn init(base: Base<Node>) -> Self {
-        godot_print!("Hello, world!"); // Prints to the Godot console
-        
-        Self {
-            base,
-        }
+        godot_print!("Heights initialized!");
+        Self { base }
     }
 }
+
+#[godot_api]
+impl Heights {
+    #[func]
+    fn hello_world(&self) {
+        godot_print!("Hello from the inherent impl!");
+    }
+}
+
