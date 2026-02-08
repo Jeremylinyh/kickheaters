@@ -6,4 +6,8 @@
 rust/target/*
 !rust/target/debug/
 rust/target/debug/*
-!rust/target/debug/rust.dll
+!rust/target/debug/*.dll
+!rust/target/release/
+rust/target/release/*
+!rust/target/release/*.dll
+
