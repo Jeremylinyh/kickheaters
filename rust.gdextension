@@ -6,7 +6,9 @@ reloadable = true
 [libraries]
 windows.debug.x86_64 =   "res://rust/target/debug/rust.dll"
 windows.release.x86_64 = "res://rust/target/release/rust.dll"
-linux.debug.x86_64 =     "res://rust/target/debug/rust.so"
-linux.release.x86_64 =   "res://rust/target/release/rust.so"
-macos.debug =            "res://rust/target/debug/rust.dylib"
-macos.release =          "res://rust/target/release/rust.dylib"
+linux.debug.x86_64 =     "res://rust/target/debug/librust.so"
+linux.release.x86_64 =   "res://rust/target/release/librust.so"
+macos.debug =            "res://rust/target/debug/librust.dylib"
+macos.release =          "res://rust/target/release/librust.dylib"
+macos.debug.arm64 =      "res://rust/target/debug/librust.dylib"
+macos.release.arm64 =    "res://rust/target/release/librust.dylib"
