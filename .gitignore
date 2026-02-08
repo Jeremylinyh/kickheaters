@@ -1,3 +1,9 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# Rust build artifacts
+rust/target/*
+!rust/target/debug/
+rust/target/debug/*
+!rust/target/debug/rust.dll
