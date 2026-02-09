@@ -61,9 +61,7 @@ impl Heights {
         } else {
             return;
         }
-
-        // FIX 2: Bubble the change up the Quadtree
-        // If we don't do this, the raycast optimization will break.
+        
         for layer_idx in 0..self.layers.len() - 1 {
             let parent_idx = idx / 4;
             let block_start = parent_idx * 4;

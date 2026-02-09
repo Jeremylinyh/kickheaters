@@ -7,7 +7,7 @@
 [ext_resource type="RDShaderFile" uid="uid://mk56k1if1lcx" path="res://VisibilityHighlighter/HorizonMapper.glsl" id="5_qwkyr"]
 [ext_resource type="Script" uid="uid://cfsfd34jp3jgn" path="res://Map/Generator/compute_simplex.gd" id="7_2ky4g"]
 
-[node name="TerrainCombiner" type="Node3D"]
+[node name="TerrainCombiner" type="Heights"]
 script = ExtResource("1_rgtf8")
 terrainViewer = ExtResource("2_u0y6e")
 
@@ -20,5 +20,3 @@ script = ExtResource("4_igrap")
 
 [node name="ComputeSimplex" type="Node" parent="."]
 script = ExtResource("7_2ky4g")
-
-[node name="Heights" type="Heights" parent="."]
