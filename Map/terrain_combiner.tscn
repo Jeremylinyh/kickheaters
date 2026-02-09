@@ -20,3 +20,5 @@ script = ExtResource("4_igrap")
 
 [node name="ComputeSimplex" type="Node" parent="."]
 script = ExtResource("7_2ky4g")
+
+[node name="Heights" type="Heights" parent="."]
