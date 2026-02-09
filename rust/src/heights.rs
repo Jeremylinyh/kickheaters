@@ -4,7 +4,7 @@ use godot::classes::INode; // The interface trait
 
 #[derive(GodotClass)]
 #[class(base=Node)]
-struct Heights {
+pub struct Heights {
     #[base]
     base: Base<Node>,
 }
