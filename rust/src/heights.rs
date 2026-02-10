@@ -35,16 +35,39 @@ impl INode3D for Heights {
 #[godot_api]
 impl Heights {
     #[func]
-    fn cast_ray(&mut self,start : Vector3,direction : Vector3) {
-        //let slice = self.height_map.as_mut_slice();
+    fn cast_ray(&self,start : Vector3,direction : Vector3) -> f32 {
+        let mut currentMip: i32 = 0;
+        let travelDist = Vector2::new(direction.x, direction.z).length();
+        let travelDir = Vector2::new(direction.x,direction.z)/travelDist;
+
+        let mut distTraveled = 0.0;
+        let starting2d = Vector2::new(start.x, start.z);
+        while distTraveled <= travelDist {
+            let currentPos = starting2d + travelDir * distTraveled;
+            let height = self.get_height(currentPos.x as u32, currentPos.y as u32, currentMip);
+            if height > start.y {
+                godot_print!("Hit at position {},{} with height {}", currentPos.x, currentPos.y, height);
+                break;
+            }
+            distTraveled += 1.0; // Move forward by 1 unit
+        }
+
+        return distTraveled;
     }
 
     #[func]
     fn get_height(&self, x: u32, y: u32,mip : i32) -> f32 {
+        if mip >= self.layers.len() as i32 {
+            godot_warn!("Requested mip level {} exceeds available layers {}", mip, self.layers.len());
+            return 0.0;
+        }
+        
+        let x = x / (mip + 1) as u32;
+        let y = y / (mip + 1) as u32;
         let morton_idx = morton_encode(x, y);
         
         // Return 0.0 if out of bounds, or the actual value
-        if morton_idx < self.layers[0].len() {
+        if morton_idx < self.layers[mip as usize].len() {
             self.layers[mip as usize][morton_idx]
         } else {
             0.0
