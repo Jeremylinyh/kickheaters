@@ -40,12 +40,12 @@ impl Heights {
     }
 
     #[func]
-    fn get_height(&self, x: u32, y: u32) -> f32 {
+    fn get_height(&self, x: u32, y: u32,mip : i32) -> f32 {
         let morton_idx = morton_encode(x, y);
         
         // Return 0.0 if out of bounds, or the actual value
         if morton_idx < self.layers[0].len() {
-            self.layers[0][morton_idx]
+            self.layers[mip as usize][morton_idx]
         } else {
             0.0
         }
