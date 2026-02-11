@@ -1,27 +1,22 @@
 @tool
 class_name TankTerrain
-extends Node3D
+extends Heights
 @export var terrainViewer : PackedScene
 var heightmapImage : Texture2D
 var tilesNeededEachDir : int = 6
 const tileSize : float = 128.0;
 var sideSize = tilesNeededEachDir * tileSize
 
-var bufferFloat : PackedFloat32Array 
+#var bufferFloat : PackedFloat32Array 
 
 func getHeightAt(input : Vector2) -> float :
-	var index = input.x + input.y * 4096.0
-	return bufferFloat[index] * 60.0
+	return get_height(int(position.x),int(position.y),0)
 
 func getHeightBilinear(pos: Vector2) -> float:
-	var base = pos.floor()
-	var ratio = pos - base
-	var h1 = lerp(getHeightAt(base), getHeightAt(base + Vector2(1, 0)), ratio.x)
-	var h2 = lerp(getHeightAt(base + Vector2(0, 1)), getHeightAt(base + Vector2(1, 1)), ratio.x)
-	return lerp(h1, h2, ratio.y)
+	return get_height_interpolated(pos.x,pos.y,0)
 
 func traceRay(origin : Vector2,destination : Vector2) :
-	pass
+	return cast_ray(global_position,global_position + global_basis.z * 10.0)
 
 func createCrater(origin : Vector2,radius : int) :
 	pass
@@ -32,7 +27,8 @@ func _ready() -> void:
 	$BakeHorizonMap._update_input_texture(heightmapImage.get_image())
 	$GetHorizons.heightmapImage = heightmapImage.get_image()
 	
-	bufferFloat = heightmapImage.get_image().get_data().to_float32_array()
+	var bufferFloat : PackedFloat32Array = heightmapImage.get_image().get_data().to_float32_array()
+	set_whole_map(bufferFloat)
 	#var heightShape : HeightMapShape3D = $StaticBody3D/CollisionShape3D.shape
 	#heightShape.map_depth = 4096
 	#heightShape.map_width = 4096

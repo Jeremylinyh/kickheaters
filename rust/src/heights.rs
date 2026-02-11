@@ -3,7 +3,7 @@ use godot::classes::Node3D;
 use godot::classes::INode3D; // The interface trait
 
 #[derive(GodotClass)]
-#[class(base=Node3D)]
+#[class(tool,base=Node3D)]
 pub struct Heights {
     #[export]
     pub heightmap_dimensions : f32,
@@ -84,6 +84,7 @@ impl Heights {
 
     #[func]
     pub fn get_height(&self, x: u32, y: u32,mip : i32) -> f32 {
+        let mip= mip.max(0);
         if mip >= self.layers.len() as i32 {
             godot_warn!("Requested mip level {} exceeds available layers {}", mip, self.layers.len());
             return 0.0;
@@ -96,7 +97,7 @@ impl Heights {
         
         // Return 0.0 if out of bounds, or the actual value
         if morton_idx < self.layers[mip as usize].len() {
-            self.layers[mip as usize][morton_idx]
+            self.layers[mip as usize][morton_idx] * self.heightmap_height
         } else {
             0.0
         }
