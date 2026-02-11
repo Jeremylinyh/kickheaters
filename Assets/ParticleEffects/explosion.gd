@@ -1,5 +1,5 @@
+@tool
 extends Node3D
-
 
 func explode():
 	$Sparks.emitting = true;

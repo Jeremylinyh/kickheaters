@@ -138,19 +138,21 @@ skeleton = NodePath("")
 [node name="Turret" type="Node3D" parent="Driver/Base"]
 
 [node name="Turret" type="MeshInstance3D" parent="Driver/Base/Turret"]
-transform = Transform3D(1.35038, 8.57382e-08, 0, -1.18054e-07, 0.980731, 0, 0, 0, -0.794922, -0.0458267, 0.858123, 0.0356267)
+transform = Transform3D(1.35038, 1.48086e-07, 0, -2.03902e-07, 0.980731, 0, 0, 0, -0.794922, -0.0458267, 0.858123, 0.0356267)
 material_override = ExtResource("3_3o0uq")
 mesh = SubResource("ArrayMesh_qew4e")
 skeleton = NodePath("")
 
-[node name="Viewer" parent="Driver/Base/Turret" instance=ExtResource("1_klg0w")]
-transform = Transform3D(-5.9027e-08, 8.57382e-08, 1.35038, 5.1603e-15, 0.980731, -1.18054e-07, 0.794922, 0, 3.47472e-08, -0.0458267, 1.10331, 0.0356267)
+[node name="GunPivot" type="Node3D" parent="Driver/Base/Turret/Turret"]
 
-[node name="Tube" type="MeshInstance3D" parent="Driver/Base/Turret/Viewer"]
-transform = Transform3D(-4.37114e-08, -2.77532e-15, -1, -1.20373e-07, 1, 0, 1, 6.3492e-08, -4.37114e-08, -0.00263898, -0.277671, -0.384449)
+[node name="Tube" type="MeshInstance3D" parent="Driver/Base/Turret/Turret/GunPivot"]
+transform = Transform3D(1, 1.20373e-07, 5.81004e-14, -1.20373e-07, 1, 4.30278e-21, -5.81004e-14, -1.12965e-20, 1, -0.384449, -0.0276667, 0.002639)
 material_override = ExtResource("3_3o0uq")
 mesh = SubResource("ArrayMesh_ueb3l")
 skeleton = NodePath("")
 
-[node name="muzzleFlash" parent="Driver/Base/Turret/Viewer/Tube" instance=ExtResource("4_lkyw6")]
-transform = Transform3D(1, -6.3492e-08, 0, 1.20373e-07, 1, 0, 0, 0, 1, -1.72015, 0.027671, -0.002639)
+[node name="muzzleFlash" parent="Driver/Base/Turret/Turret/GunPivot/Tube" instance=ExtResource("4_lkyw6")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -1.72015, 0.027671, -0.002639)
+
+[node name="Viewer" parent="Driver/Base/Turret" instance=ExtResource("1_klg0w")]
+transform = Transform3D(-5.9027e-08, 8.57382e-08, 1.35038, 5.1603e-15, 0.980731, -1.18054e-07, 0.794922, 0, 3.47472e-08, -0.0458267, 1.10331, 0.0356267)

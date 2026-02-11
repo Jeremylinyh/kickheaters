@@ -15,8 +15,9 @@ func getHeightAt(input : Vector2) -> float :
 func getHeightBilinear(pos: Vector2) -> float:
 	return get_height_interpolated(pos.x,pos.y,0)
 
-func traceRay(origin : Vector2,destination : Vector2) :
-	return cast_ray(global_position,global_position + global_basis.z * 10.0)
+## returns length the ray traveled.
+func traceRay(origin : Vector3,direction : Vector3) :
+	return cast_ray(origin,direction)
 
 func createCrater(origin : Vector2,radius : int) :
 	pass
