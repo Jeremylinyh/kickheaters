@@ -6,13 +6,13 @@ use godot::classes::INode3D; // The interface trait
 #[class(base=Node3D)]
 pub struct Heights {
     #[export]
-    heightmap_dimensions : f32,
+    pub heightmap_dimensions : f32,
     #[export]
-    heightmap_height : f32,
+    pub heightmap_height : f32,
     //height_map: Vec<f32>,
-    layers: Vec<Vec<f32>>,
+    pub layers: Vec<Vec<f32>>,
     #[base]
-    base: Base<Node3D>,
+    pub base: Base<Node3D>,
 }
 
 #[godot_api]
@@ -35,35 +35,63 @@ impl INode3D for Heights {
 #[godot_api]
 impl Heights {
     #[func]
-    fn cast_ray(&self,start : Vector3,direction : Vector3) -> f32 {
-        let mut currentMip: i32 = 0;
-        let travelDist = Vector2::new(direction.x, direction.z).length();
-        let travelDir = Vector2::new(direction.x,direction.z)/travelDist;
+    pub fn cast_ray(&self,start : Vector3,direction : Vector3) -> f32 {
+        let mut current_mip: i32 = 0;
+        let travel_dist = Vector2::new(direction.x, direction.z).length();
+        // let travel_dir = Vector2::new(direction.x,direction.z) / travel_dist.max(1.0); // Normalize and prevent division by zero
 
-        let mut distTraveled = 0.0;
-        let starting2d = Vector2::new(start.x, start.z);
-        while distTraveled <= travelDist {
-            let currentPos = starting2d + travelDir * distTraveled;
-            let height = self.get_height(currentPos.x as u32, currentPos.y as u32, currentMip);
-            if height > start.y {
-                godot_print!("Hit at position {},{} with height {}", currentPos.x, currentPos.y, height);
-                break;
+        let base_step_size = travel_dist / (direction).length(); // Base step size for fine sampling
+        let mut dist_traveled = 0.0;
+        // let starting2d = Vector2::new(start.x, start.z);
+        while dist_traveled <= travel_dist {
+            let current_pos3d = start + direction * dist_traveled;
+            let current_pos = Vector2::new(current_pos3d.x, current_pos3d.z);
+            let height = self.get_height_interpolated(current_pos.x, current_pos.y, current_mip);
+            if height >= current_pos3d.y {
+                if current_mip > 0 {
+                    current_mip -= 1; // Move to finer mip level for more precise checks
+                } else {
+                    godot_print!("Hit at position {},{} with height {}", current_pos.x, current_pos.y, height);
+                    break; // Already at finest level, stop here
+                }
             }
-            distTraveled += 1.0; // Move forward by 1 unit
+            else {
+                current_mip = (current_mip + 1).min((self.layers.len() - 1) as i32); // Move to next mip level for coarser checks
+                dist_traveled += self.determine_step_size(current_pos, base_step_size, current_mip);
+            }
         }
 
-        return distTraveled;
+        return dist_traveled;
+    }
+
+    pub fn determine_step_size(&self,position: Vector2, base_step_size: f32, mip: i32) -> f32 {
+        let mip = mip.max(0);
+        let cell_size = (2.0f32).powi(mip as i32);
+        let mut step = base_step_size * cell_size;
+
+        let off_x = position.x.rem_euclid(cell_size);
+        let off_y = position.y.rem_euclid(cell_size);
+
+        let to_grid_x = if off_x == 0.0 { cell_size } else { cell_size - off_x };
+        let to_grid_y = if off_y == 0.0 { cell_size } else { cell_size - off_y };
+
+        let min_to_grid = to_grid_x.min(to_grid_y);
+
+        step = step.min(min_to_grid);
+
+        return step.max(1.0); // Ensure a minimum step size to prevent infinite loops
     }
 
     #[func]
-    fn get_height(&self, x: u32, y: u32,mip : i32) -> f32 {
+    pub fn get_height(&self, x: u32, y: u32,mip : i32) -> f32 {
         if mip >= self.layers.len() as i32 {
             godot_warn!("Requested mip level {} exceeds available layers {}", mip, self.layers.len());
             return 0.0;
         }
         
-        let x = x / (mip + 1) as u32;
-        let y = y / (mip + 1) as u32;
+        let scale = (1u32 << mip.max(0) as u32).max(1);
+        let x = x / scale;
+        let y = y / scale;
         let morton_idx = morton_encode(x, y);
         
         // Return 0.0 if out of bounds, or the actual value
@@ -72,6 +100,39 @@ impl Heights {
         } else {
             0.0
         }
+    }
+
+    #[func]
+    pub fn get_height_interpolated(&self, x: f32, y: f32, mip: i32) -> f32 {
+        // Bilinear interpolation across mesh triangles
+        // Samples 4 corners and interpolates based on fractional position
+        
+        if mip >= self.layers.len() as i32 {
+            godot_warn!("Requested mip level {} exceeds available layers {}", mip, self.layers.len());
+            return 0.0;
+        }
+        
+        // Get integer and fractional parts
+        let x_floor = x.floor() as u32;
+        let y_floor = y.floor() as u32;
+        let fx = x.fract(); // 0.0 to 1.0
+        let fy = y.fract(); // 0.0 to 1.0
+        
+        // Sample 4 corners
+        let h00 = self.get_height(x_floor, y_floor, mip);
+        let h10 = self.get_height(x_floor + 1, y_floor, mip);
+        let h01 = self.get_height(x_floor, y_floor + 1, mip);
+        let h11 = self.get_height(x_floor + 1, y_floor + 1, mip);
+        
+        // Bilinear interpolation
+        // First interpolate along x (bottom and top rows)
+        let hx0 = h00 * (1.0 - fx) + h10 * fx;
+        let hx1 = h01 * (1.0 - fx) + h11 * fx;
+        
+        // Then interpolate along y
+        let height = hx0 * (1.0 - fy) + hx1 * fy;
+        
+        height
     }
 
     #[func]
@@ -103,7 +164,7 @@ impl Heights {
     }
 
     #[func]
-    fn set_whole_map(&mut self, input_array: PackedFloat32Array) {
+    pub fn set_whole_map(&mut self, input_array: PackedFloat32Array) {
         let size = self.heightmap_dimensions as u32;
         
         if input_array.len() != (size * size) as usize {

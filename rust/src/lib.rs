@@ -5,4 +5,4 @@ struct MyExtension;
 #[gdextension]
 unsafe impl ExtensionLibrary for MyExtension {}
 
-mod heights;
+pub mod heights;
