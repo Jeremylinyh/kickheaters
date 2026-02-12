@@ -1,6 +1,7 @@
-[gd_scene load_steps=20 format=3 uid="uid://ore43dcnnpcb"]
+[gd_scene load_steps=21 format=3 uid="uid://ore43dcnnpcb"]
 
 [ext_resource type="Script" uid="uid://c74lnxro1mvkx" path="res://Assets/ParticleEffects/muzzle_flash.gd" id="1_y1gop"]
+[ext_resource type="AudioStream" uid="uid://d3bwc47m51376" path="res://Assets/SoundEffects/awp1.wav" id="2_fsvds"]
 
 [sub_resource type="Gradient" id="Gradient_co3ur"]
 offsets = PackedFloat32Array(0, 0.698795, 1)
@@ -113,3 +114,6 @@ explosiveness = 1.0
 fixed_fps = 60
 process_material = SubResource("ParticleProcessMaterial_a3vng")
 draw_pass_1 = SubResource("SphereMesh_nug6d")
+
+[node name="ExplosionSound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("2_fsvds")
