@@ -73,6 +73,18 @@ func _process(delta: float) -> void:
 	else :
 		#$Driver/Base/Turret.rotation.y += diffSign * (difference/2.0) * delta
 		gunPivot.rotation.z = -goalRadians
+		
+	## TODO: \/ REMOVE ASAP \/
+	var origin : Vector3 = gunPivot.global_position
+	var direction : Vector3 = -gunPivot.global_basis.x.normalized()
+	var shellDistance : float = currentTerrain.traceRay(origin,direction * maxRange)
+	
+	#print(shellDistance)
+	
+	#visualize
+	$Trail.global_position = (origin + direction * (maxRange/2))
+	$Trail.look_at(origin)
+	$Trail.mesh.size = Vector3(0.25,0.25,maxRange)
 
 #testing only
 func periodicalyFire() -> void:
