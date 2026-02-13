@@ -23,7 +23,7 @@ traverseSpeed = 1.0
 turretLerpFactor = 0.5
 
 [node name="LookAt" type="Node3D" parent="t72v2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.2258, -2.86102e-06, -3.88428)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.2258, -1.09502, 8.68628)
 
 [node name="t72Ev3" parent="." node_paths=PackedStringArray("currentTerrain") instance=ExtResource("3_5qkku")]
 transform = Transform3D(-0.125835, 0, 0.992051, 0, 1, 0, -0.992051, 0, -0.125835, 2231.31, 3.61085, 2088.41)

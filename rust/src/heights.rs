@@ -46,7 +46,11 @@ impl Heights {
         while dist_traveled <= travel_dist {
             let current_pos3d = start + direction * dist_traveled;
             let current_pos = Vector2::new(current_pos3d.x, current_pos3d.z);
-            let height = self.get_height_interpolated(current_pos.x, current_pos.y, current_mip);
+            let mut height = self.get_height(current_pos.x as u32, current_pos.y as u32, current_mip);
+            if current_mip == 0
+            {
+                height = self.get_height_interpolated(current_pos.x, current_pos.y, current_mip);
+            }
             if height >= current_pos3d.y {
                 if current_mip > 0 {
                     current_mip -= 1; // Move to finer mip level for more precise checks
@@ -56,8 +60,8 @@ impl Heights {
                 }
             }
             else {
-                current_mip = (current_mip + 1).min((self.layers.len() - 1) as i32); // Move to next mip level for coarser checks
-                dist_traveled += self.determine_step_size(current_pos, base_step_size, current_mip);
+                //current_mip = (current_mip + 1).min((self.layers.len() - 1) as i32); // Move to next mip level for coarser checks
+                dist_traveled += 1.0; //self.determine_step_size(current_pos, base_step_size, current_mip);
             }
         }
 

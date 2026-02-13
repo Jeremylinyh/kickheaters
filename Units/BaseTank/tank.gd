@@ -84,7 +84,9 @@ func fire() -> void :
 	if not currentTerrain or not lookAt or not is_inside_tree():
 		return
 	
-	$Driver/Base/Turret/Turret/GunPivot/Tube/muzzleFlash.muzzleFlash()
+	var muzzleFlash = $Driver/Base/Turret/Turret/GunPivot/Tube/muzzleFlash.duplicate()
+	$Driver/Base/Turret/Turret/GunPivot/Tube.add_child(muzzleFlash)
+	muzzleFlash.muzzleFlash()
 	
 	var gunPivot := $Driver/Base/Turret/Turret/GunPivot
 	
@@ -92,7 +94,7 @@ func fire() -> void :
 	var direction : Vector3 = -gunPivot.global_basis.x
 	var shellDistance : float = currentTerrain.traceRay(origin,direction * maxRange)
 	
-	#print(shellDistance)
+	print(shellDistance)
 	
 	var shellInstance = shellExplosion.instantiate()
 	$"..".add_child(shellInstance)
