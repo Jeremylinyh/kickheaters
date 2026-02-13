@@ -25,12 +25,12 @@ const camouflage : ShaderMaterial = preload("res://Units/BaseTank/camoflage.tres
 func toggleHider(newStatus) :
 	#print(newStatus)
 	if newStatus :
-		var allChilds : Array[Node] = self.find_children("*","MeshInstance3D",true)
+		var allChilds : Array[Node] = $Driver.find_children("*","MeshInstance3D",true)
 		for mesher : MeshInstance3D in allChilds :
 			#print(mesher)
 			mesher.material_override = occlusive
 	else :
-		var allChilds : Array[Node] = self.find_children("*","MeshInstance3D",true)
+		var allChilds : Array[Node] = $Driver.find_children("*","MeshInstance3D",true)
 		for mesher : MeshInstance3D in allChilds :
 			#print(mesher)
 			mesher.material_override = camouflage
@@ -94,7 +94,10 @@ func fire() -> void :
 	var direction : Vector3 = -gunPivot.global_basis.x
 	var shellDistance : float = currentTerrain.traceRay(origin,direction * maxRange)
 	
-	print(shellDistance)
+	#visualize
+	$Trail.global_position = (origin + direction * maxRange/3)
+	$Trail.look_at(origin)
+	$Trail.scale = Vector3(0.25,0.25,maxRange)
 	
 	var shellInstance = shellExplosion.instantiate()
 	$"..".add_child(shellInstance)

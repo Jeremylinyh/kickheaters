@@ -19,8 +19,6 @@ environment = SubResource("Environment_pcchn")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2242.08, 3.61085, 2089.98)
 currentTerrain = NodePath("../TerrainCombiner")
 lookAt = NodePath("LookAt")
-traverseSpeed = 1.0
-turretLerpFactor = 0.5
 
 [node name="LookAt" type="Node3D" parent="t72v2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.2258, -1.09502, 8.68628)
@@ -30,5 +28,3 @@ transform = Transform3D(-0.125835, 0, 0.992051, 0, 1, 0, -0.992051, 0, -0.125835
 currentTerrain = NodePath("../TerrainCombiner")
 hasPlayerView = false
 shouldHideWhenNotView = true
-traverseSpeed = 1.0
-turretLerpFactor = 0.5

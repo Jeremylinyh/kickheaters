@@ -60,8 +60,8 @@ impl Heights {
                 }
             }
             else {
-                //current_mip = (current_mip + 1).min((self.layers.len() - 1) as i32); // Move to next mip level for coarser checks
-                dist_traveled += 1.0; //self.determine_step_size(current_pos, base_step_size, current_mip);
+                current_mip = 0;//(current_mip + 1).min((self.layers.len() - 1) as i32); // Move to next mip level for coarser checks
+                dist_traveled += 1;//self.determine_step_size(current_pos, base_step_size, current_mip);
             }
         }
 
