@@ -62,7 +62,7 @@ func _process(delta: float) -> void:
 		#$Driver/Base/Turret.rotation.y += diffSign * (difference/2.0) * delta
 		$Driver/Base/Turret.rotation.y = goalRadians
 		
-	goalRadians = (atan2(relativePos.x,relativePos.y)) + PI/2.0
+	goalRadians = (atan2(-Vector2(relativePos.x,relativePos.z).length(),relativePos.y)) + PI/2.0
 	selfRadians = $Driver/Base/Turret.rotation.z
 	diffRadians = angle_difference(selfRadians,goalRadians)
 	
@@ -91,13 +91,15 @@ func fire() -> void :
 	var gunPivot := $Driver/Base/Turret/Turret/GunPivot
 	
 	var origin : Vector3 = gunPivot.global_position
-	var direction : Vector3 = -gunPivot.global_basis.x
+	var direction : Vector3 = -gunPivot.global_basis.x.normalized()
 	var shellDistance : float = currentTerrain.traceRay(origin,direction * maxRange)
 	
+	#print(shellDistance)
+	
 	#visualize
-	$Trail.global_position = (origin + direction * maxRange/3)
+	$Trail.global_position = (origin + direction * (maxRange/2))
 	$Trail.look_at(origin)
-	$Trail.scale = Vector3(0.25,0.25,maxRange)
+	$Trail.mesh.size = Vector3(0.25,0.25,maxRange)
 	
 	var shellInstance = shellExplosion.instantiate()
 	$"..".add_child(shellInstance)

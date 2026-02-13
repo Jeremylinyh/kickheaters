@@ -38,13 +38,14 @@ impl Heights {
     pub fn cast_ray(&self,start : Vector3,direction : Vector3) -> f32 {
         let mut current_mip: i32 = 0;
         let travel_dist = Vector2::new(direction.x, direction.z).length();
+        let dir_norm = direction.normalized();
         // let travel_dir = Vector2::new(direction.x,direction.z) / travel_dist.max(1.0); // Normalize and prevent division by zero
 
         let base_step_size = travel_dist / (direction).length(); // Base step size for fine sampling
         let mut dist_traveled = 0.0;
         // let starting2d = Vector2::new(start.x, start.z);
         while dist_traveled <= travel_dist {
-            let current_pos3d = start + direction * dist_traveled;
+            let current_pos3d = start + dir_norm * dist_traveled;
             let current_pos = Vector2::new(current_pos3d.x, current_pos3d.z);
             let mut height = self.get_height(current_pos.x as u32, current_pos.y as u32, current_mip);
             if current_mip == 0
@@ -55,13 +56,13 @@ impl Heights {
                 if current_mip > 0 {
                     current_mip -= 1; // Move to finer mip level for more precise checks
                 } else {
-                    godot_print!("Hit at position {},{} with height {}", current_pos.x, current_pos.y, height);
+                    //godot_print!("Hit at position {},{} with height {}", current_pos.x, current_pos.y, height);
                     break; // Already at finest level, stop here
                 }
             }
             else {
-                current_mip = 0;//(current_mip + 1).min((self.layers.len() - 1) as i32); // Move to next mip level for coarser checks
-                dist_traveled += 1;//self.determine_step_size(current_pos, base_step_size, current_mip);
+                current_mip = (current_mip + 1).min((self.layers.len() - 1) as i32); // Move to next mip level for coarser checks
+                dist_traveled += self.determine_step_size(current_pos, base_step_size, current_mip);
             }
         }
 

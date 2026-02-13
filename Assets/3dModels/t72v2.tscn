@@ -117,6 +117,7 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_0gh2h")
 
 [sub_resource type="BoxMesh" id="BoxMesh_3o0uq"]
+size = Vector3(0.25, 0.25, 1024)
 
 [node name="t72v2" type="Node3D"]
 script = ExtResource("1_2y26j")
