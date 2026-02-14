@@ -48,33 +48,35 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not lookAt :
 		return
-	var relativePos : Vector3 = (lookAt.global_position - $Driver/Base/Turret.global_position)
+	var turret : Node3D = $Driver/Base/Turret
+	var gunPivot : Node3D = $Driver/Base/Turret/GunPivot
+	
+	var relativePos : Vector3 = turret.get_parent().to_local(lookAt.global_position)
 	
 	var goalRadians : float = (atan2(relativePos.x,relativePos.z)) + PI/2.0
-	var selfRadians : float = $Driver/Base/Turret.rotation.y
+	var selfRadians : float = turret.rotation.y
 	var diffRadians : float = angle_difference(selfRadians,goalRadians)
 	
 	var diffSign : float = sign(diffRadians)
 	var difference = abs(diffRadians)
 	if difference > traverseSpeed * delta :
-		$Driver/Base/Turret.rotation.y += diffSign * traverseSpeed * delta
+		turret.rotation.y += diffSign * traverseSpeed * delta
 	else :
-		#$Driver/Base/Turret.rotation.y += diffSign * (difference/2.0) * delta
-		$Driver/Base/Turret.rotation.y = goalRadians
+		turret.rotation.y = goalRadians
 		
-	goalRadians = (atan2(-Vector2(relativePos.x,relativePos.z).length(),relativePos.y)) + PI/2.0
-	selfRadians = $Driver/Base/Turret.rotation.z
+	
+	relativePos -= gunPivot.position
+	
+	goalRadians = (atan2(Vector2(relativePos.x,relativePos.z).length(),relativePos.y)) + PI/2.0
+	selfRadians = gunPivot.rotation.z
 	diffRadians = angle_difference(selfRadians,goalRadians)
 	
-	var gunPivot : Node3D = $Driver/Base/Turret/Turret/GunPivot
+	diffSign = sign(diffRadians)
+	difference = abs(diffRadians)
 	
-	if difference > turretElevateSpeed * delta :
-		gunPivot.rotation.z -= diffSign * turretElevateSpeed * delta
-	else :
-		#$Driver/Base/Turret.rotation.y += diffSign * (difference/2.0) * delta
-		gunPivot.rotation.z = -goalRadians
-		
-	## TODO: \/ REMOVE ASAP \/
+	gunPivot.rotation.z = goalRadians
+	
+	# Visualization logic
 	var origin : Vector3 = gunPivot.global_position
 	var direction : Vector3 = -gunPivot.global_basis.x.normalized()
 	var shellDistance : float = currentTerrain.traceRay(origin,direction * maxRange)
@@ -82,9 +84,9 @@ func _process(delta: float) -> void:
 	#print(shellDistance)
 	
 	#visualize
-	$Trail.global_position = (origin + direction * (maxRange/2))
+	$Trail.global_position = (origin + direction * (shellDistance/2))
 	$Trail.look_at(origin)
-	$Trail.mesh.size = Vector3(0.25,0.25,maxRange)
+	$Trail.mesh.size = Vector3(0.25,0.25,shellDistance)
 
 #testing only
 func periodicalyFire() -> void:
@@ -96,22 +98,17 @@ func fire() -> void :
 	if not currentTerrain or not lookAt or not is_inside_tree():
 		return
 	
-	var muzzleFlash = $Driver/Base/Turret/Turret/GunPivot/Tube/muzzleFlash.duplicate()
-	$Driver/Base/Turret/Turret/GunPivot/Tube.add_child(muzzleFlash)
+	var muzzleFlash = $Driver/Base/Turret/GunPivot/Tube/muzzleFlash.duplicate()
+	$Driver/Base/Turret/GunPivot/Tube.add_child(muzzleFlash)
 	muzzleFlash.muzzleFlash()
 	
-	var gunPivot := $Driver/Base/Turret/Turret/GunPivot
+	var gunPivot := $Driver/Base/Turret/GunPivot
 	
 	var origin : Vector3 = gunPivot.global_position
 	var direction : Vector3 = -gunPivot.global_basis.x.normalized()
 	var shellDistance : float = currentTerrain.traceRay(origin,direction * maxRange)
 	
 	#print(shellDistance)
-	
-	#visualize
-	$Trail.global_position = (origin + direction * (maxRange/2))
-	$Trail.look_at(origin)
-	$Trail.mesh.size = Vector3(0.25,0.25,maxRange)
 	
 	var shellInstance = shellExplosion.instantiate()
 	$"..".add_child(shellInstance)
