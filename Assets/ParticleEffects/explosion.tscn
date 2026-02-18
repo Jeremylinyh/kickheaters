@@ -1,6 +1,7 @@
-[gd_scene load_steps=23 format=3 uid="uid://g4ixm5h7q5ii"]
+[gd_scene load_steps=24 format=3 uid="uid://g4ixm5h7q5ii"]
 
 [ext_resource type="Script" uid="uid://cdwt16olkxuaj" path="res://Assets/ParticleEffects/explosion.gd" id="1_x7j87"]
+[ext_resource type="AudioStream" uid="uid://s8lnvr3whld2" path="res://Assets/SoundEffects/explode1.wav" id="2_3kfah"]
 
 [sub_resource type="Curve" id="Curve_co3ur"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.330882, 1), 0.0, 0.0, 0, 0, Vector2(0.647059, 0), 0.0, 0.0, 0, 0]
@@ -140,3 +141,4 @@ process_material = SubResource("ParticleProcessMaterial_a3vng")
 draw_pass_1 = SubResource("SphereMesh_nug6d")
 
 [node name="ExplosionSound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("2_3kfah")
