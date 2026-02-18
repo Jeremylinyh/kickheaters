@@ -11,6 +11,7 @@ func muzzleFlash():
 	$Flame.emitting = true;
 	$Smoke.emitting = true;
 	#if not wasPrevEmitting :
+	$ShootingSound.play()
 	await get_tree().create_timer(4.0).timeout
 	queue_free()
 	#$Flame.emitting = false;
