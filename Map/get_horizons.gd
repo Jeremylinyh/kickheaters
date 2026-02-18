@@ -19,8 +19,8 @@ func _ready() -> void:
 	#sibling.update_input_texture(heightmapImage)
 	
 	while (is_inside_tree()) :
-		await get_tree().process_frame
 		iterateViewers()
+		await get_tree().process_frame
 
 func updateTank(heightmapImage : Image,position : Vector2,id : int,height : float,distance : float) :
 	# stride means height above ground, it is named well truss

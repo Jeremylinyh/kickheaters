@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode world_vertex_coords;
+render_mode world_vertex_coords, unshaded;
 varying vec3 worldPos;
 global uniform sampler2D heightMap;
 #include "res://VisibilityHighlighter/visibleHorizon.gdshaderinc"

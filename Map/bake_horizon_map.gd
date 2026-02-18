@@ -88,6 +88,8 @@ func _update_params(origin: Vector2, h_scale: float, stride: float, index: int,d
 func _update_input_texture(img: Image):
 	if _cached_input_rid.is_valid():
 		_rd.free_rid(_cached_input_rid)
+	if not img :
+		return
 	img.convert(Image.FORMAT_RF)
 	var fmt = RDTextureFormat.new()
 	fmt.width = img.get_width()
@@ -97,6 +99,9 @@ func _update_input_texture(img: Image):
 	_cached_input_rid = _rd.texture_create(fmt, RDTextureView.new(), [img.get_data()])
 
 func _dispatch():
+	if not _cached_input_rid :
+		return
+	
 	var u_param = RDUniform.new()
 	u_param.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
 	u_param.binding = 0
