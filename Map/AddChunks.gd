@@ -55,7 +55,13 @@ func _process(delta: float) -> void:
 	var current_camera3d : Vector3 = get_viewport().get_camera_3d().global_position
 	var offset : float = 0.0 #tilesNeededEachDir * tileSize/2.0
 	var griddedPosition : Vector2 = Vector2(current_camera3d.x,current_camera3d.z)
-	const gridSize : float = 1.0
+	
+	var scaleFactor : float = (floor(current_camera3d.y/256.0) + 1.0)
+	scaleFactor = max(scaleFactor,1.0)
+	
+	var gridSize : float = scaleFactor
 	griddedPosition = griddedPosition.round()
 	griddedPosition -= Vector2(offset,offset)
 	global_position = Vector3(griddedPosition.x,0,griddedPosition.y)
+	
+	scale = Vector3(scaleFactor,1.0,scaleFactor)
