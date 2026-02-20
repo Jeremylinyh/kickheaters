@@ -11,7 +11,8 @@
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_pcchn")
 
-[node name="PlayerCamera" parent="." instance=ExtResource("1_pcchn")]
+[node name="PlayerCamera" parent="." node_paths=PackedStringArray("currentTerrain") instance=ExtResource("1_pcchn")]
+currentTerrain = NodePath("../TerrainCombiner")
 
 [node name="TerrainCombiner" parent="." instance=ExtResource("1_ynjd7")]
 
