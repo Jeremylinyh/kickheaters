@@ -46,7 +46,7 @@ func _ready() -> void:
 	periodicalyFire()
 
 func _process(delta: float) -> void:
-	if not lookAt :
+	if not lookAt or lookAt.position.length() < 0.01:
 		return
 	var turret : Node3D = $Driver/Base/Turret
 	var gunPivot : Node3D = $Driver/Base/Turret/GunPivot
