@@ -5,6 +5,8 @@ var movementSpeed = MovementSpeed
 @export var currentTerrain : TankTerrain
 
 func _process(delta: float) -> void:
+	set_process_priority(-100)
+	
 	var zoomScale : float = (1+(position.y/512))
 	movementSpeed = zoomScale * MovementSpeed 
 	
@@ -19,4 +21,4 @@ func _process(delta: float) -> void:
 		position += Vector3(movingInDirec.x,moveUpDown * zoomScale,movingInDirec.y)
 		#rotation += Vector3(0,rotateCamera/90,0)
 	#print(currentTerrain.getHeightBilinear(Vector2(position.x,position.z)))
-	position.y = max(position.y,currentTerrain.getHeightBilinear(Vector2(position.x,position.z)))
+	position.y = max(position.y,currentTerrain.getHeightBilinear(Vector2(position.x,position.z)) - 6.0)
