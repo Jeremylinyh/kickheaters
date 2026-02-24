@@ -16,6 +16,7 @@ environment = SubResource("Environment_pcchn")
 currentTerrain = NodePath("../TerrainCombiner")
 
 [node name="TerrainCombiner" parent="." instance=ExtResource("1_ynjd7")]
+process_priority = 100
 
 [node name="t72v2" parent="." node_paths=PackedStringArray("currentTerrain", "lookAt") instance=ExtResource("3_5qkku")]
 transform = Transform3D(0.509717, 0, 0.860342, 0, 1, 0, -0.860342, 0, 0.509717, 2242.08, 3.61085, 2089.98)

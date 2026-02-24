@@ -3,7 +3,7 @@ class_name TankTerrain
 extends Heights
 @export var terrainViewer : PackedScene
 var heightmapImage : Texture2D
-var tilesNeededEachDir : int = 3
+var tilesNeededEachDir : int = 4
 const tileSize : float = 128.0;
 var sideSize = tilesNeededEachDir * tileSize
 
@@ -41,11 +41,11 @@ func _ready() -> void:
 		tilesNeededEachDir = 32
 	RenderingServer.global_shader_parameter_set("heightMap", heightmapImage)
 	
-	for x in range(-tilesNeededEachDir,tilesNeededEachDir,1) :
-		for y in range(-tilesNeededEachDir,tilesNeededEachDir,1) :
+	for x in range(tilesNeededEachDir) :
+		for y in range(tilesNeededEachDir) :
 			var newTerrain : MeshInstance3D = terrainViewer.instantiate()
 			self.add_child(newTerrain)
-			newTerrain.position = Vector3((x-3) * tileSize,0,(y+1-3)*tileSize)
+			newTerrain.position = Vector3((x-tilesNeededEachDir/2) * tileSize,0,(y+1-tilesNeededEachDir/2)*tileSize)
 			newTerrain.name = str(x) + "," + str(y)
 			newTerrain.owner = null
 
@@ -56,16 +56,13 @@ func _process(delta: float) -> void:
 		return
 	var current_camera3d : Vector3 = get_viewport().get_camera_3d().global_position
 	
-	var griddedPosition : Vector2 = Vector2(current_camera3d.x,current_camera3d.z)
-	
 	var scaleFactor : float = (floor(current_camera3d.y/128.0) + 1.0)
-	var offset : float = 0.0# tilesNeededEachDir * tileSize/2.0
-	scaleFactor = max(scaleFactor,1.0)
-	#scaleFactor = 1.0
+	var offset : float = 0.0#-tilesNeededEachDir * tileSize * scaleFactor * 0.5
+	scaleFactor = max(scaleFactor,1.0) * 2.0
 	
-	griddedPosition = griddedPosition.snappedf(scaleFactor)
-	griddedPosition -= Vector2(offset,offset)
+	var griddedPosition : Vector2 = Vector2(current_camera3d.x,current_camera3d.z).snappedf(128 * 2)
+	griddedPosition -= Vector2(offset,offset) #+ Vector2(0.5,0.5)
 	global_position = Vector3(griddedPosition.x,0,griddedPosition.y)
 	
 	scale = Vector3(scaleFactor,1.0,scaleFactor)
-	get_viewport().debug_draw = Viewport.DEBUG_DRAW_WIREFRAME
+	#get_viewport().debug_draw = Viewport.DEBUG_DRAW_WIREFRAME
