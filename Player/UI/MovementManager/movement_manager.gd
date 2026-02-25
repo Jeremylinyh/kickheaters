@@ -31,4 +31,4 @@ func findTanksInRegion(startingPosition : Vector2) :
 func _input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("Click") :
 		var selectedTank = (findTanksInRegion(get_global_mouse_position())) ## This takes priority over path node
-		#print(selectedTank)
+		print(selectedTank)

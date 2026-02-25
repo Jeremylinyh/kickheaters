@@ -23,6 +23,7 @@ config/icon="res://Assets/icon.svg"
 
 Viewers=""
 PlayerTanks=""
+EnemyTank=""
 
 [input]
 
