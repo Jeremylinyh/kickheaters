@@ -21,4 +21,4 @@ func _process(delta: float) -> void:
 		position += Vector3(movingInDirec.x,moveUpDown * zoomScale,movingInDirec.y)
 		#rotation += Vector3(0,rotateCamera/90,0)
 	#print(currentTerrain.getHeightBilinear(Vector2(position.x,position.z)))
-	position.y = max(position.y,currentTerrain.getHeightBilinear(Vector2(position.x,position.z)) - 10.0)
+	position.y = max(position.y,currentTerrain.getHeightBilinear(Vector2(position.x,position.z)) - 16.0)

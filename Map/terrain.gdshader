@@ -9,7 +9,7 @@ const float mapScale = 1.0;
 #include "res://VisibilityHighlighter/visibleHorizon.gdshaderinc"
 
 varying vec2 v_world_pos;
-varying float heightSampled;
+//varying float heightSampled;
 
 void vertex() {
 	// Called for every vertex the material is visible on.
@@ -18,7 +18,7 @@ void vertex() {
 	vec2 effectivePosition = mapScale * (VERTEX.xz/mapSize);
 	float height = textureLod(heightMap, effectivePosition,0.0).r;
 	VERTEX.y = height * maxHeight;
-	heightSampled = VERTEX.y;
+	//heightSampled = VERTEX.y;
 	//VERTEX.y = max(VERTEX.y,isUnderground(VERTEX));
 }
 
@@ -112,6 +112,8 @@ vec3 mapColor(vec2 position) {
 void fragment() {
 	// Called for every pixel the material is visible on.
 	vec2 pixelPos = v_world_pos/mapSize;
+	vec2 effectivePosition = mapScale * (v_world_pos.xy/mapSize);
+	float heightSampled = textureLod(heightMap, effectivePosition,0.0).r * maxHeight;
 	vec3 worldPos = vec3(v_world_pos.x,heightSampled,v_world_pos.y); // brainfart
 	ALBEDO = (mapColor(pixelPos).rgb * vec3(0.016, 0.569, 0.035) * (isUnderground(worldPos) + 0.3)) * ((heightSampled*0.25) + 16.0)/60.0;
 

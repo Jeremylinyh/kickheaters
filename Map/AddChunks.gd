@@ -45,7 +45,10 @@ func _ready() -> void:
 		for y in range(tilesNeededEachDir) :
 			var newTerrain : MeshInstance3D = terrainViewer.instantiate()
 			self.add_child(newTerrain)
-			newTerrain.position = Vector3((x-tilesNeededEachDir/2) * tileSize,0,(y+1-tilesNeededEachDir/2)*tileSize)
+			if not Engine.is_editor_hint() :
+				newTerrain.position = Vector3((x-tilesNeededEachDir/2) * tileSize,0,(y+1-tilesNeededEachDir/2)*tileSize)
+			else :
+				newTerrain.position = Vector3((x) * tileSize,0,(y+1)*tileSize)
 			newTerrain.name = str(x) + "," + str(y)
 			newTerrain.owner = null
 
@@ -65,4 +68,4 @@ func _process(delta: float) -> void:
 	global_position = Vector3(griddedPosition.x,0,griddedPosition.y)
 	
 	scale = Vector3(scaleFactor,1.0,scaleFactor)
-	#get_viewport().debug_draw = Viewport.DEBUG_DRAW_WIREFRAME
+	get_viewport().debug_draw = Viewport.DEBUG_DRAW_WIREFRAME
