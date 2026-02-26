@@ -1,0 +1,164 @@
+name: Build GDExtension for All Platforms
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-gnu, wasm32-unknown-unknown
+      
+      - name: Build Linux x86_64 Debug
+        working-directory: rust
+        run: cargo build --target x86_64-unknown-linux-gnu
+      
+      - name: Build Linux x86_64 Release
+        working-directory: rust
+        run: cargo build --target x86_64-unknown-linux-gnu --release
+      
+      - name: Build WASM Debug
+        working-directory: rust
+        run: cargo build --target wasm32-unknown-unknown
+      
+      - name: Build WASM Release
+        working-directory: rust
+        run: cargo build --target wasm32-unknown-unknown --release
+      
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-binaries
+          path: |
+            rust/target/x86_64-unknown-linux-gnu/debug/librust_accelerator_.so
+            rust/target/x86_64-unknown-linux-gnu/release/librust_accelerator_.so
+      
+      - name: Upload WASM artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm-binaries
+          path: |
+            rust/target/wasm32-unknown-unknown/debug/rust_accelerator_.wasm
+            rust/target/wasm32-unknown-unknown/release/rust_accelerator_.wasm
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      
+      - name: Build Windows x86_64 Debug
+        working-directory: rust
+        run: cargo build --target x86_64-pc-windows-msvc
+      
+      - name: Build Windows x86_64 Release
+        working-directory: rust
+        run: cargo build --target x86_64-pc-windows-msvc --release
+      
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-binaries
+          path: |
+            rust/target/x86_64-pc-windows-msvc/debug/rust_accelerator_.dll
+            rust/target/x86_64-pc-windows-msvc/release/rust_accelerator_.dll
+
+  build-macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin, x86_64-apple-darwin
+      
+      - name: Build macOS aarch64 Debug
+        working-directory: rust
+        run: cargo build --target aarch64-apple-darwin
+      
+      - name: Build macOS aarch64 Release
+        working-directory: rust
+        run: cargo build --target aarch64-apple-darwin --release
+      
+      - name: Build macOS x86_64 Debug
+        working-directory: rust
+        run: cargo build --target x86_64-apple-darwin
+      
+      - name: Build macOS x86_64 Release
+        working-directory: rust
+        run: cargo build --target x86_64-apple-darwin --release
+      
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-binaries
+          path: |
+            rust/target/aarch64-apple-darwin/debug/librust_accelerator_.dylib
+            rust/target/aarch64-apple-darwin/release/librust_accelerator_.dylib
+            rust/target/x86_64-apple-darwin/debug/librust_accelerator_.dylib
+            rust/target/x86_64-apple-darwin/release/librust_accelerator_.dylib
+
+  organize-artifacts:
+    needs: [build-linux, build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-artifacts
+      
+      - name: Organize artifacts to target structure
+        run: |
+          mkdir -p organized/rust/target/{debug,release}
+          
+          # Linux binaries
+          cp -v all-artifacts/linux-binaries/x86_64-unknown-linux-gnu/debug/librust_accelerator_.so organized/rust/target/debug/ 2>/dev/null || true
+          cp -v all-artifacts/linux-binaries/x86_64-unknown-linux-gnu/release/librust_accelerator_.so organized/rust/target/release/ 2>/dev/null || true
+          
+          # Windows binaries
+          cp -v all-artifacts/windows-binaries/x86_64-pc-windows-msvc/debug/rust_accelerator_.dll organized/rust/target/debug/ 2>/dev/null || true
+          cp -v all-artifacts/windows-binaries/x86_64-pc-windows-msvc/release/rust_accelerator_.dll organized/rust/target/release/ 2>/dev/null || true
+          
+          # macOS binaries
+          mkdir -p organized/rust/target/{debug,release}
+          find all-artifacts/macos-binaries -name "librust_accelerator_.dylib" -path "*/debug/*" -exec cp -v {} organized/rust/target/debug/ \;
+          find all-artifacts/macos-binaries -name "librust_accelerator_.dylib" -path "*/release/*" -exec cp -v {} organized/rust/target/release/ \;
+          
+          # WASM binaries
+          mkdir -p organized/rust/target/{debug,release}
+          cp -v all-artifacts/wasm-binaries/wasm32-unknown-unknown/debug/rust_accelerator_.wasm organized/rust/target/debug/ 2>/dev/null || true
+          cp -v all-artifacts/wasm-binaries/wasm32-unknown-unknown/release/rust_accelerator_.wasm organized/rust/target/release/ 2>/dev/null || true
+          
+          echo "Organized artifacts:"
+          find organized -type f
+      
+      - name: Upload organized binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-binaries-organized
+          path: organized/rust/target/
+      
+      - name: Summary
+        run: |
+          echo "Build Summary"
+          echo "============="
+          echo "All platform binaries have been built and organized."
+          echo "Download the 'all-binaries-organized' artifact to get the compiled binaries."
