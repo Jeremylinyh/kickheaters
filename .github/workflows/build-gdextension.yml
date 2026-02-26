@@ -1,0 +1,165 @@
+name: Build GDExtension for All Platforms
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'rust/**'
+      - '.github/workflows/build-gdextension.yml'
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-gnu, wasm32-unknown-unknown
+      
+      - name: Build Linux & WASM
+        working-directory: rust
+        run: |
+          cargo build --target x86_64-unknown-linux-gnu
+          cargo build --target x86_64-unknown-linux-gnu --release
+          cargo build --target wasm32-unknown-unknown
+          cargo build --target wasm32-unknown-unknown --release
+      
+      - name: Upload Linux & WASM Debug Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-wasm-debug
+          path: |
+            rust/target/x86_64-unknown-linux-gnu/debug/librust_accelerator_.so
+            rust/target/wasm32-unknown-unknown/debug/rust_accelerator_.wasm
+          retention-days: 1
+
+      - name: Upload Linux & WASM Release Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-wasm-release
+          path: |
+            rust/target/x86_64-unknown-linux-gnu/release/librust_accelerator_.so
+            rust/target/wasm32-unknown-unknown/release/rust_accelerator_.wasm
+          retention-days: 1
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      
+      - name: Build Windows
+        working-directory: rust
+        run: |
+          cargo build --target x86_64-pc-windows-msvc
+          cargo build --target x86_64-pc-windows-msvc --release
+      
+      - name: Upload Windows Debug Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-debug
+          path: rust/target/x86_64-pc-windows-msvc/debug/rust_accelerator_.dll
+          retention-days: 1
+
+      - name: Upload Windows Release Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-release
+          path: rust/target/x86_64-pc-windows-msvc/release/rust_accelerator_.dll
+          retention-days: 1
+
+  build-macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin, x86_64-apple-darwin
+      
+      - name: Build macOS (x86_64 & aarch64)
+        working-directory: rust
+        run: |
+          cargo build --target aarch64-apple-darwin
+          cargo build --target aarch64-apple-darwin --release
+          cargo build --target x86_64-apple-darwin
+          cargo build --target x86_64-apple-darwin --release
+          
+          # Combine into Universal "Fat" Binaries so one file works for both Intel and M-series Macs
+          mkdir -p combined/debug combined/release
+          lipo -create rust/target/x86_64-apple-darwin/debug/librust_accelerator_.dylib rust/target/aarch64-apple-darwin/debug/librust_accelerator_.dylib -output combined/debug/librust_accelerator_.dylib
+          lipo -create rust/target/x86_64-apple-darwin/release/librust_accelerator_.dylib rust/target/aarch64-apple-darwin/release/librust_accelerator_.dylib -output combined/release/librust_accelerator_.dylib
+      
+      - name: Upload macOS Debug Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-debug
+          path: combined/debug/librust_accelerator_.dylib
+          retention-days: 1
+
+      - name: Upload macOS Release Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-release
+          path: combined/release/librust_accelerator_.dylib
+          retention-days: 1
+
+  commit-binaries:
+    needs: [build-linux, build-windows, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required to push commits
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: downloaded-artifacts
+          merge-multiple: false
+      
+      - name: Organize Binaries
+        run: |
+          mkdir -p rust/target/debug rust/target/release
+          
+          # Flatten debug artifacts
+          find downloaded-artifacts -type f -path "*-debug/*" -exec cp {} rust/target/debug/ \;
+          
+          # Flatten release artifacts
+          find downloaded-artifacts -type f -path "*-release/*" -exec cp {} rust/target/release/ \;
+          
+          echo "Organized artifacts:"
+          ls -la rust/target/debug/
+          ls -la rust/target/release/
+          
+      - name: Commit and Push to Repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # Add the targeted binary folders
+          git add rust/target/debug/
+          git add rust/target/release/
+          
+          # Check if there are changes to commit. If not, exit cleanly.
+          if git diff --staged --quiet; then
+            echo "No changes in binaries. Skipping commit."
+          else
+            # [skip ci] prevents this automated commit from triggering the workflow again!
+            git commit -m "chore: auto-compile GDExtension binaries [skip ci]"
+            git push
+          fi
