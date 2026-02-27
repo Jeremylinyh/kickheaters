@@ -3,7 +3,7 @@ class_name TankTerrain
 extends Heights
 @export var terrainViewer : PackedScene
 var heightmapImage : Texture2D
-var tilesNeededEachDir : int = 4
+var tilesNeededEachDir : int = 2
 const tileSize : float = 128.0;
 var sideSize = tilesNeededEachDir * tileSize
 

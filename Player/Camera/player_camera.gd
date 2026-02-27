@@ -20,7 +20,9 @@ func _process(delta: float) -> void:
 		#rotation += Vector3(0,rotateCamera/90,0)
 	#print(currentTerrain.getHeightBilinear(Vector2(position.x,position.z)))
 	position.y = max(position.y,currentTerrain.getHeightBilinear(Vector2(position.x,position.z)) - 60.0)
+	position.y = min(position.y,1000)
 	
+func _input(_event: InputEvent) -> void:
 	# move the terrain with us
 	if Engine.is_editor_hint() :
 		return
@@ -28,13 +30,14 @@ func _process(delta: float) -> void:
 		return
 	var current_camera3d : Vector3 = global_position
 	
-	var scaleFactor : float = (floor(current_camera3d.y/128.0) + 1.0)
+	var scaleFactor : float = (floor(current_camera3d.y/32.0) + 3.0)
 	var offset : float = 0.0#-tilesNeededEachDir * tileSize * scaleFactor * 0.5
-	scaleFactor = max(scaleFactor,1.0) * 2.0
+	scaleFactor = (max(scaleFactor,1.0))
+	#print(scaleFactor)
 	
-	var griddedPosition : Vector2 = Vector2(current_camera3d.x,current_camera3d.z).snappedf(2)
+	var griddedPosition : Vector2 = Vector2(current_camera3d.x,current_camera3d.z).snappedf(2*scaleFactor)
 	griddedPosition -= Vector2(offset,offset) #+ Vector2(0.5,0.5)
 	$"../TerrainCombiner".global_position = Vector3(griddedPosition.x,0,griddedPosition.y)
 	
 	$"../TerrainCombiner".scale = Vector3(scaleFactor,1.0,scaleFactor)
-	get_viewport().debug_draw = Viewport.DEBUG_DRAW_WIREFRAME
+	#get_viewport().debug_draw = Viewport.DEBUG_DRAW_WIREFRAME
