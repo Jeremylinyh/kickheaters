@@ -25,21 +25,10 @@ jobs:
         with:
           targets: x86_64-unknown-linux-gnu
       
-      - name: Build Linux x86_64 Debug
-        working-directory: rust
-        run: cargo build --target x86_64-unknown-linux-gnu
-      
       - name: Build Linux x86_64 Release
         working-directory: rust
         run: cargo build --target x86_64-unknown-linux-gnu --release
       
-      - name: Upload Linux Debug Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-debug
-          path: rust/target/x86_64-unknown-linux-gnu/debug/librust_accelerator_.so
-          retention-days: 1
-
       - name: Upload Linux Release Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -57,21 +46,10 @@ jobs:
         with:
           targets: x86_64-pc-windows-msvc
       
-      - name: Build Windows x86_64 Debug
-        working-directory: rust
-        run: cargo build --target x86_64-pc-windows-msvc
-      
       - name: Build Windows x86_64 Release
         working-directory: rust
         run: cargo build --target x86_64-pc-windows-msvc --release
       
-      - name: Upload Windows Debug Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-debug
-          path: rust/target/x86_64-pc-windows-msvc/debug/rust_accelerator_.dll
-          retention-days: 1
-
       - name: Upload Windows Release Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -89,17 +67,9 @@ jobs:
         with:
           targets: aarch64-apple-darwin, x86_64-apple-darwin
       
-      - name: Build macOS aarch64 Debug
-        working-directory: rust
-        run: cargo build --target aarch64-apple-darwin
-      
       - name: Build macOS aarch64 Release
         working-directory: rust
         run: cargo build --target aarch64-apple-darwin --release
-      
-      - name: Build macOS x86_64 Debug
-        working-directory: rust
-        run: cargo build --target x86_64-apple-darwin
       
       - name: Build macOS x86_64 Release
         working-directory: rust
@@ -107,17 +77,9 @@ jobs:
       
       - name: Combine Universal Binaries
         run: |
-          mkdir -p combined/debug combined/release
-          lipo -create rust/target/x86_64-apple-darwin/debug/librust_accelerator_.dylib rust/target/aarch64-apple-darwin/debug/librust_accelerator_.dylib -output combined/debug/librust_accelerator_.dylib
+          mkdir -p combined/release
           lipo -create rust/target/x86_64-apple-darwin/release/librust_accelerator_.dylib rust/target/aarch64-apple-darwin/release/librust_accelerator_.dylib -output combined/release/librust_accelerator_.dylib
       
-      - name: Upload macOS Debug Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-debug
-          path: combined/debug/librust_accelerator_.dylib
-          retention-days: 1
-
       - name: Upload macOS Release Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -141,25 +103,26 @@ jobs:
       
       - name: Organize Binaries
         run: |
-          mkdir -p rust/target/debug rust/target/release
+          mkdir -p rust/target/release rust/target/debug
           
-          # Flatten debug artifacts
-          find downloaded-artifacts -type f -path "*-debug/*" -exec cp {} rust/target/debug/ \;
-          
-          # Flatten release artifacts
+          # Move downloaded release artifacts to the release folder
           find downloaded-artifacts -type f -path "*-release/*" -exec cp {} rust/target/release/ \;
+          
+          # Copy those exact same release binaries into the debug folder to satisfy Godot
+          cp -r rust/target/release/* rust/target/debug/
           
       - name: Commit and Push to Repository
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           
-          git add rust/target/debug/
+          # Add BOTH folders so Git tracks the copied files
           git add rust/target/release/
+          git add rust/target/debug/
           
           if git diff --staged --quiet; then
             echo "No changes in binaries. Skipping commit."
           else
-            git commit -m "chore: auto-compile GDExtension binaries [skip ci]"
+            git commit -m "chore: auto-compile GDExtension release binaries [skip ci]"
             git push
           fi
