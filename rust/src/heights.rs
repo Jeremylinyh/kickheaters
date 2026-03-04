@@ -38,9 +38,13 @@ impl Heights {
     pub fn cast_ray(&self,start : Vector3,direction : Vector3) -> f32 {
         let mut current_mip: i32 = 0;
         let travel_dist = Vector2::new(direction.x, direction.z).length();
-
+        
         if travel_dist <= 0.0
         {
+            if direction.y > 0.0
+            {
+                return direction.length();
+            }
             let ground_height = self.get_height_interpolated(start.x,start.z, 0);
             return (start.y - ground_height).max(0.0);
         }
@@ -54,7 +58,14 @@ impl Heights {
         while dist_traveled <= travel_dist {
             let current_pos3d = start + dir_norm * dist_traveled;
             let current_pos = Vector2::new(current_pos3d.x, current_pos3d.z);
+            
+
+            if current_pos3d.x < 0.0 || current_pos3d.z < 0.0 || current_pos3d.x >= 4096.0 || current_pos3d.z >= 4096.0 
+            {
+                break;
+            }
             let mut height = self.get_height(current_pos.x as u32, current_pos.y as u32, current_mip);
+            
             if current_mip == 0
             {
                 height = self.get_height_interpolated(current_pos.x, current_pos.y, current_mip);
@@ -69,7 +80,7 @@ impl Heights {
             }
             else {
                 current_mip = (current_mip + 1).min((self.layers.len() - 1) as i32); // Move to next mip level for coarser checks
-                dist_traveled += self.determine_step_size(current_pos,Vector2::new(dir_norm.x,dir_norm.z), base_step_size, current_mip);
+                dist_traveled += base_step_size; //self.determine_step_size(current_pos,Vector2::new(dir_norm.x,dir_norm.z), base_step_size, current_mip);
             }
         }
 
