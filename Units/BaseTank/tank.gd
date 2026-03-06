@@ -108,9 +108,19 @@ func fire() -> void :
 	var direction : Vector3 = -gunPivot.global_basis.x.normalized()
 	var shellDistance : float = currentTerrain.traceRay(origin,direction * maxRange)
 	
-	#print(shellDistance)
+	var shootCast = PhysicsRayQueryParameters3D.create(origin, origin + direction * maxRange)
+	var spaceState = get_world_3d().direct_space_state
+	var collisionDict = spaceState.intersect_ray(shootCast)
+	if collisionDict != {}:
+		#intersect ray returns an empty dictionary if it did not collide with anything
+		#so the following code assumes something has been hit
+		var newDist = origin.distance_to(collisionDict.position)
+		if newDist < shellDistance:
+			shellDistance = newDist
+
 	
 	var shellInstance = shellExplosion.instantiate()
 	$"..".add_child(shellInstance)
 	shellInstance.global_position = origin + direction * shellDistance
 	shellInstance.explode()
+	
