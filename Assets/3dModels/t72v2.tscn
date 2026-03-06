@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=4 uid="uid://d1el08nhjyn6i"]
+[gd_scene format=4 uid="uid://d1el08nhjyn6i"]
 
 [ext_resource type="Script" uid="uid://ds18dbc67h1j4" path="res://Units/BaseTank/tank.gd" id="1_2y26j"]
 [ext_resource type="PackedScene" uid="uid://j4vbsnvtu2tf" path="res://VisibilityHighlighter/viewer.tscn" id="1_klg0w"]
@@ -116,50 +116,59 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_0gh2h")
 
-[sub_resource type="BoxMesh" id="BoxMesh_3o0uq"]
-size = Vector3(0.25, 0.25, 145.839)
+[sub_resource type="BoxShape3D" id="BoxShape3D_3o0uq"]
+size = Vector3(3.3088074, 0.9933319, 1.5990372)
 
-[node name="t72v2" type="Node3D" groups=["PlayerTanks"]]
+[sub_resource type="BoxMesh" id="BoxMesh_3o0uq"]
+size = Vector3(0.25, 0.25, 146.30783)
+
+[node name="t72v2" type="Node3D" unique_id=2108358218 groups=["PlayerTanks"]]
 script = ExtResource("1_2y26j")
 
-[node name="Driver" type="Node3D" parent="."]
+[node name="Driver" type="Node3D" parent="." unique_id=565064922]
 script = ExtResource("3_04cge")
 
-[node name="Left" type="MeshInstance3D" parent="Driver"]
+[node name="Left" type="MeshInstance3D" parent="Driver" unique_id=2114817334]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.0154092)
 material_override = ExtResource("3_3o0uq")
 mesh = SubResource("BoxMesh_04cge")
 
-[node name="Base" type="Node3D" parent="Driver"]
+[node name="Base" type="Node3D" parent="Driver" unique_id=1589318689]
 
-[node name="Base" type="MeshInstance3D" parent="Driver/Base"]
+[node name="Base" type="MeshInstance3D" parent="Driver/Base" unique_id=954085996]
 transform = Transform3D(1.35038, 8.57382e-08, 0, -1.18054e-07, 0.980731, 0, 0, 0, -0.794922, -0.254104, 0.512356, 0.034621)
 material_override = ExtResource("3_3o0uq")
 mesh = SubResource("ArrayMesh_74yka")
 skeleton = NodePath("")
 
-[node name="Turret" type="Node3D" parent="Driver/Base"]
+[node name="Turret" type="Node3D" parent="Driver/Base" unique_id=1764989655]
 
-[node name="Turret" type="MeshInstance3D" parent="Driver/Base/Turret"]
+[node name="Turret" type="MeshInstance3D" parent="Driver/Base/Turret" unique_id=1468216984]
 transform = Transform3D(1.35038, 1.48086e-07, 0, -2.03902e-07, 0.980731, 0, 0, 0, -0.794922, -0.0458267, 0.858123, 0.0356267)
 material_override = ExtResource("3_3o0uq")
 mesh = SubResource("ArrayMesh_qew4e")
 skeleton = NodePath("")
 
-[node name="Viewer" parent="Driver/Base/Turret" instance=ExtResource("1_klg0w")]
+[node name="Viewer" parent="Driver/Base/Turret" unique_id=237533064 instance=ExtResource("1_klg0w")]
 transform = Transform3D(-5.9027e-08, 8.57382e-08, 1.35038, 5.1603e-15, 0.980731, -1.18054e-07, 0.794922, 0, 3.47472e-08, -0.0458267, 1.10331, 0.0356267)
 
-[node name="GunPivot" type="Node3D" parent="Driver/Base/Turret"]
+[node name="GunPivot" type="Node3D" parent="Driver/Base/Turret" unique_id=1355404861]
 transform = Transform3D(1.35038, 1.48086e-07, 0, -2.03902e-07, 0.980731, 0, 0, 0, -0.794922, -0.0458267, 0.858123, 0.0356267)
 
-[node name="Tube" type="MeshInstance3D" parent="Driver/Base/Turret/GunPivot"]
+[node name="Tube" type="MeshInstance3D" parent="Driver/Base/Turret/GunPivot" unique_id=2026662298]
 transform = Transform3D(1, 1.20373e-07, 5.81004e-14, -1.20373e-07, 1, 4.30278e-21, -5.81004e-14, -1.12965e-20, 1, -0.384449, -0.0276667, 0.002639)
 material_override = ExtResource("3_3o0uq")
 mesh = SubResource("ArrayMesh_ueb3l")
 skeleton = NodePath("")
 
-[node name="muzzleFlash" parent="Driver/Base/Turret/GunPivot/Tube" instance=ExtResource("4_lkyw6")]
+[node name="muzzleFlash" parent="Driver/Base/Turret/GunPivot/Tube" unique_id=1025630967 instance=ExtResource("4_lkyw6")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -1.72015, 0.027671, -0.002639)
 
-[node name="Trail" type="MeshInstance3D" parent="."]
+[node name="StaticBody3D" type="StaticBody3D" parent="Driver" unique_id=1359169925]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Driver/StaticBody3D" unique_id=174709438]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13905525, 0.54787445, 0.0322752)
+shape = SubResource("BoxShape3D_3o0uq")
+
+[node name="Trail" type="MeshInstance3D" parent="." unique_id=648264800]
 mesh = SubResource("BoxMesh_3o0uq")
