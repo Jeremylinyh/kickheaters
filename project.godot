@@ -142,3 +142,7 @@ tankFacing3={
 "type": "float",
 "value": 0.0
 }
+tooSteepThreshold={
+"type": "float",
+"value": 0.939
+}

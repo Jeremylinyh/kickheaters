@@ -24,7 +24,8 @@ currentTerrain = NodePath("../TerrainCombiner")
 lookAt = NodePath("LookAt")
 
 [node name="LookAt" type="Node3D" parent="t72v2" unique_id=720691175]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -76.4116, 7.97852, -27.3193)
+transform = Transform3D(0.509717, 0, 0.860342, 0, 1, 0, -0.860342, 0, 0.509717, 2179.628, 11.58937, 2141.795)
+top_level = true
 
 [node name="t72v3" parent="." unique_id=501617432 node_paths=PackedStringArray("currentTerrain", "lookAt") groups=["PlayerTanks"] instance=ExtResource("3_5qkku")]
 transform = Transform3D(0.509717, 0, 0.860342, 0, 1, 0, -0.860342, 0, 0.509717, 2245.45, 3.61085, 2089.98)
@@ -32,7 +33,8 @@ currentTerrain = NodePath("../TerrainCombiner")
 lookAt = NodePath("LookAt")
 
 [node name="LookAt" type="Node3D" parent="t72v3" unique_id=408960258]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -76.4116, 7.97852, -27.3193)
+transform = Transform3D(0.509717, 0, 0.860342, 0, 1, 0, -0.860342, 0, 0.509717, 2182.9978, 11.58937, 2141.795)
+top_level = true
 
 [node name="t72Ev3" parent="." unique_id=1704080288 node_paths=PackedStringArray("currentTerrain") groups=["EnemyTank"] instance=ExtResource("3_5qkku")]
 transform = Transform3D(-0.125835, 0, 0.992051, 0, 1, 0, -0.992051, 0, -0.125835, 2231.31, 3.61085, 2088.41)

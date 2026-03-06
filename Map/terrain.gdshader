@@ -6,6 +6,8 @@ const float maxHeight = 60.0;
 const vec2 mapSize = vec2(4096.0,4096.0);
 const float mapScale = 1.0;
 
+global uniform float tooSteepThreshold;
+
 #include "res://VisibilityHighlighter/visibleHorizon.gdshaderinc"
 
 varying vec2 v_world_pos;
@@ -115,8 +117,29 @@ void fragment() {
 	vec2 effectivePosition = mapScale * (v_world_pos.xy/mapSize);
 	float heightSampled = textureLod(heightMap, effectivePosition,0.0).r * maxHeight;
 	vec3 worldPos = vec3(v_world_pos.x,heightSampled,v_world_pos.y); // brainfart
-	ALBEDO = (mapColor(pixelPos).rgb * vec3(0.016, 0.569, 0.035) * (isUnderground(worldPos) + 0.3)) * ((heightSampled*0.25) + 16.0)/60.0;
-
+	
+	vec2 texelSize = 1.0 / vec2(textureSize(heightMap, 0));
+	float hL = textureLod(heightMap, effectivePosition + vec2(-texelSize.x, 0.0), 0.0).r * maxHeight;
+	float hR = textureLod(heightMap, effectivePosition + vec2(texelSize.x, 0.0), 0.0).r * maxHeight;
+	float hD = textureLod(heightMap, effectivePosition + vec2(0.0, -texelSize.y), 0.0).r * maxHeight;
+	float hU = textureLod(heightMap, effectivePosition + vec2(0.0, texelSize.y), 0.0).r * maxHeight;
+	vec2 worldDelta = (mapSize / mapScale) * texelSize;
+	vec3 tangent = vec3(worldDelta.x * 2.0, hR - hL, 0.0);
+	vec3 bitangent = vec3(0.0, hU - hD, worldDelta.y * 2.0);
+	vec3 worldNormal = normalize(cross(bitangent, tangent));
+	NORMAL = (VIEW_MATRIX * vec4(worldNormal, 0.0)).xyz;
+	
+	// is it too steep
+	float steepness = dot(worldNormal,vec3(0.0,1.0,0.0));
+	vec3 defaultGrassColor = vec3(0.016, 0.569, 0.035) * (isUnderground(worldPos) + 0.3);
+	//if (steepness < tooSteepThreshold)
+	//{
+		//defaultGrassColor = vec3(0.1);
+	//}
+	
+	//ALBEDO = (mapColor(pixelPos).rgb * vec3(0.016, 0.569, 0.035) * (isUnderground(worldPos) + 0.3)) * ((heightSampled*0.25) + 16.0)/60.0;
+	ALBEDO = (mapColor(pixelPos).rgb * defaultGrassColor) * (0.9*vec3(dot(worldNormal,normalize(vec3(-0.5,0.3,-0.5))))+0.1);
+	//ALBEDO = vec3(dot(worldNormal,normalize(vec3(0.5,0.5,0.5))));
 	// green:  vec3(0.016, 0.569, 0.035) *
 
 	///ALBEDO = vec3(isUnderground(worldPos) * fract(UV*10.0)/100.0,0.5);
