@@ -1,4 +1,4 @@
-[gd_scene format=4 uid="uid://d582llijoghm"]
+[gd_scene load_steps=6 format=4 uid="uid://d582llijoghm"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_82hq4"]
 resource_name = "Material"
@@ -74,12 +74,12 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_yd124")
 
-[node name="jagdtiger" type="Node3D" unique_id=408203772]
+[node name="jagdtiger" type="Node3D"]
 
-[node name="Body" type="MeshInstance3D" parent="." unique_id=183455512]
+[node name="Body" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_e5rvr")
 skeleton = NodePath("")
 
-[node name="Barrel" type="MeshInstance3D" parent="." unique_id=362761096]
+[node name="Barrel" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_ywjqn")
 skeleton = NodePath("")
