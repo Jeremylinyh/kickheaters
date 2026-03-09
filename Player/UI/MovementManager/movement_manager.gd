@@ -9,8 +9,6 @@ extends Control
 @onready var tankCircle = $TankCircle
 var tankVisuals : Dictionary[Tank,Panel]
 
-const ray_length : float = 4096
-
 func isCloseEnough(A : Vector2, B : Vector2) -> float :
 	return (A - B).length()
 
@@ -20,13 +18,17 @@ func findTanksInRegion(startingPosition : Vector2) :
 	var closestDist = 100
 	
 	var currIndex = 0
-	for tank in playerTanks :
+	for tank : Tank in playerTanks :
 		var tankScreenPoint : Vector2 = get_viewport().get_camera_3d().unproject_position(tank.global_position)
 		#prints(tankScreenPoint,startingPosition)
 		var newClosestDist = isCloseEnough(tankScreenPoint,startingPosition)
 		if newClosestDist < closestDist :
 			closestDist = newClosestDist
 			closestIndex = currIndex
+		
+		if not Input.is_action_pressed("shift") :
+			tank.selected = false
+		
 		currIndex += 1
 	
 	#print()
@@ -37,7 +39,7 @@ func findTanksInRegion(startingPosition : Vector2) :
 		return playerTanks[closestIndex]
 	return null
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	var playerTanks = get_tree().get_nodes_in_group("PlayerTanks")
 	for tank : Tank in playerTanks :
 		if not tankVisuals.get(tank) :
@@ -52,19 +54,10 @@ func _process(delta: float) -> void:
 		tankScreenPoint -= Vector2(tankRadius/2,tankRadius/2)
 		visualizer.position = tankScreenPoint
 
-func _input(event: InputEvent) -> void:
+func _input(_event: InputEvent) -> void:
 	if Input.is_action_just_pressed("Click") :
 		var selectedTank : Tank = (findTanksInRegion(get_global_mouse_position())) ## This takes priority over path node
-		dragTank(selectedTank)
-		print(selectedTank)
-
-func dragTank(tank : Tank) -> void:
-	var camera : Camera3D = get_viewport().get_camera_3d()
-	if not camera or not tank :
-		return
-	while not Input.is_action_just_released("Click") :
-		var mouse_pos = get_viewport().get_mouse_position()
-		var from = camera.project_ray_origin(mouse_pos)
-		var to = from + camera.project_ray_normal(mouse_pos) * ray_length
-		await get_tree().process_frame
-	print("path ends")
+		#dragTank(selectedTank)
+		if selectedTank : # and not Input.is_action_pressed("shift") :
+			selectedTank.selected = true
+		#print(selectedTank)

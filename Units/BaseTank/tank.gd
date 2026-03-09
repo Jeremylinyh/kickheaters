@@ -15,12 +15,48 @@ class_name Tank
 @export var turretElevateSpeed : float = 1.0
 
 const maxRange : float = 1024.0
+const ray_length : float = 4096
+var selected = false :
+	set(value):
+		selected = value
+		if value :
+			dragTank()
 
 #var selfAzimuth : float = 0.0
 
 const shellExplosion := preload("res://Assets/ParticleEffects/explosion.tscn")
 const occlusive : ShaderMaterial = preload("res://VisibilityHighlighter/VisibilityReciever/ShowFov.tres")
 const camouflage : ShaderMaterial = preload("res://Units/BaseTank/camoflage.tres")
+
+var queuedWaypoints : Array[Vector3] = [] : 
+	set(value) :
+		$Waypoints.updateMesh(global_position,value)
+		#print(value.size())
+		queuedWaypoints = value
+
+func dragTank() -> void:
+	var camera : Camera3D = get_viewport().get_camera_3d()
+	if not camera or not self :
+		return
+	queuedWaypoints = []
+	while selected :
+		if Input.is_action_just_released("Click") :
+			if Input.is_action_pressed("shift") :
+				continue
+			else :
+				break
+		var mouse_pos = get_viewport().get_mouse_position()
+		var from = camera.project_ray_origin(mouse_pos)
+		var to = from + camera.project_ray_normal(mouse_pos) * ray_length
+		
+		var terrDist : float = currentTerrain.traceRay(from,to)
+		
+		queuedWaypoints.append(from + to * terrDist)
+		$Waypoints.updateMesh(global_position,queuedWaypoints)
+		
+		await get_tree().process_frame
+	#selected = false
+	#print("path ends")
 
 func toggleHider(newStatus) :
 	#print(newStatus)
