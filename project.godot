@@ -19,6 +19,10 @@ run/main_scene="uid://bbeo2i8i3qn3a"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://Assets/icon.svg"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot_vim/plugin.cfg")
+
 [global_group]
 
 Viewers=""

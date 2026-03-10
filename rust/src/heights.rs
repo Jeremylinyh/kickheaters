@@ -38,7 +38,18 @@ impl Heights {
     pub fn cast_ray(&self,start : Vector3,direction : Vector3) -> f32 {
         let mut current_mip: i32 = 0;
         let travel_dist = Vector2::new(direction.x, direction.z).length();
-        let dir_norm = direction.normalized();
+        
+        if travel_dist <= 0.0
+        {
+            if direction.y > 0.0
+            {
+                return direction.length();
+            }
+            let ground_height = self.get_height_interpolated(start.x,start.z, 0);
+            return (start.y - ground_height).max(0.0);
+        }
+
+        let dir_norm = direction/travel_dist;
         // let travel_dir = Vector2::new(direction.x,direction.z) / travel_dist.max(1.0); // Normalize and prevent division by zero
 
         let base_step_size = travel_dist / (direction).length(); // Base step size for fine sampling
@@ -47,7 +58,14 @@ impl Heights {
         while dist_traveled <= travel_dist {
             let current_pos3d = start + dir_norm * dist_traveled;
             let current_pos = Vector2::new(current_pos3d.x, current_pos3d.z);
+            
+
+            if current_pos3d.x < 0.0 || current_pos3d.z < 0.0 || current_pos3d.x >= 4096.0 || current_pos3d.z >= 4096.0 
+            {
+                break;
+            }
             let mut height = self.get_height(current_pos.x as u32, current_pos.y as u32, current_mip);
+            
             if current_mip == 0
             {
                 height = self.get_height_interpolated(current_pos.x, current_pos.y, current_mip);
@@ -62,29 +80,51 @@ impl Heights {
             }
             else {
                 current_mip = (current_mip + 1).min((self.layers.len() - 1) as i32); // Move to next mip level for coarser checks
-                dist_traveled += self.determine_step_size(current_pos, base_step_size, current_mip);
+                dist_traveled += base_step_size; //self.determine_step_size(current_pos,Vector2::new(dir_norm.x,dir_norm.z), base_step_size, current_mip);
             }
         }
 
         return dist_traveled;
     }
 
-    pub fn determine_step_size(&self,position: Vector2, base_step_size: f32, mip: i32) -> f32 {
-        let mip = mip.max(0);
-        let cell_size = (2.0f32).powi(mip as i32);
-        let mut step = base_step_size * cell_size;
+    pub fn determine_step_size(&self, position: Vector2, dir2d_norm: Vector2, minimum_step_size: f32, mip: i32) -> f32 {
+        // 1 << mip is a much faster way to calculate 2^mip for integers
+        let cell_size = (1 << mip.max(0)) as f32; 
 
-        let off_x = position.x.rem_euclid(cell_size);
-        let off_y = position.y.rem_euclid(cell_size);
+        let mut t_max_x = f32::INFINITY;
+        let mut t_max_y = f32::INFINITY;
 
-        let to_grid_x = if off_x == 0.0 { cell_size } else { cell_size - off_x };
-        let to_grid_y = if off_y == 0.0 { cell_size } else { cell_size - off_y };
+        // Distance to next X boundary
+        if dir2d_norm.x.abs() > 1e-6 {
+            let next_x = if dir2d_norm.x > 0.0 {
+                (position.x / cell_size).floor() * cell_size + cell_size
+            } else {
+                let mut nx = (position.x / cell_size).ceil() * cell_size - cell_size;
+                // If we are sitting exactly on the boundary, push to the next one
+                if nx == position.x { nx -= cell_size; } 
+                nx
+            };
+            t_max_x = (next_x - position.x) / dir2d_norm.x;
+        }
 
-        let min_to_grid = to_grid_x.min(to_grid_y);
+        // Distance to next Y boundary
+        if dir2d_norm.y.abs() > 1e-6 {
+            let next_y = if dir2d_norm.y > 0.0 {
+                (position.y / cell_size).floor() * cell_size + cell_size
+            } else {
+                let mut ny = (position.y / cell_size).ceil() * cell_size - cell_size;
+                if ny == position.y { ny -= cell_size; }
+                ny
+            };
+            t_max_y = (next_y - position.y) / dir2d_norm.y;
+        }
 
-        step = step.min(min_to_grid);
+        // Take the shortest distance to a boundary
+        // Add a tiny epsilon (e.g., 0.001) so the step pushes the position mathematically INSIDE the next cell
+        let step_to_boundary = t_max_x.min(t_max_y) + 0.001;
 
-        return step.max(1.0); // Ensure a minimum step size to prevent infinite loops
+        // Ensure we don't take a step smaller than the allowed minimum
+        step_to_boundary.max(minimum_step_size)
     }
 
     #[func]
