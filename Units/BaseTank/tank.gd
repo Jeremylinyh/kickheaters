@@ -51,7 +51,7 @@ func dragTank() -> void:
 		
 		var terrDist : float = currentTerrain.traceRay(from,to)
 		
-		queuedWaypoints.append(from + to * terrDist)
+		queuedWaypoints.append(from + camera.project_ray_normal(mouse_pos) * terrDist)
 		$Waypoints.updateMesh(global_position,queuedWaypoints)
 		
 		await get_tree().process_frame
