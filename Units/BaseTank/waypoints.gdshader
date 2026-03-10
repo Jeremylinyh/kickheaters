@@ -1,6 +1,6 @@
 shader_type spatial;
 render_mode unshaded, cull_disabled, depth_test_disabled;
-instance uniform float thickness = 0.1;
+instance uniform float thickness = 3;
 
 void vertex() {
 	// Called for every vertex the material is visible on.
@@ -16,7 +16,7 @@ void vertex() {
 	}
 	vec2 perp = vec2(-dir.y, dir.x);
 	
-	vec2 offset = perp * UV.y * thickness;
+	vec2 offset = perp * UV.y * (thickness / VIEWPORT_SIZE);
 	clip_pos.xy += offset * clip_pos.w;
 	POSITION = clip_pos;
 	
@@ -25,7 +25,7 @@ void vertex() {
 
 void fragment() {
 	// Called for every pixel the material is visible on.
-	ALBEDO = vec3(UV,1.0);
+	//ALBEDO = vec3(UV,1.0);
 }
 
 //void light() {

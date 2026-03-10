@@ -6,7 +6,7 @@ func _ready() -> void:
 	mesh.custom_aabb = AABB(Vector3(-10000, -10000, -10000), Vector3(20000, 20000, 20000))
 
 func updateMesh(originGlobal : Vector3,waypoints : Array[Vector3]) -> void:
-	print(waypoints.size())
+	#print(waypoints.size())
 	if waypoints.size() < 1:
 		visible = false
 		return

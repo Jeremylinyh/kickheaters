@@ -38,7 +38,7 @@ func dragTank() -> void:
 	var camera : Camera3D = get_viewport().get_camera_3d()
 	if not camera or not self :
 		return
-	queuedWaypoints = []
+	self.queuedWaypoints = []
 	while selected :
 		if Input.is_action_just_released("Click") :
 			if Input.is_action_pressed("shift") :
@@ -46,12 +46,12 @@ func dragTank() -> void:
 			else :
 				break
 		var mouse_pos = get_viewport().get_mouse_position()
-		var from = camera.project_ray_origin(mouse_pos)
-		var to = from + camera.project_ray_normal(mouse_pos) * ray_length
+		var from = camera.global_position
+		var to = camera.project_ray_normal(mouse_pos).normalized()
 		
-		var terrDist : float = currentTerrain.traceRay(from,to)
-		
-		queuedWaypoints.append(from + camera.project_ray_normal(mouse_pos) * terrDist)
+		var terrDist : float = currentTerrain.traceRay(from,to * ray_length)
+		print(terrDist)
+		self.queuedWaypoints.append(camera.project_position(mouse_pos,terrDist))
 		$Waypoints.updateMesh(global_position,queuedWaypoints)
 		
 		await get_tree().process_frame
