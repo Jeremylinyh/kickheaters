@@ -36,7 +36,7 @@ var queuedWaypoints : Array[Vector3] = [] :
 
 func dragTank() -> void:
 	var camera : Camera3D = get_viewport().get_camera_3d()
-	print(camera)
+	# print(camera)
 	if not camera or not self :
 		return
 	self.queuedWaypoints = []
@@ -52,7 +52,18 @@ func dragTank() -> void:
 		
 		var terrDist : float = currentTerrain.traceRay(from,to * ray_length)
 		#print(terrDist)
-		self.queuedWaypoints.append(from + (to * terrDist))
+		var proposedWaypoint : Vector3 = from + (to * terrDist)
+		
+		if self.queuedWaypoints.size() > 0 :
+			var prevWaypoint : Vector3 = self.queuedWaypoints[queuedWaypoints.size()-1]
+			var vecToProposed : Vector3 = proposedWaypoint - prevWaypoint
+			var distToProposed : float = (vecToProposed).length()
+			
+			var vecToBeAdd : Vector3 = vecToProposed.normalized()
+			for i in range(1,floor(distToProposed) + 1,1) :
+				self.queuedWaypoints.append(prevWaypoint + vecToBeAdd * i)
+		else :
+			self.queuedWaypoints.append(proposedWaypoint)
 		$Waypoints.updateMesh(global_position,queuedWaypoints)
 		
 		await get_tree().process_frame

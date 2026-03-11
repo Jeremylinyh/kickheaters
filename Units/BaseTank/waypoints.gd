@@ -46,6 +46,8 @@ func updateMesh(originGlobal : Vector3,waypoints : Array[Vector3]) -> void:
 	
 	var selfMesh : ArrayMesh = mesh
 	selfMesh.clear_surfaces()
+	selfMesh = mesh.duplicate()
+	mesh = selfMesh
 	#selfMesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLE_STRIP,surface_array)
 	selfMesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLE_STRIP,surface_array, [], {}, format_flags)
 	#mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLE_STRIP,surface_array)
