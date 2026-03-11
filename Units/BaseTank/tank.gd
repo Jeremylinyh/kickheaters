@@ -15,7 +15,7 @@ class_name Tank
 @export var turretElevateSpeed : float = 1.0
 
 const maxRange : float = 1024.0
-const ray_length : float = 4096
+const ray_length : float = 4096.0
 var selected = false :
 	set(value):
 		selected = value
@@ -46,7 +46,7 @@ func dragTank() -> void:
 			else :
 				break
 		var mouse_pos = get_viewport().get_mouse_position()
-		var from = camera.global_position
+		var from = camera.project_ray_origin(mouse_pos)
 		var to = camera.project_ray_normal(mouse_pos).normalized()
 		
 		var terrDist : float = currentTerrain.traceRay(from,to * ray_length)
