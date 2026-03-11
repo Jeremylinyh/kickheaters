@@ -16,6 +16,8 @@ class_name Tank
 
 const maxRange : float = 1024.0
 const ray_length : float = 4096.0
+const maxStepSize : int = 1
+
 var selected = false :
 	set(value):
 		selected = value
@@ -30,9 +32,11 @@ const camouflage : ShaderMaterial = preload("res://Units/BaseTank/camoflage.tres
 
 var queuedWaypoints : Array[Vector3] = [] : 
 	set(value) :
-		$Waypoints.updateMesh(global_position,value)
+		$Waypoints.updateMesh(preTransformPosition,value)
 		#print(value.size())
 		queuedWaypoints = value
+
+@onready var preTransformPosition : Vector3 = self.global_position
 
 func dragTank() -> void:
 	var camera : Camera3D = get_viewport().get_camera_3d()
@@ -40,6 +44,8 @@ func dragTank() -> void:
 	if not camera or not self :
 		return
 	self.queuedWaypoints = []
+	#get_viewport().debug_draw = Viewport.DEBUG_DRAW_WIREFRAME
+	preTransformPosition = self.global_position
 	while selected :
 		if Input.is_action_just_released("Click") :
 			if Input.is_action_pressed("shift") :
@@ -55,18 +61,36 @@ func dragTank() -> void:
 		var proposedWaypoint : Vector3 = from + (to * terrDist)
 		
 		if self.queuedWaypoints.size() > 0 :
-			var prevWaypoint : Vector3 = self.queuedWaypoints[queuedWaypoints.size()-1]
+			var prevWaypoint : Vector3 = self.queuedWaypoints.back()
 			var vecToProposed : Vector3 = proposedWaypoint - prevWaypoint
 			var distToProposed : float = (vecToProposed).length()
 			
 			var vecToBeAdd : Vector3 = vecToProposed.normalized()
-			for i in range(1,floor(distToProposed) + 1,1) :
-				self.queuedWaypoints.append(prevWaypoint + vecToBeAdd * i)
+			
+			# const minStepSize : int = 1
+			for i in range(1,floor(distToProposed/maxStepSize) + 1,1) :
+				self.queuedWaypoints.append(prevWaypoint + vecToBeAdd * i * maxStepSize)
+				# I am aware this is not raycasted
+				# TODO: Fix that if able.
+			
+			prevWaypoint = self.queuedWaypoints.back()
+			#for i in range(minStepSize,int(distToProposed) % maxStepSize + minStepSize,minStepSize) :
+				#self.queuedWaypoints.append(prevWaypoint + vecToBeAdd * i * minStepSize)
+			#if int(ceil(distToProposed)) % maxStepSize > 0 && distToProposed > minStepSize :
+				#self.queuedWaypoints.append(proposedWaypoint)
 		else :
 			self.queuedWaypoints.append(proposedWaypoint)
-		$Waypoints.updateMesh(global_position,queuedWaypoints)
+		
+		$Waypoints.updateMesh(preTransformPosition,queuedWaypoints)
+		global_position = proposedWaypoint
+		var sceneRoot : SceneRoot = get_tree().current_scene
+		sceneRoot.setTankTimeNow(queuedWaypoints.size() * maxStepSize + (queuedWaypoints.back() - proposedWaypoint).length())
 		
 		await get_tree().process_frame
+	global_position = preTransformPosition
+	var sceneRoot : SceneRoot = get_tree().current_scene
+	sceneRoot.setTankTimeNow(0.0)
+	
 	#selected = false
 	#print("path ends")
 
@@ -133,6 +157,8 @@ func _process(delta: float) -> void:
 	
 	#visualize
 	$Trail.global_position = (origin + direction * (shellDistance/2))
+	if shellDistance/2.0 <= 1.0 :
+		return
 	$Trail.look_at(origin)
 	$Trail.mesh.size = Vector3(0.25,0.25,shellDistance)
 
@@ -162,3 +188,27 @@ func fire() -> void :
 	$"..".add_child(shellInstance)
 	shellInstance.global_position = origin + direction * shellDistance
 	shellInstance.explode()
+
+func _on_simulation_time_changed(newTime: float) -> void:
+	if shouldHideWhenNotView :
+		if newTime <= 0.01 :
+			visible = false
+		else :
+			visible = true
+		return
+	
+	if selected :
+		return
+	
+	if newTime <= 0.01 :
+		self.global_position = preTransformPosition
+		return
+	if queuedWaypoints.size() <= 0 :
+		return
+	
+	var low : int = clamp(floor(newTime),0,max(queuedWaypoints.size() - 1,0))
+	var high : int = clamp(ceil(newTime),0,max(queuedWaypoints.size() - 1,0))
+	var fract : float = newTime - low
+	
+	var predictedPosition : Vector3 = lerp(queuedWaypoints[low],queuedWaypoints[high],fract)
+	self.global_position = predictedPosition
