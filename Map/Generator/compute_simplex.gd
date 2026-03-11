@@ -15,7 +15,7 @@ func generate_noise_texture(width: int, height: int) -> Texture2D:
 	fmt.width = width
 	fmt.height = height
 	# This specifically matches 'r32f' in GLSL
-	fmt.format = RenderingDevice.DATA_FORMAT_R32_SFLOAT 
+	fmt.format = RenderingDevice.DATA_FORMAT_R16_UNORM
 	# Usages: Storage (write), Sampling (read in shader), Can_Copy (read back to CPU)
 	fmt.usage_bits = RenderingDevice.TEXTURE_USAGE_STORAGE_BIT | RenderingDevice.TEXTURE_USAGE_CAN_COPY_FROM_BIT | RenderingDevice.TEXTURE_USAGE_SAMPLING_BIT
 
@@ -54,7 +54,7 @@ func generate_noise_texture(width: int, height: int) -> Texture2D:
 	var byte_data = rd.texture_get_data(texture_rid, 0)
 
 	# Create an Image resource. FORMAT_RF maps to R32_SFLOAT
-	var image = Image.create_from_data(width, height, false, Image.FORMAT_RF, byte_data)
+	var image = Image.create_from_data(width, height, false, Image.FORMAT_R16, byte_data)
 
 	# Create the final Texture2D
 	var texture = ImageTexture.create_from_image(image)
