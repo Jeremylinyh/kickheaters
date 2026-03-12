@@ -109,13 +109,16 @@ func toggleHider(newStatus) :
 	shouldHideWhenNotView = newStatus
 
 func _ready() -> void:
+	if not self or not get_tree() :
+		return
 	if not hasPlayerView :
 		$Driver/Base/Turret/Viewer.remove_from_group("Viewers")
 	else :
 		$Driver/Base/Turret/Viewer.add_to_group("Viewers")
 	toggleHider(shouldHideWhenNotView)
 	var sceneRoot : SceneRoot = get_tree().current_scene
-	sceneRoot.simulationTimeChanged.connect(Callable(self,"_on_simulation_time_changed"))
+	if sceneRoot :
+		sceneRoot.simulationTimeChanged.connect(Callable(self,"_on_simulation_time_changed"))
 	periodicalyFire()
 
 func _process(delta: float) -> void:
@@ -213,3 +216,13 @@ func _on_simulation_time_changed(newTime: float) -> void:
 	
 	var predictedPosition : Vector3 = lerp(queuedWaypoints[low],queuedWaypoints[high],fract)
 	self.global_position = predictedPosition
+	if queuedWaypoints.size() <= 1 :
+		return
+	var lookatPosition = queuedWaypoints[high]
+	if fract >= queuedWaypoints.size() - 1:
+		# the last
+		var relativeForward : Vector3 = (queuedWaypoints[low] - queuedWaypoints[high])
+		lookatPosition = predictedPosition + relativeForward
+	if (lookatPosition - predictedPosition).length() <= 0.01 :
+		return
+	self.look_at(lookatPosition)
