@@ -47,6 +47,3 @@ shouldHideWhenNotView = true
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1587752076]
 
 [node name="MovementManager" parent="HUD" unique_id=1764196912 instance=ExtResource("4_7ueq3")]
-
-[connection signal="simulationTimeChanged" from="." to="t72v2" method="_on_simulation_time_changed"]
-[connection signal="simulationTimeChanged" from="." to="t72v3" method="_on_simulation_time_changed"]

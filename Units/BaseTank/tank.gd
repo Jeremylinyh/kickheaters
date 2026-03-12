@@ -114,7 +114,8 @@ func _ready() -> void:
 	else :
 		$Driver/Base/Turret/Viewer.add_to_group("Viewers")
 	toggleHider(shouldHideWhenNotView)
-	
+	var sceneRoot : SceneRoot = get_tree().current_scene
+	sceneRoot.simulationTimeChanged.connect(Callable(self,"_on_simulation_time_changed"))
 	periodicalyFire()
 
 func _process(delta: float) -> void:
