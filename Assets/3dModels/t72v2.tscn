@@ -119,7 +119,7 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_0gh2h")
 
 [sub_resource type="BoxMesh" id="BoxMesh_3o0uq"]
-size = Vector3(0.25, 0.25, 149.00026)
+size = Vector3(0.25, 0.25, 148.99988)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_e15ib"]
 render_priority = 0
