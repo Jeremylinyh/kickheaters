@@ -20,6 +20,8 @@ const maxStepSize : int = 1
 
 const minimumTurnRadians : float = 0.0 * PI/60.0 # 3 deg
 
+const deadZoneScreenPixels : float = 36.0
+
 var selected = false :
 	set(value):
 		selected = value
@@ -49,7 +51,9 @@ func dragTank() -> void:
 	#get_viewport().debug_draw = Viewport.DEBUG_DRAW_WIREFRAME
 	preTransformPosition = self.global_position
 	var sceneRoot : SceneRoot = get_tree().current_scene
+	var lastMousePos : Vector2
 	while selected :
+		var thereIsNonZeroStuff : bool = queuedWaypoints.size() > 0
 		if Input.is_action_just_released("Click") :
 			if Input.is_action_pressed("shift") :
 				continue
@@ -63,39 +67,43 @@ func dragTank() -> void:
 		#print(terrDist)
 		var proposedWaypoint : Vector3 = from + (to * terrDist)
 		
-		if self.queuedWaypoints.size() > 0 :
-			if queuedWaypoints.size() >= 2 :
-				var prevFacing : Vector3 = queuedWaypoints.back() - queuedWaypoints[queuedWaypoints.size() - 2]
-				var currFacing : Vector3 = proposedWaypoint - queuedWaypoints.back()
-				var angleDiff : float = Vector2(prevFacing.x,prevFacing.z).normalized().angle_to(Vector2(currFacing.x,currFacing.z).normalized())
-				if abs(angleDiff) < minimumTurnRadians :
-					var length : float = (proposedWaypoint - queuedWaypoints.back()).length()
-					proposedWaypoint = queuedWaypoints.back() + prevFacing.normalized() * length
-			
-			var prevWaypoint : Vector3 = self.queuedWaypoints.back()
-			var vecToProposed : Vector3 = proposedWaypoint - prevWaypoint
-			var distToProposed : float = (vecToProposed).length()
-			
-			var vecToBeAdd : Vector3 = vecToProposed.normalized()
-			
-			# const minStepSize : int = 1
-			for i in range(1,floor(distToProposed/maxStepSize) + 1,1) :
-				self.queuedWaypoints.append(prevWaypoint + vecToBeAdd * i * maxStepSize)
-				# I am aware this is not raycasted
-				# TODO: Fix that if able.
-			
+		if thereIsNonZeroStuff :
+			global_position = proposedWaypoint
+			sceneRoot.setTankTimeNow((queuedWaypoints.size()) * (maxStepSize) + (queuedWaypoints.back() - proposedWaypoint).length())
+			if (mouse_pos - lastMousePos).length() < deadZoneScreenPixels :
+				await get_tree().process_frame
+				continue
+		lastMousePos = mouse_pos
+		
+		var prevWaypoint : Vector3
+		if thereIsNonZeroStuff :
 			prevWaypoint = self.queuedWaypoints.back()
-			#for i in range(minStepSize,int(distToProposed) % maxStepSize + minStepSize,minStepSize) :
-				#self.queuedWaypoints.append(prevWaypoint + vecToBeAdd * i * minStepSize)
-			#if int(ceil(distToProposed)) % maxStepSize > 0 && distToProposed > minStepSize :
-				#self.queuedWaypoints.append(proposedWaypoint)
 		else :
-			self.queuedWaypoints.append(proposedWaypoint)
+			prevWaypoint = self.global_position
+		
+		var vecToProposed : Vector3 = proposedWaypoint - prevWaypoint
+		var distToProposed : float = (vecToProposed).length()
+		
+		var vecToBeAdd : Vector3 = vecToProposed.normalized()
+		
+		# const minStepSize : int = 1
+		#addBezierWaypoints(prevWaypoint,vecToBeAdd,distToProposed,maxStepSize)
+		for i in range(1,floor(distToProposed/maxStepSize) + 1,1) :
+			self.queuedWaypoints.append(prevWaypoint + vecToBeAdd * i * maxStepSize)
+			# I am aware this is not raycasted
+			# TODO: Fix that if able.
+		
+		#prevWaypoint = self.queuedWaypoints.back()
+		#for i in range(minStepSize,int(distToProposed) % maxStepSize + minStepSize,minStepSize) :
+			#self.queuedWaypoints.append(prevWaypoint + vecToBeAdd * i * minStepSize)
+		#if int(ceil(distToProposed)) % maxStepSize > 0 && distToProposed > minStepSize :
+			#self.queuedWaypoints.append(proposedWaypoint)
 		
 		$Waypoints.updateMesh(preTransformPosition,queuedWaypoints)
-		global_position = proposedWaypoint
+		
 		#var sceneRoot : SceneRoot = get_tree().current_scene
-		sceneRoot.setTankTimeNow(queuedWaypoints.size() * maxStepSize + (queuedWaypoints.back() - proposedWaypoint).length())
+		#if queuedWaypoints.size() > 0:
+			#sceneRoot.setTankTimeNow((queuedWaypoints.size()) * (maxStepSize) + (queuedWaypoints.back() - proposedWaypoint).length())
 		
 		await get_tree().process_frame
 	global_position = preTransformPosition
