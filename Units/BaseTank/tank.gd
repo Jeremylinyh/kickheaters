@@ -18,7 +18,7 @@ const maxRange : float = 1024.0
 const ray_length : float = 4096.0
 const maxStepSize : int = 1
 
-const minimumTurnRadians : float = PI/10.0 # 3 deg
+const minimumTurnRadians : float = 0.0 * PI/60.0 # 3 deg
 
 var selected = false :
 	set(value):
@@ -64,13 +64,13 @@ func dragTank() -> void:
 		var proposedWaypoint : Vector3 = from + (to * terrDist)
 		
 		if self.queuedWaypoints.size() > 0 :
-			if queuedWaypoints.size() > 2 and false :
+			if queuedWaypoints.size() >= 2 :
 				var prevFacing : Vector3 = queuedWaypoints.back() - queuedWaypoints[queuedWaypoints.size() - 2]
 				var currFacing : Vector3 = proposedWaypoint - queuedWaypoints.back()
 				var angleDiff : float = Vector2(prevFacing.x,prevFacing.z).normalized().angle_to(Vector2(currFacing.x,currFacing.z).normalized())
-				if angleDiff < minimumTurnRadians :
+				if abs(angleDiff) < minimumTurnRadians :
 					var length : float = (proposedWaypoint - queuedWaypoints.back()).length()
-					proposedWaypoint = queuedWaypoints.back() + prevFacing * length
+					proposedWaypoint = queuedWaypoints.back() + prevFacing.normalized() * length
 			
 			var prevWaypoint : Vector3 = self.queuedWaypoints.back()
 			var vecToProposed : Vector3 = proposedWaypoint - prevWaypoint
@@ -132,9 +132,7 @@ func _ready() -> void:
 		sceneRoot.simulationTimeChanged.connect(Callable(self,"_on_simulation_time_changed"))
 	periodicalyFire()
 
-func _process(delta: float) -> void:
-	if not lookAt or lookAt.position.length() < 0.01:
-		return
+func _aimGun(delta : float) -> void:
 	var turret : Node3D = $Driver/Base/Turret
 	var gunPivot : Node3D = $Driver/Base/Turret/GunPivot
 	
@@ -176,6 +174,12 @@ func _process(delta: float) -> void:
 		return
 	$Trail.look_at(origin)
 	$Trail.mesh.size = Vector3(0.25,0.25,shellDistance)
+
+func _process(delta: float) -> void:
+	if not lookAt or lookAt.position.length() < 0.01:
+		return
+	var turret : Node3D = $Driver/Base/Turret
+	turret.rotation.y = 0
 
 #testing only
 func periodicalyFire() -> void:
@@ -241,4 +245,4 @@ func _on_simulation_time_changed(newTime: float) -> void:
 	if (lookatPosition - predictedPosition).length() <= 0.01 :
 		return
 	self.look_at(Vector3(lookatPosition.x,global_position.y,lookatPosition.z))
-	self.rotate_y(deg_to_rad(90))
+	self.rotate_y(deg_to_rad(-90))
