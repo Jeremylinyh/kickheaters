@@ -18,6 +18,8 @@ const maxRange : float = 1024.0
 const ray_length : float = 4096.0
 const maxStepSize : int = 1
 
+const minimumTurnRadians : float = PI/10.0 # 3 deg
+
 var selected = false :
 	set(value):
 		selected = value
@@ -46,6 +48,7 @@ func dragTank() -> void:
 	self.queuedWaypoints = []
 	#get_viewport().debug_draw = Viewport.DEBUG_DRAW_WIREFRAME
 	preTransformPosition = self.global_position
+	var sceneRoot : SceneRoot = get_tree().current_scene
 	while selected :
 		if Input.is_action_just_released("Click") :
 			if Input.is_action_pressed("shift") :
@@ -61,6 +64,14 @@ func dragTank() -> void:
 		var proposedWaypoint : Vector3 = from + (to * terrDist)
 		
 		if self.queuedWaypoints.size() > 0 :
+			if queuedWaypoints.size() > 2 and false :
+				var prevFacing : Vector3 = queuedWaypoints.back() - queuedWaypoints[queuedWaypoints.size() - 2]
+				var currFacing : Vector3 = proposedWaypoint - queuedWaypoints.back()
+				var angleDiff : float = Vector2(prevFacing.x,prevFacing.z).normalized().angle_to(Vector2(currFacing.x,currFacing.z).normalized())
+				if angleDiff < minimumTurnRadians :
+					var length : float = (proposedWaypoint - queuedWaypoints.back()).length()
+					proposedWaypoint = queuedWaypoints.back() + prevFacing * length
+			
 			var prevWaypoint : Vector3 = self.queuedWaypoints.back()
 			var vecToProposed : Vector3 = proposedWaypoint - prevWaypoint
 			var distToProposed : float = (vecToProposed).length()
@@ -83,12 +94,12 @@ func dragTank() -> void:
 		
 		$Waypoints.updateMesh(preTransformPosition,queuedWaypoints)
 		global_position = proposedWaypoint
-		var sceneRoot : SceneRoot = get_tree().current_scene
+		#var sceneRoot : SceneRoot = get_tree().current_scene
 		sceneRoot.setTankTimeNow(queuedWaypoints.size() * maxStepSize + (queuedWaypoints.back() - proposedWaypoint).length())
 		
 		await get_tree().process_frame
 	global_position = preTransformPosition
-	var sceneRoot : SceneRoot = get_tree().current_scene
+	
 	sceneRoot.setTankTimeNow(0.0)
 	
 	#selected = false
@@ -218,11 +229,16 @@ func _on_simulation_time_changed(newTime: float) -> void:
 	self.global_position = predictedPosition
 	if queuedWaypoints.size() <= 1 :
 		return
-	var lookatPosition = queuedWaypoints[high]
-	if fract >= queuedWaypoints.size() - 1:
+	
+	var lookatPosition : Vector3 = queuedWaypoints[high]
+	var nextNextPosition : Vector3 = lookatPosition + (lookatPosition - queuedWaypoints[low])
+	if high < queuedWaypoints.size() - 1:
 		# the last
-		var relativeForward : Vector3 = (queuedWaypoints[low] - queuedWaypoints[high])
-		lookatPosition = predictedPosition + relativeForward
+		nextNextPosition = queuedWaypoints[high + 1]
+	
+	lookatPosition = lerp(lookatPosition,nextNextPosition,fract)
+	
 	if (lookatPosition - predictedPosition).length() <= 0.01 :
 		return
-	self.look_at(lookatPosition)
+	self.look_at(Vector3(lookatPosition.x,global_position.y,lookatPosition.z))
+	self.rotate_y(deg_to_rad(90))
