@@ -42,6 +42,46 @@ var queuedWaypoints : Array[Vector3] = [] :
 
 @onready var preTransformPosition : Vector3 = self.global_position
 
+func addBezierWaypoints(prevWaypoint: Vector3, vecToBeAdd: Vector3, distToProposed: float, maxStepSize: float) -> void:
+	var p0: Vector3 = prevWaypoint
+	var p3: Vector3 = prevWaypoint + (vecToBeAdd * distToProposed)
+	
+	var prevDirNorm: Vector3
+	
+	# 1. Determine first control point (P1) tangency
+	if queuedWaypoints.size() > 0:
+		var prevDir: Vector3 = p0 - queuedWaypoints.back()
+		
+		# Use Godot's built-in length() and normalized()
+		if prevDir.length() > 0:
+			prevDirNorm = prevDir.normalized()
+		else:
+			prevDirNorm = vecToBeAdd
+	else:
+		prevDirNorm = vecToBeAdd
+		
+	# 2. Set control scalars
+	var controlScalar: float = distToProposed * 6.0
+	var p1: Vector3 = p0 + (prevDirNorm * controlScalar)
+	var p2: Vector3 = p3 - (vecToBeAdd * controlScalar)
+	
+	# 3. Generate and interpolate the Bezier Waypoints
+	var numSteps: int = floor(distToProposed / maxStepSize)
+	
+	for i in range(1, numSteps + 1):
+		# Cast to float to avoid integer division
+		var t: float = float(i) / float(numSteps)
+		var u: float = 1.0 - t
+		
+		# Cubic Bezier Formula for Vector3
+		var bezierPoint: Vector3 = (
+			(pow(u, 3) * p0) + 
+			(3.0 * pow(u, 2) * t * p1) + 
+			(3.0 * u * pow(t, 2) * p2) + 
+			(pow(t, 3) * p3)
+		)
+		
+		queuedWaypoints.append(bezierPoint)
 func dragTank() -> void:
 	var camera : Camera3D = get_viewport().get_camera_3d()
 	# print(camera)
@@ -87,9 +127,9 @@ func dragTank() -> void:
 		var vecToBeAdd : Vector3 = vecToProposed.normalized()
 		
 		# const minStepSize : int = 1
-		#addBezierWaypoints(prevWaypoint,vecToBeAdd,distToProposed,maxStepSize)
-		for i in range(1,floor(distToProposed/maxStepSize) + 1,1) :
-			self.queuedWaypoints.append(prevWaypoint + vecToBeAdd * i * maxStepSize)
+		addBezierWaypoints(prevWaypoint,vecToBeAdd,distToProposed,maxStepSize)
+		#for i in range(1,floor(distToProposed/maxStepSize) + 1,1) :
+			#self.queuedWaypoints.append(prevWaypoint + vecToBeAdd * i * maxStepSize)
 			# I am aware this is not raycasted
 			# TODO: Fix that if able.
 		
@@ -138,7 +178,7 @@ func _ready() -> void:
 	var sceneRoot : SceneRoot = get_tree().current_scene
 	if sceneRoot :
 		sceneRoot.simulationTimeChanged.connect(Callable(self,"_on_simulation_time_changed"))
-	periodicalyFire()
+	#periodicalyFire()
 
 func _aimGun(delta : float) -> void:
 	var turret : Node3D = $Driver/Base/Turret
