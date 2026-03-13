@@ -16,13 +16,13 @@ func _ready():
 	startTime = Time.get_unix_time_from_system()
 
 func _process(delta : float):
-	print(totalPausedTime)
+	#print(totalPausedTime)
 	
 	if paused == true:
 		totalPausedTime = Time.get_unix_time_from_system() - pausedStartTime
 		return
 	currTime= Time.get_unix_time_from_system() - startTime 
-	$".".text = str(round_to_dec(currTime, 2))
+	$".".text = str(round_to_dec(currTime, 3))
 
 func pause():
 	if $".".paused == false:
