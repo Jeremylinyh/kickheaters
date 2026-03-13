@@ -1,36 +1,56 @@
-[gd_scene load_steps=6 format=3 uid="uid://bbeo2i8i3qn3a"]
+[gd_scene format=3 uid="uid://bbeo2i8i3qn3a"]
 
 [ext_resource type="PackedScene" uid="uid://dci2cd0ppqp5e" path="res://Player/Camera/player_camera.tscn" id="1_pcchn"]
 [ext_resource type="PackedScene" uid="uid://y0vmg6qqm6m3" path="res://Map/terrain_combiner.tscn" id="1_ynjd7"]
 [ext_resource type="PackedScene" uid="uid://d1el08nhjyn6i" path="res://Assets/3dModels/t72v2.tscn" id="3_5qkku"]
 [ext_resource type="PackedScene" uid="uid://y4i1gh7ay57x" path="res://Player/UI/MovementManager/movement_manager.tscn" id="4_7ueq3"]
+[ext_resource type="Script" uid="uid://ci4ydc0rs3epp" path="res://Player/UI/timer.gd" id="5_g7wwq"]
+[ext_resource type="Texture2D" uid="uid://ccmmunpu8yd4w" path="res://Assets/Pictures/pauseButton.png" id="6_3juw3"]
 
 [sub_resource type="Environment" id="Environment_pcchn"]
 
-[node name="Node3D" type="Node3D"]
+[node name="Node3D" type="Node3D" unique_id=874536508]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=791393697]
 environment = SubResource("Environment_pcchn")
 
-[node name="PlayerCamera" parent="." node_paths=PackedStringArray("currentTerrain") instance=ExtResource("1_pcchn")]
+[node name="PlayerCamera" parent="." unique_id=851347861 node_paths=PackedStringArray("currentTerrain") instance=ExtResource("1_pcchn")]
 currentTerrain = NodePath("../TerrainCombiner")
 
-[node name="TerrainCombiner" parent="." instance=ExtResource("1_ynjd7")]
+[node name="TerrainCombiner" parent="." unique_id=461841075 instance=ExtResource("1_ynjd7")]
 
-[node name="t72v2" parent="." node_paths=PackedStringArray("currentTerrain", "lookAt") instance=ExtResource("3_5qkku")]
+[node name="t72v2" parent="." unique_id=1840264812 node_paths=PackedStringArray("currentTerrain", "lookAt") instance=ExtResource("3_5qkku")]
 transform = Transform3D(0.509717, 0, 0.860342, 0, 1, 0, -0.860342, 0, 0.509717, 2242.08, 3.61085, 2089.98)
 currentTerrain = NodePath("../TerrainCombiner")
 lookAt = NodePath("LookAt")
 
-[node name="LookAt" type="Node3D" parent="t72v2"]
+[node name="LookAt" type="Node3D" parent="t72v2" unique_id=1629515206]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -76.4116, 7.97852, -27.3193)
 
-[node name="t72Ev3" parent="." node_paths=PackedStringArray("currentTerrain") instance=ExtResource("3_5qkku")]
+[node name="t72Ev3" parent="." unique_id=846570823 node_paths=PackedStringArray("currentTerrain") instance=ExtResource("3_5qkku")]
 transform = Transform3D(-0.125835, 0, 0.992051, 0, 1, 0, -0.992051, 0, -0.125835, 2231.31, 3.61085, 2088.41)
 currentTerrain = NodePath("../TerrainCombiner")
 hasPlayerView = false
 shouldHideWhenNotView = true
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=331469935]
 
-[node name="MovementManager" parent="HUD" instance=ExtResource("4_7ueq3")]
+[node name="MovementManager" parent="HUD" unique_id=364675220 instance=ExtResource("4_7ueq3")]
+
+[node name="Timer" type="Label" parent="HUD" unique_id=718939093]
+offset_left = 526.0
+offset_top = 546.0
+offset_right = 627.0
+offset_bottom = 612.0
+text = "skibidi sigma
+"
+script = ExtResource("5_g7wwq")
+
+[node name="PauseButton" type="TextureButton" parent="HUD" unique_id=1962108346]
+offset_left = 643.0
+offset_top = 515.0
+offset_right = 771.0
+offset_bottom = 643.0
+texture_normal = ExtResource("6_3juw3")
+
+[connection signal="pressed" from="HUD/PauseButton" to="HUD/Timer" method="pause"]
