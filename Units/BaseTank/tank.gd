@@ -42,46 +42,46 @@ var queuedWaypoints : Array[Vector3] = [] :
 
 @onready var preTransformPosition : Vector3 = self.global_position
 
-func addBezierWaypoints(prevWaypoint: Vector3, vecToBeAdd: Vector3, distToProposed: float, maxStepSize: float) -> void:
+func addBezierWaypoints(prevWaypoint: Vector3, vecToBeAdd: Vector3, distToProposed: float) -> void:
 	var p0: Vector3 = prevWaypoint
-	var p3: Vector3 = prevWaypoint + (vecToBeAdd * distToProposed)
+	var p2: Vector3 = prevWaypoint + (vecToBeAdd * distToProposed)
 	
 	var prevDirNorm: Vector3
+	var q_size: int = queuedWaypoints.size()
 	
-	# 1. Determine first control point (P1) tangency
-	if queuedWaypoints.size() > 0:
-		var prevDir: Vector3 = p0 - queuedWaypoints.back()
+	if q_size >= 2:
+		var prevPrevWaypoint: Vector3 = queuedWaypoints[q_size - 2]
+		var prevDir: Vector3 = p0 - prevPrevWaypoint
 		
-		# Use Godot's built-in length() and normalized()
-		if prevDir.length() > 0:
+		# Safeguard against zero-length vectors
+		if prevDir.length() > 0.001:
 			prevDirNorm = prevDir.normalized()
 		else:
-			prevDirNorm = vecToBeAdd
+			prevDirNorm = self.basis.z # Your requested fallback
 	else:
-		prevDirNorm = vecToBeAdd
+		# If this is the very first segment being drawn
+		prevDirNorm = self.basis.z
 		
-	# 2. Set control scalars
-	var controlScalar: float = distToProposed * 6.0
+	# 2. Set the Control Point (P1)
+	var controlScalar: float = distToProposed * 0.5
 	var p1: Vector3 = p0 + (prevDirNorm * controlScalar)
-	var p2: Vector3 = p3 - (vecToBeAdd * controlScalar)
 	
-	# 3. Generate and interpolate the Bezier Waypoints
-	var numSteps: int = floor(distToProposed / maxStepSize)
+	# 3. Generate the Quadratic Bezier Waypoints
+	var numSteps: int = max(1, floor(distToProposed / maxStepSize))
 	
 	for i in range(1, numSteps + 1):
-		# Cast to float to avoid integer division
 		var t: float = float(i) / float(numSteps)
 		var u: float = 1.0 - t
 		
-		# Cubic Bezier Formula for Vector3
 		var bezierPoint: Vector3 = (
-			(pow(u, 3) * p0) + 
-			(3.0 * pow(u, 2) * t * p1) + 
-			(3.0 * u * pow(t, 2) * p2) + 
-			(pow(t, 3) * p3)
+			(u * u * p0) + 
+			(2.0 * u * t * p1) + 
+			(t * t * p2)
 		)
 		
 		queuedWaypoints.append(bezierPoint)
+		
+
 func dragTank() -> void:
 	var camera : Camera3D = get_viewport().get_camera_3d()
 	# print(camera)
@@ -127,7 +127,7 @@ func dragTank() -> void:
 		var vecToBeAdd : Vector3 = vecToProposed.normalized()
 		
 		# const minStepSize : int = 1
-		addBezierWaypoints(prevWaypoint,vecToBeAdd,distToProposed,maxStepSize)
+		addBezierWaypoints(prevWaypoint,vecToBeAdd,distToProposed)
 		#for i in range(1,floor(distToProposed/maxStepSize) + 1,1) :
 			#self.queuedWaypoints.append(prevWaypoint + vecToBeAdd * i * maxStepSize)
 			# I am aware this is not raycasted
@@ -290,7 +290,7 @@ func _on_simulation_time_changed(newTime: float) -> void:
 	
 	lookatPosition = lerp(lookatPosition,nextNextPosition,fract)
 	
-	if (lookatPosition - predictedPosition).length() <= 0.01 :
+	if (Vector3(lookatPosition.x,global_position.y,lookatPosition.z) - predictedPosition).length() <= 0.01 :
 		return
 	self.look_at(Vector3(lookatPosition.x,global_position.y,lookatPosition.z))
 	self.rotate_y(deg_to_rad(-90))
