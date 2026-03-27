@@ -69,5 +69,5 @@ void main() {
     float continentalness = snoise(st * 0.75 - vec2(67.0));
     continentalness *= continentalness;
     height += (smoothstep(0.1, 0.5, continentalness)) * 0.5;
-    imageStore(output_image, id, vec4(height * 1.0,0.0,0.0, 1.0));
+    imageStore(output_image, id, vec4(height / 1.55,0.0,0.0, 1.0));
 }

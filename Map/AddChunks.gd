@@ -28,7 +28,18 @@ func _ready() -> void:
 	$BakeHorizonMap._update_input_texture(heightmapImage.get_image())
 	$GetHorizons.heightmapImage = heightmapImage.get_image()
 	
-	var bufferFloat : PackedFloat32Array = heightmapImage.get_image().get_data().to_float32_array()
+	var img : Image = heightmapImage.get_image()
+	var raw_bytes : PackedByteArray = img.get_data()
+	var bufferFloat := PackedFloat32Array()
+
+	# Resize for performance: u16 uses 2 bytes per value
+	bufferFloat.resize(raw_bytes.size() / 2)
+
+	for i in range(bufferFloat.size()):
+		# Decode one 16-bit unsigned int at a time
+		var u16_val = raw_bytes.decode_u16(i * 2)
+		# Convert to 0.0 - 1.0 range (optional but common for heightmaps)
+		bufferFloat[i] = u16_val / 65535.0 
 	set_whole_map(bufferFloat)
 	#var heightShape : HeightMapShape3D = $StaticBody3D/CollisionShape3D.shape
 	#heightShape.map_depth = 4096
