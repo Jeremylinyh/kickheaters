@@ -38,19 +38,21 @@ shouldHideWhenNotView = true
 [node name="MovementManager" parent="HUD" unique_id=364675220 instance=ExtResource("4_7ueq3")]
 
 [node name="Timer" type="Label" parent="HUD" unique_id=718939093]
-offset_left = 526.0
-offset_top = 546.0
-offset_right = 627.0
-offset_bottom = 612.0
+offset_left = 481.0
+offset_top = 485.0
+offset_right = 637.0
+offset_bottom = 586.0
 text = "skibidi sigma
-"
+if you are reading
+this then something
+went wrong"
 script = ExtResource("5_g7wwq")
 
 [node name="PauseButton" type="TextureButton" parent="HUD" unique_id=1962108346]
-offset_left = 643.0
-offset_top = 515.0
-offset_right = 771.0
-offset_bottom = 643.0
+offset_left = 638.0
+offset_top = 469.0
+offset_right = 766.0
+offset_bottom = 597.0
 texture_normal = ExtResource("6_3juw3")
 
 [connection signal="pressed" from="HUD/PauseButton" to="HUD/Timer" method="pause"]
