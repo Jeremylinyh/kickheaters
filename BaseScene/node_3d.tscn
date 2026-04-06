@@ -42,10 +42,7 @@ offset_left = 481.0
 offset_top = 485.0
 offset_right = 637.0
 offset_bottom = 586.0
-text = "skibidi sigma
-if you are reading
-this then something
-went wrong"
+text = "00:00:00:000"
 script = ExtResource("5_g7wwq")
 
 [node name="PauseButton" type="TextureButton" parent="HUD" unique_id=1962108346]
