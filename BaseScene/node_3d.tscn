@@ -9,6 +9,9 @@
 
 [sub_resource type="Environment" id="Environment_pcchn"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_tj408"]
+font_size = 45
+
 [node name="Node3D" type="Node3D" unique_id=874536508]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=791393697]
@@ -38,21 +41,21 @@ shouldHideWhenNotView = true
 [node name="MovementManager" parent="HUD" unique_id=364675220 instance=ExtResource("4_7ueq3")]
 
 [node name="Timer" type="Label" parent="HUD" unique_id=718939093]
-offset_left = 481.0
-offset_top = 485.0
-offset_right = 637.0
-offset_bottom = 586.0
-text = "skibidi sigma
-if you are reading
-this then something
-went wrong"
+offset_left = 386.0
+offset_top = 502.0
+offset_right = 675.0
+offset_bottom = 572.0
+text = "00:00:00:000"
+label_settings = SubResource("LabelSettings_tj408")
 script = ExtResource("5_g7wwq")
 
 [node name="PauseButton" type="TextureButton" parent="HUD" unique_id=1962108346]
-offset_left = 638.0
-offset_top = 469.0
-offset_right = 766.0
-offset_bottom = 597.0
+offset_left = 661.0
+offset_top = 498.0
+offset_right = 728.0
+offset_bottom = 575.0
 texture_normal = ExtResource("6_3juw3")
+ignore_texture_size = true
+stretch_mode = 0
 
 [connection signal="pressed" from="HUD/PauseButton" to="HUD/Timer" method="pause"]

@@ -30,7 +30,8 @@ func _ready():
 	startTime = Time.get_unix_time_from_system()
 	totalStartTime = Time.get_unix_time_from_system()
 	totalTime = 0
-	paused = false 
+	paused = false
+	pause() 
 
 func _process(delta : float):
 	
