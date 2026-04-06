@@ -1,6 +1,8 @@
 extends Label
 
 var startTime : float
+var totalTime : float
+var totalStartTime : float
 var pausedStartTime : float = 0
 var totalPausedTime : float = 0
 var currSecond : float = 0
@@ -26,6 +28,8 @@ func _ready():
 	totalPausedTime = 0
 	pausedStartTime = 0
 	startTime = Time.get_unix_time_from_system()
+	totalStartTime = Time.get_unix_time_from_system()
+	totalTime = 0
 	paused = false 
 
 func _process(delta : float):
@@ -34,9 +38,9 @@ func _process(delta : float):
 		totalPausedTime = Time.get_unix_time_from_system() - pausedStartTime
 		return
 	currSecond= Time.get_unix_time_from_system() - startTime 
+	totalTime = Time.get_unix_time_from_system() - totalStartTime
 	if currSecond >= 60:
 		startTime += 60
-		currSecond -= 60
 		currMinute += 1
 		minuteString = str(currMinute)
 		if currMinute < 10:
@@ -53,6 +57,7 @@ func _process(delta : float):
 	
 	var timeString = "%s:%s:%s" % [hourString, minuteString, secondString]
 	$".".text = timeString
+	#print(totalTime)
 
 func pause():
 	if $".".paused == false:
@@ -63,3 +68,4 @@ func pause():
 		$".".paused = false
 		$"../PauseButton".set_texture_normal(pauseButton)
 		startTime += totalPausedTime
+		totalStartTime += totalPausedTime
