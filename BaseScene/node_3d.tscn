@@ -41,19 +41,19 @@ shouldHideWhenNotView = true
 [node name="MovementManager" parent="HUD" unique_id=364675220 instance=ExtResource("4_7ueq3")]
 
 [node name="Timer" type="Label" parent="HUD" unique_id=718939093]
-offset_left = 386.0
-offset_top = 502.0
-offset_right = 675.0
-offset_bottom = 572.0
+offset_left = 714.0
+offset_top = 929.0
+offset_right = 1003.0
+offset_bottom = 999.0
 text = "00:00:00:000"
 label_settings = SubResource("LabelSettings_tj408")
 script = ExtResource("5_g7wwq")
 
 [node name="PauseButton" type="TextureButton" parent="HUD" unique_id=1962108346]
-offset_left = 661.0
-offset_top = 498.0
-offset_right = 728.0
-offset_bottom = 575.0
+offset_left = 1025.0
+offset_top = 922.0
+offset_right = 1092.0
+offset_bottom = 999.0
 texture_normal = ExtResource("6_3juw3")
 ignore_texture_size = true
 stretch_mode = 0
