@@ -4,6 +4,9 @@ extends Node3D
 var movementSpeed = MovementSpeed
 @export var currentTerrain : TankTerrain
 
+func _ready():
+	moveToPlayer()
+	
 func _process(delta: float) -> void:
 	var zoomScale : float = (1+(position.y/512))
 	movementSpeed = zoomScale * MovementSpeed 
@@ -20,3 +23,7 @@ func _process(delta: float) -> void:
 		#rotation += Vector3(0,rotateCamera/90,0)
 	#print(currentTerrain.getHeightBilinear(Vector2(position.x,position.z)))
 	position.y = max(position.y,currentTerrain.getHeightBilinear(Vector2(position.x,position.z)))
+
+func moveToPlayer():
+	position.x = $"../t72v2".position.x
+	position.z = $"../t72v2".position.z
