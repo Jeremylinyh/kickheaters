@@ -18,7 +18,7 @@ const maxRange : float = 1024.0
 const ray_length : float = 4096.0
 const maxStepSize : int = 1
 
-const minimumTurnRadians : float = 0.0 * PI/60.0 # 3 deg
+const minimumTurnRadians : float = 1.0 * PI/60.0 # 3 deg
 
 const deadZoneScreenPixels : float = 36.0
 

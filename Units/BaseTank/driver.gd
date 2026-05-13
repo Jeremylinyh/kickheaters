@@ -12,7 +12,7 @@ func _ready() -> void:
 	else :
 		$Left.mesh.size = Vector3(trackLength,0.1,trackSpacing)
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	currentTerrain = $"..".currentTerrain
 	if Engine.is_editor_hint() :
 		$Left.mesh.size = Vector3(trackLength,0.1,trackSpacing)

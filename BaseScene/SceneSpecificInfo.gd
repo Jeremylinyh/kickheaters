@@ -11,3 +11,6 @@ func setTankTimeNow(new : float) :
 	#print(new)
 	tankTimeNow = new
 	simulationTimeChanged.emit(tankTimeNow)
+
+func _process(_delta: float) -> void:
+	tankTimeNow = $HUD/Timer.totalTime

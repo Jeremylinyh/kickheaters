@@ -1,7 +1,7 @@
 extends Label
 
 var startTime : float
-var totalTime : float
+@export var totalTime : float
 var totalStartTime : float
 var pausedStartTime : float = 0
 var totalPausedTime : float = 0
@@ -11,7 +11,7 @@ var currHour : int = 0
 var secondString : String
 var minuteString : String
 var hourString : String
-var paused : bool = false
+@export var paused : bool = false
 var pauseButton = load("res://Assets/Pictures/pauseButton.png")
 var unpauseButton = load("res://Assets/Pictures/unpauseButton.png")
 
@@ -33,7 +33,7 @@ func _ready():
 	paused = false
 	pause() 
 
-func _process(delta : float):
+func _process(_delta : float):
 	
 	if paused == true:
 		totalPausedTime = Time.get_unix_time_from_system() - pausedStartTime
