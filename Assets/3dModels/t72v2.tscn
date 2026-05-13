@@ -131,7 +131,7 @@ shader = ExtResource("6_21pup")
 [sub_resource type="ArrayMesh" id="ArrayMesh_21pup"]
 custom_aabb = AABB(-10000, -10000, -10000, 20000, 20000, 20000)
 
-[node name="t72v2" type="Node3D" unique_id=100333700 groups=["PlayerTanks"]]
+[node name="t72v2" type="Node3D" unique_id=100333700]
 script = ExtResource("1_2y26j")
 
 [node name="Driver" type="Node3D" parent="." unique_id=346899639]
