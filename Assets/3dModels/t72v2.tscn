@@ -5,6 +5,8 @@
 [ext_resource type="Material" uid="uid://c8w2a0y1ny0l0" path="res://Units/BaseTank/camoflage.tres" id="3_3o0uq"]
 [ext_resource type="Script" uid="uid://1ajdet1aswoj" path="res://Units/BaseTank/driver.gd" id="3_04cge"]
 [ext_resource type="PackedScene" uid="uid://ore43dcnnpcb" path="res://Assets/ParticleEffects/muzzleFlash.tscn" id="4_lkyw6"]
+[ext_resource type="Shader" uid="uid://c0vrwvnwik8v1" path="res://Units/BaseTank/waypoints.gdshader" id="6_21pup"]
+[ext_resource type="Script" uid="uid://bhk25482qiec" path="res://Units/BaseTank/waypoints.gd" id="6_fadu2"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_04cge"]
 size = Vector3(3, 0.1, 1.6)
@@ -120,9 +122,16 @@ shadow_mesh = SubResource("ArrayMesh_0gh2h")
 size = Vector3(2.9795113, 1.0085564, 1.6499901)
 
 [sub_resource type="BoxMesh" id="BoxMesh_3o0uq"]
-size = Vector3(0.25, 0.25, 185.72945)
+size = Vector3(0.25, 0.25, 2.0000002)
 
-[node name="t72v2" type="Node3D" unique_id=100333700 groups=["PlayerTanks"]]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_e15ib"]
+render_priority = 0
+shader = ExtResource("6_21pup")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_21pup"]
+custom_aabb = AABB(-10000, -10000, -10000, 20000, 20000, 20000)
+
+[node name="t72v2" type="Node3D" unique_id=100333700]
 script = ExtResource("1_2y26j")
 
 [node name="Driver" type="Node3D" parent="." unique_id=346899639]
@@ -172,3 +181,9 @@ shape = SubResource("BoxShape3D_3o0uq")
 
 [node name="Trail" type="MeshInstance3D" parent="." unique_id=1716489793]
 mesh = SubResource("BoxMesh_3o0uq")
+
+[node name="Waypoints" type="MeshInstance3D" parent="." unique_id=1248249320]
+top_level = true
+material_override = SubResource("ShaderMaterial_e15ib")
+mesh = SubResource("ArrayMesh_21pup")
+script = ExtResource("6_fadu2")
