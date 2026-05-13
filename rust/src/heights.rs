@@ -84,7 +84,7 @@ impl Heights {
             }
         }
 
-        return dist_traveled;
+        return (dir_norm * dist_traveled).length();
     }
 
     pub fn determine_step_size(&self, position: Vector2, dir2d_norm: Vector2, minimum_step_size: f32, mip: i32) -> f32 {

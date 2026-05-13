@@ -1,8 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://y4i1gh7ay57x"]
+[gd_scene format=3 uid="uid://y4i1gh7ay57x"]
 
 [ext_resource type="Script" uid="uid://ds3q2nxqdiof4" path="res://Player/UI/MovementManager/movement_manager.gd" id="1_ojq6x"]
+[ext_resource type="Texture2D" uid="uid://mn6m5jrdl2ie" path="res://Units/BaseTank/NatoSymbol.png" id="2_r4avl"]
 
-[node name="MovementManager" type="Control"]
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_yk5m2"]
+texture = ExtResource("2_r4avl")
+
+[node name="MovementManager" type="Control" unique_id=1428588962]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -10,3 +14,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ojq6x")
+
+[node name="TankCircle" type="Panel" parent="." unique_id=240768500]
+visible = false
+layout_mode = 0
+offset_right = 30.0
+offset_bottom = 30.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_yk5m2")
