@@ -23,12 +23,12 @@ func _process(delta: float) -> void:
 		#rotation += Vector3(0,rotateCamera/90,0)
 	#print(currentTerrain.getHeightBilinear(Vector2(position.x,position.z)))
 	position.y = max(position.y,currentTerrain.getHeightBilinear(Vector2(position.x,position.z)))
+	position.y = max(position.y,currentTerrain.getHeightBilinear(Vector2(position.x,position.z)) + 6)
+	position.y = min(position.y,1000)
 
 func moveToPlayer():
 	position.x = $"../t72v2".position.x
 	position.z = $"../t72v2".position.z
-	position.y = max(position.y,currentTerrain.getHeightBilinear(Vector2(position.x,position.z)) + 36.0)
-	position.y = min(position.y,1000)
 	
 func _input(_event: InputEvent) -> void:
 	# move the terrain with us
