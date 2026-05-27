@@ -19,13 +19,14 @@ const ray_length : float = 4096.0
 const maxStepSize : int = 1
 
 const minimumTurnRadians : float = 0.0 * PI/60.0 # 3 deg
-
+var walkedTime : float = 0.0
 const deadZoneScreenPixels : float = 36.0
 
 var selected = false :
 	set(value):
 		selected = value
 		if value :
+			walkedTime = $"../HUD/Timer".totalTime
 			dragTank(true)
 
 #var selfAzimuth : float = 0.0
@@ -90,6 +91,7 @@ func dragTank(resetWaypoints : bool) -> void:
 	if resetWaypoints:
 		self.queuedWaypoints = []
 	#get_viewport().debug_draw = Viewport.DEBUG_DRAW_WIREFRAME
+		
 	
 	preTransformPosition = self.global_position
 	var sceneRoot : SceneRoot = get_tree().current_scene
@@ -232,6 +234,8 @@ func _process(delta: float) -> void:
 	turret.rotation.y = 0
 	if get_tree().current_scene and not get_tree().current_scene.pause :
 		dragTank(false)
+	else :
+		pass
 	
 
 #testing only
@@ -271,6 +275,9 @@ func fire() -> void :
 	shellInstance.explode()
 
 func _on_simulation_time_changed(newTime: float) -> void:
+	#prints(newTime,walkedTime)
+	newTime -= walkedTime  * 6
+	#prints(newTime)
 	if shouldHideWhenNotView :
 		if newTime <= 0.01 :
 			visible = false
