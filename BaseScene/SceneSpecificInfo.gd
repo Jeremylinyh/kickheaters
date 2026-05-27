@@ -1,12 +1,13 @@
 extends Node3D
 class_name SceneRoot
 
-var pause : bool = false
+#var pause : bool = false
 var tankTimePassed : float = 0.0
+var tankSpeed : float = 10
 var tankTimeNow : float = 0.0 :
 	get:
 		#print(tankTimeNow + $HUD/Timer.totalTime)
-		return tankTimeNow + $HUD/Timer.totalTime * 6
+		return tankTimeNow + $HUD/Timer.totalTime * tankSpeed
 
 signal simulationTimeChanged(newTime : float)
 
@@ -17,5 +18,5 @@ func setTankTimeNow(new : float) :
 	tankTimeNow = new
 	simulationTimeChanged.emit(tankTimeNow)
 	
-func _process(delta: float) -> void:
-	pause = $HUD/Timer.paused
+#func _process(delta: float) -> void:
+	#pause = $HUD/Timer.paused

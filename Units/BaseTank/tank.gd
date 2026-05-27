@@ -232,7 +232,8 @@ func _process(delta: float) -> void:
 		return
 	var turret : Node3D = $Driver/Base/Turret
 	turret.rotation.y = 0
-	if get_tree().current_scene and not get_tree().current_scene.pause :
+	#if get_tree().current_scene and not get_tree().current_scene.pause :
+	if get_tree().current_scene and not $"../HUD/Timer".paused:
 		dragTank(false)
 	else :
 		pass
@@ -276,7 +277,7 @@ func fire() -> void :
 
 func _on_simulation_time_changed(newTime: float) -> void:
 	#prints(newTime,walkedTime)
-	newTime -= walkedTime  * 6
+	newTime -= walkedTime  * $"..".tankSpeed
 	#prints(newTime)
 	if shouldHideWhenNotView :
 		if newTime <= 0.01 :
