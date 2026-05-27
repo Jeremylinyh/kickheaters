@@ -26,7 +26,7 @@ var selected = false :
 	set(value):
 		selected = value
 		if value :
-			dragTank()
+			dragTank(true)
 
 #var selfAzimuth : float = 0.0
 
@@ -82,13 +82,15 @@ func addBezierWaypoints(prevWaypoint: Vector3, vecToBeAdd: Vector3, distToPropos
 		queuedWaypoints.append(bezierPoint)
 		
 
-func dragTank() -> void:
+func dragTank(resetWaypoints : bool) -> void:
 	var camera : Camera3D = get_viewport().get_camera_3d()
 	# print(camera)
 	if not camera or not self :
 		return
-	self.queuedWaypoints = []
+	if resetWaypoints:
+		self.queuedWaypoints = []
 	#get_viewport().debug_draw = Viewport.DEBUG_DRAW_WIREFRAME
+	
 	preTransformPosition = self.global_position
 	var sceneRoot : SceneRoot = get_tree().current_scene
 	var lastMousePos : Vector2
@@ -228,6 +230,9 @@ func _process(delta: float) -> void:
 		return
 	var turret : Node3D = $Driver/Base/Turret
 	turret.rotation.y = 0
+	if get_tree().current_scene and not get_tree().current_scene.pause :
+		dragTank(false)
+	
 
 #testing only
 func periodicalyFire() -> void:
