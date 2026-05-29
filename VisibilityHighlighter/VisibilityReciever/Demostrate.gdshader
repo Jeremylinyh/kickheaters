@@ -12,7 +12,8 @@ void vertex() {
 void fragment() {
 	// Called for every pixel the material is visible on.
 	vec3 visibility = isUnderground(worldPos);
-	if (!(visibility.x == visibility.y && visibility.x == visibility.z && visibility.x > 0.0))
+	//if (!(visibility.x == visibility.y && visibility.x == visibility.z && visibility.x > 0.0))
+	if (visibility.x == 0.0)
 	{
 		discard;
 	}

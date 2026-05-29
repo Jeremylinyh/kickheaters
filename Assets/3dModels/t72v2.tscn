@@ -5,8 +5,8 @@
 [ext_resource type="Material" uid="uid://c8w2a0y1ny0l0" path="res://Units/BaseTank/camoflage.tres" id="3_3o0uq"]
 [ext_resource type="Script" uid="uid://1ajdet1aswoj" path="res://Units/BaseTank/driver.gd" id="3_04cge"]
 [ext_resource type="PackedScene" uid="uid://ore43dcnnpcb" path="res://Assets/ParticleEffects/muzzleFlash.tscn" id="4_lkyw6"]
-[ext_resource type="Shader" path="res://Units/BaseTank/waypoints.gdshader" id="6_21pup"]
-[ext_resource type="Script" path="res://Units/BaseTank/waypoints.gd" id="6_fadu2"]
+[ext_resource type="Shader" uid="uid://c0vrwvnwik8v1" path="res://Units/BaseTank/waypoints.gdshader" id="6_21pup"]
+[ext_resource type="Script" uid="uid://bhk25482qiec" path="res://Units/BaseTank/waypoints.gd" id="6_fadu2"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_04cge"]
 size = Vector3(3, 0.1, 1.6)

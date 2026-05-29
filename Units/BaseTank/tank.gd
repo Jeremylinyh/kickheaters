@@ -83,6 +83,9 @@ func addBezierWaypoints(prevWaypoint: Vector3, vecToBeAdd: Vector3, distToPropos
 		queuedWaypoints.append(bezierPoint)
 		
 
+func getRealPos() -> Vector3 :
+	return $Driver.global_position
+
 func dragTank(resetWaypoints : bool) -> void:
 	var camera : Camera3D = get_viewport().get_camera_3d()
 	# print(camera)
@@ -234,7 +237,7 @@ func _process(_delta: float) -> void:
 	turret.rotation.y = 0
 	#if get_tree().current_scene and not get_tree().current_scene.pause :
 	
-	var visibleToPlr : bool = checkVisibleToNonEnemy()
+	var visibleToPlr : bool = true# checkVisibleToNonEnemy()
 	#print(visibleToPlr)
 	if get_tree().current_scene and not $"../HUD/Timer".paused:
 		self.visible = not (is_in_group("EnemyTank") and not visibleToPlr)
@@ -244,9 +247,10 @@ func _process(_delta: float) -> void:
 		pass
 	#if checkVisibleToNonEnemy() :
 		#pass
-	
+	_aimGun(_delta)
 
 func checkVisibleToNonEnemy() -> bool:
+	#print(get_groups())
 	if not is_in_group("EnemyTank"):
 		return true
 	
@@ -261,9 +265,12 @@ func periodicalyFire() -> void:
 		await get_tree().create_timer(1.0).timeout
 		fire()
 
-func fire() -> void :
-	if not currentTerrain or not lookAt or not is_inside_tree():
-		return
+var lastFired : float = 0
+func fire() -> bool :
+	#print( Time.get_ticks_msec() - lastFired )
+	if not currentTerrain or not lookAt or not is_inside_tree() or Time.get_ticks_msec() - lastFired < 1000 :
+		return false
+	lastFired = Time.get_ticks_msec()
 	
 	var muzzleFlash = $Driver/Base/Turret/GunPivot/Tube/muzzleFlash.duplicate()
 	$Driver/Base/Turret/GunPivot/Tube.add_child(muzzleFlash)
@@ -290,6 +297,8 @@ func fire() -> void :
 	$"..".add_child(shellInstance)
 	shellInstance.global_position = origin + direction * shellDistance
 	shellInstance.explode()
+	
+	return true
 
 func _on_simulation_time_changed(newTime: float) -> void:
 	#prints(newTime,walkedTime)
