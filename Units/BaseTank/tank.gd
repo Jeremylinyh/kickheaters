@@ -14,6 +14,8 @@ class_name Tank
 @export var turretLerpFactor : float = 0.1
 @export var turretElevateSpeed : float = 1.0
 
+@export var ally : bool
+
 const maxRange : float = 1024.0
 const ray_length : float = 4096.0
 const maxStepSize : int = 1
@@ -247,6 +249,9 @@ func periodicalyFire() -> void:
 
 func fire() -> void :
 	if not currentTerrain or not lookAt or not is_inside_tree():
+		return
+	
+	if $"../HUD/Timer".paused:
 		return
 	
 	var muzzleFlash = $Driver/Base/Turret/GunPivot/Tube/muzzleFlash.duplicate()
