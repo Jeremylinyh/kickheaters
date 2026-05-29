@@ -227,17 +227,33 @@ func _aimGun(delta : float) -> void:
 	$Trail.look_at(origin)
 	$Trail.mesh.size = Vector3(0.25,0.25,shellDistance)
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if not lookAt or lookAt.position.length() < 0.01:
 		return
 	var turret : Node3D = $Driver/Base/Turret
 	turret.rotation.y = 0
 	#if get_tree().current_scene and not get_tree().current_scene.pause :
+	
+	var visibleToPlr : bool = checkVisibleToNonEnemy()
+	#print(visibleToPlr)
 	if get_tree().current_scene and not $"../HUD/Timer".paused:
+		self.visible = not (is_in_group("EnemyTank") and not visibleToPlr)
 		dragTank(false)
 	else :
+		self.visible = true
 		pass
+	#if checkVisibleToNonEnemy() :
+		#pass
 	
+
+func checkVisibleToNonEnemy() -> bool:
+	if not is_in_group("EnemyTank"):
+		return true
+	
+	for friendly : Tank in get_tree().get_nodes_in_group("PlayerTanks") :
+		print(friendly)
+	
+	return false
 
 #testing only
 func periodicalyFire() -> void:
